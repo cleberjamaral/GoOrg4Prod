@@ -1,0 +1,17 @@
+digraph G {
+	"paintHouse" [ style = "filled" fillcolor = "white" fontname = "Courier New" shape = "ellipse" label = <<table border="0" cellborder="0"><tr><td align="center"><b>paintHouse</b></td></tr></table>> ];
+	"contracting" [ style = "filled" fillcolor = "white" fontname = "Courier New" shape = "diamond" label = <<table border="0" cellborder="0"><tr><td align="center"><font color="black"><b>contracting</b></font></td></tr><tr><td align="left"><sub><i>getBids</i></sub></td></tr></table>> ];
+	paintHouse->contracting;
+	"bidInternalPaint" [ style = "filled" fillcolor = "white" fontname = "Courier New" shape = "ellipse" label = <<table border="0" cellborder="0"><tr><td align="center"><b>bidInternalPaint</b></td></tr><tr><td align="left"><sub><i>bid</i></sub></td></tr><tr><td align="left"><sub><i>paint</i></sub></td></tr></table>> ];
+	contracting->bidInternalPaint;
+	"bidExternalPaint" [ style = "filled" fillcolor = "white" fontname = "Courier New" shape = "ellipse" label = <<table border="0" cellborder="0"><tr><td align="center"><b>bidExternalPaint</b></td></tr><tr><td align="left"><sub><i>bid</i></sub></td></tr><tr><td align="left"><sub><i>paint</i></sub></td></tr></table>> ];
+	contracting->bidExternalPaint;
+	"execute" [ style = "filled" fillcolor = "white" fontname = "Courier New" shape = "ellipse" label = <<table border="0" cellborder="0"><tr><td align="center"><b>execute</b></td></tr></table>> ];
+	paintHouse->execute;
+	"contractWinner" [ style = "filled" fillcolor = "white" fontname = "Courier New" shape = "ellipse" label = <<table border="0" cellborder="0"><tr><td align="center"><b>contractWinner</b></td></tr><tr><td align="left"><sub><i>contract</i></sub></td></tr></table>> ];
+	execute->contractWinner;
+	"internalPaint" [ style = "filled" fillcolor = "white" fontname = "Courier New" shape = "ellipse" label = <<table border="0" cellborder="0"><tr><td align="center"><b>internalPaint</b></td></tr><tr><td align="left"><sub><i>bid</i></sub></td></tr><tr><td align="left"><sub><i>paint</i></sub></td></tr></table>> ];
+	execute->internalPaint;
+	"externalPaint" [ style = "filled" fillcolor = "white" fontname = "Courier New" shape = "ellipse" label = <<table border="0" cellborder="0"><tr><td align="center"><b>externalPaint</b></td></tr><tr><td align="left"><sub><i>paint</i></sub></td></tr></table>> ];
+	execute->externalPaint;
+}

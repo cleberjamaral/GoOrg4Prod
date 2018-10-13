@@ -40,18 +40,22 @@ public class OrganizationRoleTest {
 	public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
 		
 		// set verbose level
-		if (args[1].isEmpty())
-			SimpleLogger.getInstance(3);
-		else
-			SimpleLogger.getInstance(Integer.valueOf(args[1]));
+		if (args.length >= 1) {
+			if (args[1] == null)
+				SimpleLogger.getInstance(3);
+			else
+				SimpleLogger.getInstance(Integer.valueOf(args[1]));
+		}
 
-		String str;
+		String str = "od0.xml";
 		BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
-		if (args[0].isEmpty()) {
-			System.out.print("Digite o nome do arquivo XML organizational-specification: ");
-			str = teclado.readLine();
-		} else {
-			str = args[0];
+		if (args.length >= 2) {
+			if (args[0] == null) {
+				System.out.print("Digite o nome do arquivo XML organizational-specification: ");
+				str = teclado.readLine();
+			} else {
+				str = args[0];
+			}
 		}
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
