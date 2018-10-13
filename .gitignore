@@ -1,6 +1,3 @@
-**.mas2j~
-**.asl~
-
 **.class
 **.log
 **.zip
@@ -15,3 +12,11 @@
 **/bin/*
 **/log/*
 /bin/
+
+# jason / jacamo agent temporary files
+**.mas2j~
+**.asl~
+
+# graphviz (gv) and compiled graphs (pdf)
+*.gv
+*.pdf
