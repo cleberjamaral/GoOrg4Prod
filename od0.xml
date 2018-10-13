@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
+
+<organisational-specification id="house_contruction" os-version="0.8"
+
+	xmlns='http://moise.sourceforge.net/os' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:schemaLocation='http://moise.sourceforge.net/os
+                        http://moise.sourceforge.net/xml/os.xsd'>
+
+	<functional-specification>
+		<scheme id="build_house_sch">
+			<goal id="paintHouse">
+				<plan operator="sequence">
+					<goal id="contracting" ttf="20 minutes" ds="prepare the site for the next tasks">
+						<skill id="getBids"/>
+						<plan operator="parallel">
+							<goal id="bidInternalPaint">
+								<skill id="bid" />								
+								<skill id="paint"/>
+							</goal>
+							<goal id="bidExternalPaint">
+								<skill id="bid" />
+								<skill id="paint"/>
+							</goal>
+						</plan>
+					</goal>
+					<goal id="execute">
+						<plan operator="sequence">
+							<goal id="contractWinner">
+								<skill id="contract"/>
+							</goal>
+							<goal id="internalPaint">
+								<skill id="bid"/>
+								<skill id="paint"/>
+							</goal>
+							<goal id="externalPaint">
+								<skill id="paint"/>
+							</goal>
+
+						</plan>
+					</goal>
+				</plan>
+			</goal>
+		</scheme>
+	</functional-specification>
+
+</organisational-specification>

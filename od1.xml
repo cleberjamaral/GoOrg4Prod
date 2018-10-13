@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
+
+<organisational-specification id="house_contruction" os-version="0.8"
+
+	xmlns='http://moise.sourceforge.net/os' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:schemaLocation='http://moise.sourceforge.net/os
+                        http://moise.sourceforge.net/xml/os.xsd'>
+
+	<functional-specification>
+		<scheme id="build_house_sch">
+			<goal id="house_built">
+				<plan operator="sequence">
+					<goal id="site_prepared" ttf="20 minutes" ds="prepare the site for the next tasks">
+						<skill id="build" />
+					</goal>
+					<goal id="floors_laid" ttf="25 minutes">
+						<skill id="build" />
+					</goal>
+					<goal id="walls_built" ttf="40 minutes">
+						<skill id="build" />
+					</goal>
+					<goal id="rwd">
+						<plan operator="parallel">
+							<goal id="roof_built" ttf="30 minutes">
+								<skill id="build" />
+							</goal>
+							<goal id="windows_fitted" ttf="10 minutes">
+								<skill id="build" />
+							</goal>
+							<goal id="doors_fitted" ttf="10 minutes">
+								<skill id="build" />
+							</goal>
+						</plan>
+					</goal>
+					<goal id="pee">
+						<plan operator="parallel">
+							<goal id="plumbing_installed" ttf="20 minutes" />
+							<goal id="electrical_system_installed" ttf="20 minutes" />
+							<goal id="exterior_painted" ttf="20 minutes">
+								<skill id="bid"/>
+								<skill id="paint"/>
+							</goal>
+
+						</plan>
+					</goal>
+					<goal id="interior_painted" ttf="30 minutes">
+						<skill id="paint"/>
+						<skill id="bid"/>
+					</goal>
+				</plan>
+			</goal>
+		</scheme>
+	</functional-specification>
+
+</organisational-specification>

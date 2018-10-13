@@ -1,0 +1,16 @@
+**.mas2j~
+**.asl~
+
+**.class
+**.log
+**.zip
+**.rar
+**.war
+**.tar.gz
+
+**/hs_err_pid*
+
+**/target/*
+**/bin/classes/*
+**/bin/*
+**/log/*
