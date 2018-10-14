@@ -1,4 +1,4 @@
-package util;
+package test;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -13,8 +13,8 @@ import busca.BuscaIterativo;
 import busca.BuscaLargura;
 import busca.BuscaProfundidade;
 import busca.Nodo;
-import exemplos.OrganizationalRole;
-import exemplos.OrganizationalRole.GoalNode;
+import organizational.OrganizationalRole;
+import organizational.GoalNode;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -73,7 +73,7 @@ public class OrganizationRoleTest {
 		
 		plotOrganizationalGoalTree();
 		
-		OrganizationalRole inicial = new OrganizationalRole(rootNode);
+		OrganizationalRole inicial = new OrganizationalRole(rootNode,3);
 
 		Nodo n = null;
 

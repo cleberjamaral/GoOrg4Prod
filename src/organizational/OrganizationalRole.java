@@ -1,10 +1,8 @@
-package exemplos;
+package organizational;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,37 +11,46 @@ import java.util.List;
 import java.util.Set;
 
 import busca.Antecessor;
-import busca.BuscaIterativo;
-import busca.BuscaLargura;
-import busca.BuscaProfundidade;
 import busca.Estado;
-import busca.Nodo;
 
 import simplelogger.SimpleLogger;
 
 public class OrganizationalRole implements Estado, Antecessor {
 
-	private static SimpleLogger LOG = SimpleLogger.getInstance(3);
+	private static SimpleLogger LOG = SimpleLogger.getInstance(1);
 
 	private static List<OrganizationalRole> isGoalList = new ArrayList<OrganizationalRole>();
 	private static List<OrganizationalRole> rolesList = new ArrayList<OrganizationalRole>();
 
 	GoalNode headGoal;
-	private Set<String> roleSkills = new HashSet<String>();
 	private List<GoalNode> goalSuccessors = new ArrayList<GoalNode>();
-
 	private OrganizationalRole roleParent;
-
+	private Set<String> roleSkills = new HashSet<String>();
 	private Set<String> graphLinks = new HashSet<String>();
+	private int flatCost = 0;
+	private int divisionalCost = 0;
+	
+	/**
+	 * 1: unitary cost (no function)
+	 * 2: based on flat cost (flatter structures are more expensive)
+	 * 3: based on divisional cost (fewer divisions means the divisions are more populated and expensive) 
+	 */
+	static int costFunction = 1;
 
 	public String getDescricao() {
 		return "Empty\n";
 	}
 
+	public OrganizationalRole(GoalNode gn, int costFunction) {
+		this(gn);
+		
+		OrganizationalRole.costFunction = costFunction;
+	}
+
 	public OrganizationalRole(GoalNode gn) {
 		headGoal = gn;
 
-		if (gn.parent == null) {
+		if (gn.getParent() == null) {
 			for (GoalNode goal : headGoal.getSuccessors())
 				goalSuccessors.add(goal);
 			rolesList.add(this);
@@ -62,12 +69,11 @@ public class OrganizationalRole implements Estado, Antecessor {
 						PrintWriter out = new PrintWriter(bw)) {
 					out.println("digraph G {");
 					for (OrganizationalRole or : rolesList) {
-						// out.println(or.headGoal.goalName + ";");
-						out.print("\t\"" + or.headGoal.goalName
+						out.print("\t\"" + or.headGoal.getGoalName()
 								+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
 								+ "shape = \"Mrecord\" label = <<table border=\"0\" cellborder=\"0\" bgcolor=\"white\">"
 								+ "<tr><td bgcolor=\"black\" align=\"center\"><font color=\"white\">"
-								+ or.headGoal.goalName + "</font></td></tr>");
+								+ or.headGoal.getGoalName() + "</font></td></tr>");
 						for (String s : or.roleSkills)
 							out.print("<tr><td align=\"left\">" + s + "</td></tr>");
 						out.println("</table>> ];");
@@ -81,7 +87,7 @@ public class OrganizationalRole implements Estado, Antecessor {
 			} else {
 				// This should not happen again, it has occurred because searching process
 				// (deepth) was calling ehMeta 2 times
-				LOG.warn("* * * Goal achieved but duplicated * * *");
+				LOG.warn("Goal achieved but duplicated!");
 			}
 		}
 		return false;
@@ -94,10 +100,19 @@ public class OrganizationalRole implements Estado, Antecessor {
 			return getRootRole(node.roleParent);
 	}
 
-	/** * Java method to print leaf nodes using recursion * * @param root * */
-
 	public int custo() {
-		return 1;
+		if (costFunction == 2) {
+			LOG.debug("flatCost: " + flatCost);
+			return flatCost;
+		}
+		else if (costFunction == 3) {
+			LOG.debug("divisionalCost: " + divisionalCost);
+			return divisionalCost;
+		}
+		else {
+			// default cost function is unitary (any openning has same cost)
+			return 1; 
+		}
 	}
 
 	/** Lista de sucessores */
@@ -123,6 +138,9 @@ public class OrganizationalRole implements Estado, Antecessor {
 		for (String skill : goalToBeAssociatedToRole.getSkills())
 			newRole.roleSkills.add(skill);
 
+		// this organization gained another level, so flat cost has increased
+		newRole.flatCost = this.flatCost + 1;
+		
 		newRole.roleParent = this;
 		for (String s : this.graphLinks)
 			newRole.graphLinks.add(s);
@@ -130,11 +148,11 @@ public class OrganizationalRole implements Estado, Antecessor {
 		// The new role is a child of the current state (current role)
 		OrganizationalRole parentOR = null;
 		for (OrganizationalRole or : rolesList)
-			if (or.headGoal == goalToBeAssociatedToRole.parent) {
+			if (or.headGoal == goalToBeAssociatedToRole.getParent()) {
 				parentOR = or;
 				break;
 			}
-		newRole.graphLinks.add(parentOR.headGoal.goalName + "->" + newRole.headGoal.goalName);
+		newRole.graphLinks.add(parentOR.headGoal.getGoalName() + "->" + newRole.headGoal.getGoalName());
 
 		for (GoalNode goal : this.goalSuccessors) {
 			if (goal != newRole.headGoal)
@@ -172,11 +190,15 @@ public class OrganizationalRole implements Estado, Antecessor {
 			OrganizationalRole newRole = new OrganizationalRole(goalToBeAssociatedToRole);
 			for (String skill : goalToBeAssociatedToRole.getSkills())
 				newRole.roleSkills.add(skill);
+			
+			// this organization is being compressed in few divisions, so division cost increased
+			newRole.divisionalCost = this.divisionalCost+1;
+			
 			newRole.roleParent = this.roleParent;
 			for (String s : this.graphLinks)
 				newRole.graphLinks.add(s);
 			// create link between goal's parent and the already existing equivalent role
-			newRole.graphLinks.add(goalToBeAssociatedToRole.parent.goalName + "->" + this.headGoal.goalName);
+			newRole.graphLinks.add(goalToBeAssociatedToRole.getParent().getGoalName() + "->" + this.headGoal.getGoalName());
 
 			for (GoalNode goal : this.goalSuccessors) {
 				if (goal != newRole.headGoal)
@@ -229,7 +251,6 @@ public class OrganizationalRole implements Estado, Antecessor {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return false;
 	}
 
@@ -239,130 +260,29 @@ public class OrganizationalRole implements Estado, Antecessor {
 
 	public int hashCode() {
 		return this.graphLinks.hashCode();
-
 	}
 
 	/**
 	 * Custo acumulado g
 	 */
 	public int custoAcumulado() {
-		return 0;
-	}
-
-	public static void main(String[] a) throws IOException {
-
-		// Sample organization : paint a house
-		GoalNode paintHouse = new GoalNode(null, "paintHouse");
-		GoalNode contracting = new GoalNode(paintHouse, "contracting");
-		contracting.operator = "parallel";
-		contracting.addSkill("getBids");
-		GoalNode bidIPaint = new GoalNode(contracting, "bidIPaint");
-		bidIPaint.addSkill("bid");
-		bidIPaint.addSkill("paint");
-		GoalNode bidEPaint = new GoalNode(contracting, "bidEPaint");
-		bidEPaint.addSkill("bid");
-		bidEPaint.addSkill("paint");
-		GoalNode execute = new GoalNode(paintHouse, "execute");
-		GoalNode contractWinner = new GoalNode(execute, "contractWinner");
-		contractWinner.addSkill("contract");
-		GoalNode iPaint = new GoalNode(execute, "iPaint");
-		iPaint.addSkill("bid");
-		iPaint.addSkill("paint");
-		GoalNode ePaint = new GoalNode(execute, "ePaint");
-		ePaint.addSkill("paint");
-
-		OrganizationalRole inicial = new OrganizationalRole(paintHouse);
-
-		String str;
-		BufferedReader teclado;
-		teclado = new BufferedReader(new InputStreamReader(System.in));
-
-		Nodo n = null;
-
-		System.out.print("Digite sua opcao de busca { Digite S para finalizar }\n");
-		System.out.print("\t1  -  Largura\n");
-		System.out.print("\t2  -  Profundidade\n");
-		System.out.print("\t3  -  Pronfundidade Iterativo\n");
-		System.out.print("Opcao: ");
-		str = teclado.readLine().toUpperCase();
-		if (!str.equals("S")) {
-			if (str.equals("1")) {
-				System.out.println("Busca em Largura");
-				n = new BuscaLargura().busca(inicial);
-			} else {
-				if (str.equals("2")) {
-					System.out.println("Busca em Profundidade");
-					n = new BuscaProfundidade(100).busca(inicial);
-				} else {
-					if (str.equals("3")) {
-						System.out.println("Busca em Profundidade Iterativo");
-						n = new BuscaIterativo().busca(inicial);
-					}
-				}
+		if (costFunction == 2) {
+			int cost = 0;
+			OrganizationalRole countParent = this;
+			while (countParent.headGoal != null) {
+				countParent = countParent.roleParent;
+				cost++;
 			}
-			if (str.equals("1") || str.equals("2") || str.equals("3")) {
-				if (n == null) {
-					System.out.println("Sem Solucao!");
-				} else {
-					System.out.println("Solucao:\n" + n.montaCaminho() + "\n\n");
-				}
-			}
+			LOG.debug("ACC-flatCost: " + cost);
+			return cost;
+		}
+		else if (costFunction == 3) {
+			LOG.debug("divisionalCost: " + divisionalCost);
+			return divisionalCost;
+		}
+		else {
+			// default cost function is unitary (any opening has same cost)
+			return 0; 
 		}
 	}
-
-	public static class GoalNode {
-		private List<String> skills = new ArrayList<String>();
-		private List<GoalNode> successors = new ArrayList<GoalNode>();
-		private String goalName;
-		private GoalNode parent;
-		private String operator;
-
-		public GoalNode(GoalNode p, String name) {
-			goalName = name;
-			parent = p;
-			operator = "sequence";
-			if (parent != null) {
-				parent.addSuccessors(this);
-			}
-		}
-
-		public void addSkill(String newSkill) {
-			skills.add(newSkill);
-		}
-
-		public List<String> getSkills() {
-			return skills;
-		}
-
-		private void addSuccessors(GoalNode newSuccessor) {
-			successors.add(newSuccessor);
-			if (parent != null)
-				parent.addSuccessors(newSuccessor);
-		}
-
-		public List<GoalNode> getSuccessors() {
-			return successors;
-		}
-
-		public String getGoalName() {
-			return goalName;
-		}
-
-		public GoalNode getParent() {
-			return parent;
-		}
-
-		public void setOperator(String op) {
-			this.operator = op;
-		}
-
-		public String getOperator() {
-			return operator;
-		}
-
-		public String toString() {
-			return goalName;
-		}
-	}
-
 }
