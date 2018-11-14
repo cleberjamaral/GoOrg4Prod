@@ -152,7 +152,7 @@ public class OrganizationalRole implements Estado, Antecessor {
 				parentOR = or;
 				break;
 			}
-		newRole.graphLinks.add(parentOR.headGoal.getGoalName() + "->" + newRole.headGoal.getGoalName());
+		newRole.graphLinks.add("\""+parentOR.headGoal.getGoalName() + "\"->\"" + newRole.headGoal.getGoalName()+"\"");
 
 		for (GoalNode goal : this.goalSuccessors) {
 			if (goal != newRole.headGoal)

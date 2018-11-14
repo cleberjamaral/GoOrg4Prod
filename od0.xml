@@ -8,41 +8,69 @@
 	xsi:schemaLocation='http://moise.sourceforge.net/os
                         http://moise.sourceforge.net/xml/os.xsd'>
 
+	<structural-specification>
+
+		<role-definitions>
+			<role id="roletst1" />
+			<role id="roletst2" />
+		</role-definitions>
+
+		<group-specification id="group">
+			<roles>
+				<role id="roletst1" min="1" max="1" />
+				<role id="roletst2" min="0" max="300" />
+			</roles>
+
+			<links>
+				<link from="roletst1" to="roletst2" type="communication" scope="intra-group" extends-subgroups="false"
+					bi-dir="true" />
+			</links>
+		</group-specification>
+	</structural-specification>
+
+
 	<functional-specification>
 		<scheme id="build_house_sch">
 			<goal id="paintHouse">
 				<plan operator="sequence">
 					<goal id="contracting" ttf="20 minutes" ds="prepare the site for the next tasks">
-						<skill id="getBids"/>
+						<skill id="getBids" />
 						<plan operator="parallel">
 							<goal id="bidInternalPaint">
-								<skill id="bid" />								
-								<skill id="paint"/>
+								<skill id="bid" />
+								<skill id="paint" />
 							</goal>
 							<goal id="bidExternalPaint">
 								<skill id="bid" />
-								<skill id="paint"/>
+								<skill id="paint" />
 							</goal>
 						</plan>
 					</goal>
 					<goal id="execute">
 						<plan operator="sequence">
 							<goal id="contractWinner">
-								<skill id="contract"/>
+								<skill id="contract" />
 							</goal>
 							<goal id="internalPaint">
-								<skill id="bid"/>
-								<skill id="paint"/>
+								<skill id="bid" />
+								<skill id="paint" />
 							</goal>
 							<goal id="externalPaint">
-								<skill id="paint"/>
+								<skill id="paint" />
 							</goal>
 
 						</plan>
 					</goal>
 				</plan>
 			</goal>
+			<mission id="mtst1" min="1">
+				<goal id="internalPaint" />
+			</mission>
 		</scheme>
 	</functional-specification>
+
+	<normative-specification>
+		<norm id="n1" type="permission" role="roletst1" mission="mtst1" />
+	</normative-specification>
 
 </organisational-specification>

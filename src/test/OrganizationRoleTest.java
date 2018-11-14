@@ -139,6 +139,8 @@ public class OrganizationRoleTest {
 				} else if (node.getNodeName().equals("skill")) {
 					referenceGoalNode.addSkill(eGoal.getAttribute("id"));
 					SimpleLogger.getInstance().debug("Skill = " + referenceGoalNode.toString() + " : " + referenceGoalNode.getSkills());
+				} else if (node.getNodeName().equals("mission")) {
+					return; // end of scheme goals
 				}
 				if (node.hasChildNodes()) {
 		
@@ -173,7 +175,7 @@ public class OrganizationRoleTest {
 					out.print("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
 				out.println("</table>> ];");
 				if (or.getParent() != null)
-					out.println("\t" + or.getParent().getGoalName() + "->" + or.getGoalName() + ";");
+					out.println("\t\"" + or.getParent().getGoalName() + "\"->\"" + or.getGoalName() + "\";");
     		}
         		
         	out.println("}");
