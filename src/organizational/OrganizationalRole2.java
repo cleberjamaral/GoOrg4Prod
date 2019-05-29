@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -90,10 +91,13 @@ public class OrganizationalRole2 implements Estado, Antecessor {
 					out.println("}");
 				} catch (IOException e) {
 				}
+				
+				//return true; // if only one solution is needed
 			} else {
 				// This should not happen again, it has occurred because searching process
 				// (deepth) was calling ehMeta 2 times
 				LOG.warn("Goal achieved but duplicated!");
+				//return true; // if only one solution is needed
 			}
 		}
 		return false;
@@ -129,32 +133,51 @@ public class OrganizationalRole2 implements Estado, Antecessor {
 			LOG.debug("\nCURRENT HEAD GOAL DATA: " + this.toString() + " - OpenGoals: [" + goalSuccessors.toString() + "] - Size: "
 					+ headGoal.getSuccessors().size());
 
-		if (!goalSuccessors.isEmpty()) {
-			GoalNode goalToBeAssociated = goalSuccessors.get(0);
-			
-			//open a successor
-			if (this.headGoal.equals(goalToBeAssociated.getParent())) {
-				//the successor is a child node
-				addRelation(suc, goalToBeAssociated);
-			} else if ((this.headGoal.getParent() != null) //parent node cannot have siblings
-					&& (this.headGoal.getParent().equals(goalToBeAssociated.getParent())
-					)) { 
-				//the successor is a sibling node
-				System.out.println("$$$$ "+this.headGoal.getParent());
-				
-				// if successor needs same skills of its sibling, so join it
-				if ((this.roleSkills.containsAll(goalToBeAssociated.getSkills())
-						&& !goalToBeAssociated.getParent().getOperator().equals("parallel"))
-						|| (goalToBeAssociated.getSkills().isEmpty())) {
-					joinAnother(suc, goalToBeAssociated);
-				} else {
-					addRelation(suc, goalToBeAssociated);
-				}
-			} else {
-				// the successor is any other node
+		// add all children as possible successors
+		for (GoalNode goalToBeAssociated : goalSuccessors) {
+			if (goalToBeAssociated.getParent().equals(this.headGoal)) {
+				//  creating successors, no matter what creating a separated role is always a possible solution
 				System.out.println("XXXX " + this.headGoal.getParent());
 				addRelation(suc, goalToBeAssociated);
+				
+				// creating successors, if parent is same any skills match, joining this goal to
+				// an existing role is a possible solution
+				if (((this.headGoal.getParent() != null) // parent node cannot have siblings
+						&& (this.headGoal.getParent().equals(goalToBeAssociated.getParent()))
+						&& ((this.roleSkills.containsAll(goalToBeAssociated.getSkills())
+						// && !goalToBeAssociated.getParent().getOperator().equals("parallel") //does it
+						// makes sense?
+						) || (goalToBeAssociated.getSkills().isEmpty())))) {
+					// the successor is a sibling node
+					System.out.println("$$$$ " + this.headGoal.getParent());
+			
+					joinAnother(suc, goalToBeAssociated);
+				} 
+
 			}
+		}
+
+		// anyway, create successors if the list is not empty (maybe it is duplicating, anyway, it will be pruned)
+		if (!goalSuccessors.isEmpty()) {
+			GoalNode goalToBeAssociated = goalSuccessors.get(0);
+
+			//  creating successors, no matter what creating a separated role is always a possible solution
+			System.out.println("XXXX " + this.headGoal.getParent());
+			addRelation(suc, goalToBeAssociated);
+			
+			// creating successors, if parent is same any skills match, joining this goal to
+			// an existing role is a possible solution
+			if (((this.headGoal.getParent() != null) // parent node cannot have siblings
+					&& (this.headGoal.getParent().equals(goalToBeAssociated.getParent()))
+					&& ((this.roleSkills.containsAll(goalToBeAssociated.getSkills())
+					// && !goalToBeAssociated.getParent().getOperator().equals("parallel") //does it
+					// makes sense?
+					) || (goalToBeAssociated.getSkills().isEmpty())))) {
+				// the successor is a sibling node
+				System.out.println("$$$$ " + this.headGoal.getParent());
+		
+				joinAnother(suc, goalToBeAssociated);
+			} 
 		}
 
 		return suc;
@@ -263,12 +286,16 @@ public class OrganizationalRole2 implements Estado, Antecessor {
 	}
 
 	/**
-	 * Verifica se um estado � igual a outro j� inserido na lista de sucessores
+	 * Verifica se um estado eh igual a outro ja inserido na lista de sucessores
 	 * (usado para poda)
 	 */
 	public boolean equals(Object o) {
 		try {
 			if (o instanceof OrganizationalRole2) {
+				System.out.println("****" + this.graphLinks + " - " + ((OrganizationalRole2) o).graphLinks);
+	
+				Collections.sort(this.graphLinks);
+				Collections.sort(((OrganizationalRole2) o).graphLinks);
 				return this.graphLinks.equals(((OrganizationalRole2) o).graphLinks);
 			}
 		} catch (Exception e) {

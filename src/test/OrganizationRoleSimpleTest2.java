@@ -24,7 +24,7 @@ public class OrganizationRoleSimpleTest2 {
 
 	public static void main(String[] a) throws IOException {
 
-		
+/*	
 		// Sample organization
 		GoalNode g0 = new GoalNode(null, "g0");
 		GoalNode g1 = new GoalNode(g0, "g1");
@@ -32,15 +32,16 @@ public class OrganizationRoleSimpleTest2 {
 		GoalNode g2 = new GoalNode(g1, "g2");
 		g2.addSkill("s2");
 		GoalNode g3 = new GoalNode(g1, "g3");
-		g3.addSkill("s3");
+		g3.addSkill("s2");
 		GoalNode g4 = new GoalNode(g0, "g4");
 		GoalNode g5 = new GoalNode(g4, "g5");
 		g5.addSkill("s5");
 		GoalNode g6 = new GoalNode(g4, "g6");
+		g6.addSkill("s4");
 		g6.addSkill("s5");
+		OrganizationalRole2 inicial = new OrganizationalRole2(g0,3);
+*/		
 
-		
-/*
 		// Sample organization : paint a house
 		GoalNode paintHouse = new GoalNode(null, "paintHouse");
 		GoalNode contracting = new GoalNode(paintHouse, "contracting");
@@ -53,17 +54,15 @@ public class OrganizationRoleSimpleTest2 {
 		bidEPaint.addSkill("bid");
 		bidEPaint.addSkill("paint");
 		GoalNode execute = new GoalNode(paintHouse, "execute");
-		GoalNode contractWinner = new GoalNode(execute, "contractWinner");
-		contractWinner.addSkill("contract");
+		GoalNode ePaint = new GoalNode(execute, "ePaint");
+		ePaint.addSkill("paint");
 		GoalNode iPaint = new GoalNode(execute, "iPaint");
 		iPaint.addSkill("bid");
 		iPaint.addSkill("paint");
-		GoalNode ePaint = new GoalNode(execute, "ePaint");
-		ePaint.addSkill("paint");
-*/		
+		GoalNode contractWinner = new GoalNode(execute, "contractWinner");
+		contractWinner.addSkill("contract");
+		OrganizationalRole2 inicial = new OrganizationalRole2(paintHouse,3);
 		
-		OrganizationalRole2 inicial = new OrganizationalRole2(g0,3);
-
 		String str;
 		BufferedReader teclado;
 		teclado = new BufferedReader(new InputStreamReader(System.in));
