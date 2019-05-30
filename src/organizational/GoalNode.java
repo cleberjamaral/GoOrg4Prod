@@ -5,7 +5,7 @@ import java.util.List;
 
 public class GoalNode {
 	private List<String> skills = new ArrayList<String>();
-	private List<GoalNode> successors = new ArrayList<GoalNode>();
+	private List<GoalNode> descendents = new ArrayList<GoalNode>();
 	private String goalName;
 	private GoalNode parent;
 	private String operator;
@@ -15,7 +15,7 @@ public class GoalNode {
 		parent = p;
 		operator = "sequence";
 		if (parent != null) {
-			parent.addSuccessors(this);
+			parent.addDescendent(this);
 		}
 	}
 
@@ -27,14 +27,14 @@ public class GoalNode {
 		return skills;
 	}
 
-	private void addSuccessors(GoalNode newSuccessor) {
-		successors.add(newSuccessor);
+	private void addDescendent(GoalNode newDescendent) {
+		descendents.add(newDescendent);
 		if (parent != null)
-			parent.addSuccessors(newSuccessor);
+			parent.addDescendent(newDescendent);
 	}
 
 	public List<GoalNode> getSuccessors() {
-		return successors;
+		return descendents;
 	}
 
 	public String getGoalName() {

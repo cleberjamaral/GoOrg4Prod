@@ -24,15 +24,17 @@ public class OrganizationalRole2 implements Estado, Antecessor {
 	private static List<OrganizationalRole2> rolesList = new ArrayList<OrganizationalRole2>();
 
 	GoalNode headGoal;
+	
+	// The goals that were not explored yet, the algorithm end when all goals were allocated into roles
 	private List<GoalNode> goalSuccessors = new ArrayList<GoalNode>();
 	
-	//State description
+	// State description
 	private OrganizationalRole2 roleParent;
 	private Set<String> roleSkills = new HashSet<String>();
-	//graphlinks is a list because it is used as hash and it allows multiple identical links when joining function is used
+	// graphlinks is a list because it is used as hash and it allows multiple identical links when joining function is used
 	private List<String> graphLinks = new ArrayList<String>();
 	
-	//Cost supporting variables
+	// Cost supporting variables
 	private int flatCost = 0;
 	private int divisionalCost = 0;
 	
@@ -137,19 +139,19 @@ public class OrganizationalRole2 implements Estado, Antecessor {
 		for (GoalNode goalToBeAssociated : goalSuccessors) {
 			if (goalToBeAssociated.getParent().equals(this.headGoal)) {
 				//  creating successors, no matter what creating a separated role is always a possible solution
-				System.out.println("XXXX " + this.headGoal.getParent());
-				addRelation(suc, goalToBeAssociated);
+				System.out.println("YYYY " + this.headGoal.getParent());
+				addSubordinate(suc, goalToBeAssociated);
 				
 				// creating successors, if parent is same any skills match, joining this goal to
 				// an existing role is a possible solution
-				if (((this.headGoal.getParent() != null) // parent node cannot have siblings
+				if (((this.headGoal.getParent() != null) // parent node cannot have siblings, why not?
 						&& (this.headGoal.getParent().equals(goalToBeAssociated.getParent()))
 						&& ((this.roleSkills.containsAll(goalToBeAssociated.getSkills())
 						// && !goalToBeAssociated.getParent().getOperator().equals("parallel") //does it
 						// makes sense?
 						) || (goalToBeAssociated.getSkills().isEmpty())))) {
 					// the successor is a sibling node
-					System.out.println("$$$$ " + this.headGoal.getParent());
+					System.out.println("&&&& " + this.headGoal.getParent());
 			
 					joinAnother(suc, goalToBeAssociated);
 				} 
@@ -163,7 +165,7 @@ public class OrganizationalRole2 implements Estado, Antecessor {
 
 			//  creating successors, no matter what creating a separated role is always a possible solution
 			System.out.println("XXXX " + this.headGoal.getParent());
-			addRelation(suc, goalToBeAssociated);
+			addSubordinate(suc, goalToBeAssociated);
 			
 			// creating successors, if parent is same any skills match, joining this goal to
 			// an existing role is a possible solution
@@ -183,13 +185,13 @@ public class OrganizationalRole2 implements Estado, Antecessor {
 		return suc;
 	}
 
-	public void addRelation(List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
+	public void addSubordinate(List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
 		OrganizationalRole2 newRole = new OrganizationalRole2(goalToBeAssociatedToRole);
 
 		// Copy all skills of the goal to this new role
 		for (String skill : goalToBeAssociatedToRole.getSkills())
 			newRole.roleSkills.add(skill);
-
+		// Make this state bwing parent of the new one and copy current links
 		newRole.roleParent = this;
 		for (String s : this.graphLinks)
 			newRole.graphLinks.add(s);
@@ -229,6 +231,51 @@ public class OrganizationalRole2 implements Estado, Antecessor {
 		}
 	}
 
+	public void addPair(List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
+		OrganizationalRole2 newRole = new OrganizationalRole2(goalToBeAssociatedToRole);
+
+		// Copy all skills of the goal to this new role
+		for (String skill : goalToBeAssociatedToRole.getSkills())
+			newRole.roleSkills.add(skill);
+		// Make the parent of this state being parent of the new one (they are siblings) and copy current links
+		newRole.roleParent = this.roleParent;
+		for (String s : this.graphLinks)
+			newRole.graphLinks.add(s);
+
+		// The new role is a child of the current state (current role)
+		OrganizationalRole2 parentOR = null;
+		for (OrganizationalRole2 or : rolesList)
+			if (or.headGoal.getParent() == goalToBeAssociatedToRole.getParent()) {
+				parentOR = or;
+				break;
+			}
+		newRole.graphLinks.add("\""+parentOR.headGoal.getGoalName() + "\"->\"" + newRole.headGoal.getGoalName()+"\"");
+		
+		// Add all successors of current state but not the new state itself
+		for (GoalNode goal : this.goalSuccessors) {
+			if (goal != newRole.headGoal)
+				newRole.goalSuccessors.add(goal);
+		}
+
+		String logg;
+		logg = "\taddRelation: " + newRole.toString() + ", Links: [ ";
+		for (String s : newRole.graphLinks)
+			logg += s + " ";
+		logg += "], nSucc: " + newRole.goalSuccessors.size();
+		LOG.debug(logg);
+
+		suc.add(newRole);
+
+		boolean isNew = true;
+		for (OrganizationalRole2 or : rolesList)
+			if (or.headGoal == newRole.headGoal) {
+				isNew = false;
+				break;
+			}
+		if (isNew) {
+			rolesList.add(newRole);
+		}
+	}
 	public void joinAnother(List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
 		// Creates a new state which is the same role but with another equal link (just
 		// to make it different)
