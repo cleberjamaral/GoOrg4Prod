@@ -149,21 +149,13 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 			// if one of assigned goals is parent, so open it as a child
 			if (this.assignedGoals.contains(goalToBeAssociated.getParent())) {
 				// creating successors, no matter what creating a separated role is always a possible solution
-				addSubordinate(suc, goalToBeAssociated);
-			}
-		
-			// A role with assigned goals that match to the parent of the goal to be
-			// assigned, may have siblings
-			// Note that earlier joining processes may made a role a "step parent" of many
-			// other goals since it can be concentrating many goals
-			if ((this.parentRole != null) && (this.parentRole.assignedGoals.contains(goalToBeAssociated.getParent()))) {
+				addSubordinate(this, suc, goalToBeAssociated);
+			} else if ((this.parentRole != null) && (this.parentRole.assignedGoals.contains(goalToBeAssociated.getParent()))) {
 				// creating successors, no matter what creating a separated role is always a
 				// possible solution
 				addPair(suc, goalToBeAssociated);
-			}
-			
-			//  if it is not the rootnode and parent is same, they are pairs and can be joined
-			if ((this.parentRole != null) && (this.parentRole.assignedGoals.contains(goalToBeAssociated.getParent()))) {
+
+				//  if it is not the rootnode and parent is same, they are pairs and can be joined
 				// creating successors, if parent is same any skills match, join this goal to an existing role
 				if (((this.roleSkills.containsAll(goalToBeAssociated.getSkills())
 						// && !goalToBeAssociated.getParent().getOperator().equals("parallel") //does it
@@ -175,24 +167,18 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 						e.printStackTrace();
 					}
 				} 
+			} else {
+				//addANotRelative(suc, goalToBeAssociated);
 			}
 		}
 
 		return suc;
 	}
 
-	public void addSubordinate(List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
-		OrganizationalRole3 newState = new OrganizationalRole3(goalToBeAssociatedToRole);
+	public void addSubordinate(OrganizationalRole3 parentRole, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
 
-		// Copy all skills of the goal to this new role
-		for (String skill : goalToBeAssociatedToRole.getSkills()) newState.roleSkills.add(skill);
-		// Make this state bwing parent of the new one and copy current links
-		newState.parentRole = this;
-		// Copy all roles tree
-		for (OrganizationalRole3 or : this.rolesTree) newState.rolesTree.add(or);
-		// Copy all graph links tree
-		for (String s : this.graphLinks) newState.graphLinks.add(s);
-
+		OrganizationalRole3 newState = (OrganizationalRole3) createState(parentRole, goalToBeAssociatedToRole);
+		
 		newState.graphLinks.add("\""+this.headGoal.getGoalName() + "\"->\"" + goalToBeAssociatedToRole.getGoalName()+"\"");
 		
 		// Add all successors of current state but not the new state itself
@@ -208,16 +194,8 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 	}
 
 	public void addPair(List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
-		OrganizationalRole3 newState = new OrganizationalRole3(goalToBeAssociatedToRole);
-
-		// Copy all skills of the goal to this new role
-		for (String skill : goalToBeAssociatedToRole.getSkills()) newState.roleSkills.add(skill);
-		// Make the parent of this state being parent of the new one (they are siblings) and copy current links
-		newState.parentRole = this.parentRole;
-		// Copy all roles tree
-		for (OrganizationalRole3 or : rolesTree) newState.rolesTree.add(or);
-		// Copy all graph links tree
-		for (String s : this.graphLinks) newState.graphLinks.add(s);
+		
+		OrganizationalRole3 newState = (OrganizationalRole3) createState(this.parentRole, goalToBeAssociatedToRole);
 		
 		newState.graphLinks.add("\""+this.headGoal.getParent().getGoalName() + "\"->\"" + goalToBeAssociatedToRole.getGoalName()+"\"");
 		
@@ -233,20 +211,8 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 		LOG.debug("addPair       : " + newState.rolesTree + ", nSucc: " + newState.goalSuccessors.size() + ", Hash: " + newState.hashCode());
 	}
 	public void joinAPair(List<Estado> suc, GoalNode goalToBeAssociatedToRole) throws CloneNotSupportedException {
-		// Creates a new state which is the same role but with another equal link (just
-		// to make it different)
-		OrganizationalRole3 newState = new OrganizationalRole3(goalToBeAssociatedToRole);
-		// Copy all skills of the goal to this new role
-		for (String skill : goalToBeAssociatedToRole.getSkills()) newState.roleSkills.add(skill);
-		// Make the parent of this state being parent of the new one (they are siblings) and copy current links
-		newState.parentRole = this.parentRole;
-		// Copy all roles tree
-		for (OrganizationalRole3 or : rolesTree) {
-			OrganizationalRole3 nnewS = (OrganizationalRole3) or.clone();  			
-			newState.rolesTree.add((OrganizationalRole3) nnewS);
-		}
-		// Copy all graph links tree
-		for (String s : this.graphLinks) newState.graphLinks.add(s);
+
+		OrganizationalRole3 newState = (OrganizationalRole3) createState(this.parentRole, goalToBeAssociatedToRole);
 		
 		// this organization is being compressed in few divisions, so division cost increased
 		newState.divisionalCost = this.divisionalCost + 1;
@@ -266,8 +232,6 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 		for (OrganizationalRole3 or : newState.rolesTree) {
 			if (or.assignedGoals.containsAll(this.assignedGoals)) {
 				or.assignedGoals.add(goalToBeAssociatedToRole);
-				LOG.debug("assignedGoals: " + or.assignedGoals + " - " + or.graphLinks + " - " + newState.rolesTree
-						+ " - " + or.headGoal);
 				break;
 			}
 		}
@@ -277,6 +241,18 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 		LOG.debug("joinAPair     : " + newState.rolesTree + ", nSucc: " + newState.goalSuccessors.size() + ", Hash: " + newState.hashCode());
 	}
 
+	public void addANotRelative(List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
+		// Find a role that contains the parent goal of goalToBeAssociatedToRole, it intents
+		// to start to explore another branch of the tree
+		for (OrganizationalRole3 or : this.rolesTree) {
+			if (or.assignedGoals.contains(goalToBeAssociatedToRole.getParent())) {
+				LOG.debug("addANotRelative");
+				addSubordinate(or, suc, goalToBeAssociatedToRole);
+				break;
+			}
+		}
+	}
+	
 	/** Lista de antecessores, para busca bidirecional */
 	public List<Estado> antecessores() {
 		return sucessores();
@@ -335,11 +311,28 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 		// Only the tree is not copied because of recursiveness
 		OrganizationalRole3 clone = new OrganizationalRole3(this.headGoal);
 		for (String skill : this.roleSkills) clone.roleSkills.add(skill);
-		clone.parentRole = clone.parentRole;
+		clone.parentRole = this.parentRole;
 		for (String s : this.graphLinks) clone.graphLinks.add(s);
 		for (GoalNode goal : this.goalSuccessors) clone.goalSuccessors.add(goal);
 		
 	    return clone;
+	}
+
+	public OrganizationalRole3 createState(OrganizationalRole3 parentRole, GoalNode gn) {
+		OrganizationalRole3 newState = new OrganizationalRole3(gn);
+		// Copy all skills of the goal to this new role
+		for (String skill : gn.getSkills()) newState.roleSkills.add(skill);
+		// Make the parent of this state being parent of the new one (they are siblings) and copy current links
+		newState.parentRole = parentRole;
+		// Copy all graph links tree
+		for (String s : this.graphLinks) newState.graphLinks.add(s);
+		// Copy all roles tree
+		for (OrganizationalRole3 or : rolesTree) {
+			OrganizationalRole3 nnewS = (OrganizationalRole3) or.clone();  			
+			newState.rolesTree.add((OrganizationalRole3) nnewS);
+		}
+
+	    return newState;
 	}
 	
 }
