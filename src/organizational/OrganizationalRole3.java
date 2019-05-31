@@ -177,15 +177,18 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 
 	public void addSubordinate(OrganizationalRole3 parentRole, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
 
-		OrganizationalRole3 newState = (OrganizationalRole3) createState(parentRole, goalToBeAssociatedToRole);
-		
-		newState.graphLinks.add("\""+this.headGoal.getGoalName() + "\"->\"" + goalToBeAssociatedToRole.getGoalName()+"\"");
-		
-		// Add all successors of current state but not the new state itself
-		for (GoalNode goal : this.goalSuccessors) {
-			if (goal != goalToBeAssociatedToRole)
-				newState.goalSuccessors.add(goal);
+		// the in factum parent may be changed if it was joined in another role
+		OrganizationalRole3 infactumParent = parentRole;
+		// the new role is also assigned to a new goal (the joined one)
+		for (OrganizationalRole3 or : this.rolesTree) {
+			if (or.assignedGoals.contains(goalToBeAssociatedToRole.getParent())) {
+				infactumParent = or;
+				break;
+			}
 		}
+		OrganizationalRole3 newState = (OrganizationalRole3) createState(infactumParent, goalToBeAssociatedToRole);
+		
+		newState.graphLinks.add("\""+infactumParent.headGoal.getGoalName() + "\"->\"" + goalToBeAssociatedToRole.getGoalName()+"\"");
 
 		suc.add(newState);
 		newState.rolesTree.add(newState);
@@ -195,15 +198,19 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 
 	public void addPair(List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
 		
-		OrganizationalRole3 newState = (OrganizationalRole3) createState(this.parentRole, goalToBeAssociatedToRole);
+		// the in factum parent may be changed if it was joined in another role
+		OrganizationalRole3 infactumParent = this.parentRole;
+//		// the new role is also assigned to a new goal (the joined one)
+//		for (OrganizationalRole3 or : this.rolesTree) {
+//			if (or.assignedGoals.contains(goalToBeAssociatedToRole.getParent())) {
+//				infactumParent = or;
+//				break;
+//			}
+//		}
+
+		OrganizationalRole3 newState = (OrganizationalRole3) createState(infactumParent, goalToBeAssociatedToRole);
 		
 		newState.graphLinks.add("\""+this.headGoal.getParent().getGoalName() + "\"->\"" + goalToBeAssociatedToRole.getGoalName()+"\"");
-		
-		// Add all successors of current state but not the new state itself
-		for (GoalNode goal : this.goalSuccessors) {
-			if (goal != goalToBeAssociatedToRole)
-				newState.goalSuccessors.add(goal);
-		}
 
 		suc.add(newState);
 		newState.rolesTree.add(newState);
@@ -211,19 +218,22 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 		LOG.debug("addPair       : " + newState.rolesTree + ", nSucc: " + newState.goalSuccessors.size() + ", Hash: " + newState.hashCode());
 	}
 	public void joinAPair(List<Estado> suc, GoalNode goalToBeAssociatedToRole) throws CloneNotSupportedException {
-
-		OrganizationalRole3 newState = (OrganizationalRole3) createState(this.parentRole, goalToBeAssociatedToRole);
+		// the in factum parent may be changed if it was joined in another role
+		OrganizationalRole3 infactumParent = this.parentRole;
+//		// the new role is also assigned to a new goal (the joined one)
+//		for (OrganizationalRole3 or : this.rolesTree) {
+//			if (or.assignedGoals.contains(goalToBeAssociatedToRole.getParent())) {
+//				infactumParent = or;
+//				break;
+//			}
+//		}
+		OrganizationalRole3 newState = (OrganizationalRole3) createState(infactumParent, goalToBeAssociatedToRole);
 		
 		// this organization is being compressed in few divisions, so division cost increased
 		newState.divisionalCost = this.divisionalCost + 1;
 
 		// create a link which is same as another existing, in fact it will only change the hashcode of this state
 		newState.graphLinks.add("\""+goalToBeAssociatedToRole.getParent().getGoalName() + "\"->\"" + this.headGoal.getGoalName()+"\"");
-	
-		for (GoalNode goal : this.goalSuccessors) {
-			if (goal != goalToBeAssociatedToRole)
-				newState.goalSuccessors.add(goal);
-		}
 		
 		// adding just to show that this role was joined
 		//newState.rolesTree.add(newState);
@@ -231,7 +241,7 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 		// the new role is also assigned to a new goal (the joined one)
 		for (OrganizationalRole3 or : newState.rolesTree) {
 			if (or.assignedGoals.containsAll(this.assignedGoals)) {
-				or.assignedGoals.add(goalToBeAssociatedToRole);
+				if (!or.assignedGoals.contains(goalToBeAssociatedToRole)) or.assignedGoals.add(goalToBeAssociatedToRole);
 				break;
 			}
 		}
@@ -314,6 +324,10 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 		clone.parentRole = this.parentRole;
 		for (String s : this.graphLinks) clone.graphLinks.add(s);
 		for (GoalNode goal : this.goalSuccessors) clone.goalSuccessors.add(goal);
+		// copy assigned goals - list of goals does not need to be cloned because does not change
+		for (GoalNode goal : this.assignedGoals) {
+			if (!clone.assignedGoals.contains(goal)) clone.assignedGoals.add(goal);
+		}
 		
 	    return clone;
 	}
@@ -331,7 +345,11 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 			OrganizationalRole3 nnewS = (OrganizationalRole3) or.clone();  			
 			newState.rolesTree.add((OrganizationalRole3) nnewS);
 		}
-
+		// Add all successors of current state but not the new state itself - list of goals does not need to be cloned because does not change
+		for (GoalNode goal : this.goalSuccessors) {
+			if (goal != gn) newState.goalSuccessors.add(goal);
+		}
+		
 	    return newState;
 	}
 	

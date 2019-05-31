@@ -56,4 +56,14 @@ public class GoalNode {
 	public String toString() {
 		return goalName;
 	}
+	
+	public GoalNode clone() {
+		GoalNode clone = new GoalNode(this.parent, this.goalName);
+		
+		for (String s : this.skills) clone.skills.add(s);
+		for (GoalNode gn : this.descendents) clone.descendents.add(gn);
+		clone.operator = this.operator;
+		
+	    return clone;
+	}
 }
