@@ -25,9 +25,8 @@ public class OrganizationRoleSimpleTest3 {
 	public static void main(String[] a) throws IOException {
 	
 		// Sample organization
-//		GoalNode g0 = new GoalNode(null, "g0");
-//		GoalNode g1 = new GoalNode(g0, "g1");
-		GoalNode g1 = new GoalNode(null, "g1");
+		GoalNode g0 = new GoalNode(null, "g0");
+		GoalNode g1 = new GoalNode(g0, "g1");
 		g1.addSkill("s1");
 		GoalNode g2 = new GoalNode(g1, "g2");
 		g2.addSkill("s2");
@@ -39,7 +38,7 @@ public class OrganizationRoleSimpleTest3 {
 		//GoalNode g6 = new GoalNode(g4, "g6");
 		//g6.addSkill("s4");
 		//g6.addSkill("s5");
-		OrganizationalRole3 inicial = new OrganizationalRole3(g1,3);
+		OrganizationalRole3 inicial = new OrganizationalRole3(g0,3);
 	
 /*
 		// Sample organization : paint a house
