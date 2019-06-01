@@ -29,15 +29,15 @@ public class OrganizationRoleSimpleTest3 {
 		GoalNode g1 = new GoalNode(g0, "g1");
 		g1.addSkill("s1");
 		GoalNode g2 = new GoalNode(g0, "g2");
-		//g2.addSkill("s1");
-		//GoalNode g3 = new GoalNode(g1, "g3");
-		//g3.addSkill("s2");
+		g2.addSkill("s1");
+		GoalNode g3 = new GoalNode(g1, "g3");
+		g3.addSkill("s2");
 		GoalNode g4 = new GoalNode(g0, "g4");
-		//GoalNode g5 = new GoalNode(g4, "g5");
-		//g5.addSkill("s5");
-		//GoalNode g6 = new GoalNode(g4, "g6");
-		//g6.addSkill("s4");
-		//g6.addSkill("s5");
+		GoalNode g5 = new GoalNode(g4, "g5");
+		g5.addSkill("s5");
+		GoalNode g6 = new GoalNode(g4, "g6");
+		g6.addSkill("s4");
+		g6.addSkill("s5");
 		OrganizationalRole3 inicial = new OrganizationalRole3(g0,3);
 	
 /*
