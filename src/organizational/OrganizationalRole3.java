@@ -150,6 +150,17 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 			if (this.assignedGoals.contains(goalToBeAssociated.getParent())) {
 				// creating successors, create a subordinate role (child)
 				addSubordinate(this, suc, goalToBeAssociated);
+				// creating successors, join goals of a pair
+				if (((this.roleSkills.containsAll(goalToBeAssociated.getSkills())
+						// && !goalToBeAssociated.getParent().getOperator().equals("parallel") //does it
+						// makes sense?
+						) || (goalToBeAssociated.getSkills().isEmpty()))) {
+					try {
+						joinASubordinate(suc, goalToBeAssociated);
+					} catch (CloneNotSupportedException e) {
+						e.printStackTrace();
+					}
+				} 
 			} else if ((this.parentRole != null) && (this.parentRole.assignedGoals.contains(goalToBeAssociated.getParent()))) {
 				// creating successors, create a pair role (sibling)
 				addPair(suc, goalToBeAssociated);
@@ -196,6 +207,7 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 
 		LOG.debug("addPair       : " + newState.rolesTree + ", nSucc: " + newState.goalSuccessors.size() + ", Hash: " + newState.hashCode());
 	}
+	
 	public void joinAPair(List<Estado> suc, GoalNode goalToBeAssociatedToRole) throws CloneNotSupportedException {
 
 		OrganizationalRole3 newState = (OrganizationalRole3) createState(this.parentRole, goalToBeAssociatedToRole);
@@ -216,6 +228,25 @@ public class OrganizationalRole3 implements Estado, Antecessor {
 		suc.add(newState);
 
 		LOG.debug("joinAPair     : " + newState.rolesTree + ", nSucc: " + newState.goalSuccessors.size() + ", Hash: " + newState.hashCode());
+	}
+
+	public void joinASubordinate(List<Estado> suc, GoalNode goalToBeAssociatedToRole) throws CloneNotSupportedException {
+
+		OrganizationalRole3 newState = (OrganizationalRole3) createState(this.parentRole, goalToBeAssociatedToRole);
+		
+		// the new role is also assigned to a new goal (the joined one)
+		for (OrganizationalRole3 or : newState.rolesTree) {
+			if (or.assignedGoals.containsAll(this.assignedGoals)) {
+				if (!or.assignedGoals.contains(goalToBeAssociatedToRole)) or.assignedGoals.add(goalToBeAssociatedToRole);
+				// create a link which is same as another existing, in fact it will only change the hashcode of this state
+				newState.graphLinks.add("\""+or.headGoal.getGoalName() + "\"->\"" + or.headGoal.getGoalName()+"\"");
+				break;
+			}
+		}
+
+		suc.add(newState);
+
+		LOG.debug("joinASubordinate     : " + newState.rolesTree + ", nSucc: " + newState.goalSuccessors.size() + ", Hash: " + newState.hashCode());
 	}
 
 	public void addANotRelative(List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
