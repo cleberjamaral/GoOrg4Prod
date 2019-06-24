@@ -30,8 +30,6 @@ public class OrganizationalRole4 implements Estado, Antecessor {
 	// The goals that were not explored yet, the algorithm end when all goals were allocated into roles
 	private List<GoalNode> goalSuccessors = new ArrayList<GoalNode>();
 	
-	// the headGoal is a reference, like an index for this state (node of the orgchart), other goals can be assigned besides the head
-	GoalNode headGoal;
 	String roleName = "";
 	// list of goals that this role is assigned to achieve
 	private List<GoalNode> assignedGoals = new ArrayList<GoalNode>();
@@ -41,6 +39,11 @@ public class OrganizationalRole4 implements Estado, Antecessor {
 	private Set<String> roleSkills = new HashSet<String>();
 	// graphlinks is a list because it is used as hash and it allows multiple identical links when joining function is used
 	private List<String> graphLinks = new ArrayList<String>();
+	
+	// the orgRoleId is a reference, like an index for this state (node of the orgchart), other goals can be assigned besides the head
+	GoalNode orgRoleId;
+	// orgRoleIdLinks is a graph connecting ids, which leads to unique structures allowing to prune similar ones
+	private List<String> orgRoleIdLinks = new ArrayList<String>();
 	
 	// Cost supporting variables
 	private int flatCost = 0;
@@ -64,7 +67,7 @@ public class OrganizationalRole4 implements Estado, Antecessor {
 	}
 
 	public OrganizationalRole4(GoalNode gn) {
-		headGoal = gn;
+		orgRoleId = gn;
 		assignedGoals.add(gn);
 
 		if (gn.getParent() == null) {
@@ -192,7 +195,7 @@ public class OrganizationalRole4 implements Estado, Antecessor {
 		newState.roleName = "r"+newState.rolesTree.size();
 		newState.rolesTree.add(newState);
 		
-		//newState.graphLinks.add("\""+newState.parentRole.headGoal.getGoalName() + "\"->\"" + goalToBeAssociatedToRole.getGoalName()+"\"");
+		newState.orgRoleIdLinks.add("\""+newState.parentRole.orgRoleId.getGoalName() + "\"->\"" + goalToBeAssociatedToRole.getGoalName()+"\"");
 		newState.graphLinks.add("\""+newState.parentRole.roleName + "\"->\"" + newState.roleName+"\"");
 
 		suc.add(newState);
@@ -206,7 +209,7 @@ public class OrganizationalRole4 implements Estado, Antecessor {
 		newState.roleName = "r"+newState.rolesTree.size();
 		newState.rolesTree.add(newState);
 		
-		//newState.graphLinks.add("\""+newState.parentRole.headGoal.getGoalName() + "\"->\"" + goalToBeAssociatedToRole.getGoalName()+"\"");
+		newState.orgRoleIdLinks.add("\""+newState.parentRole.orgRoleId.getGoalName() + "\"->\"" + goalToBeAssociatedToRole.getGoalName()+"\"");
 		newState.graphLinks.add("\""+newState.parentRole.roleName + "\"->\"" + newState.roleName+"\"");
 
 		suc.add(newState);
@@ -226,7 +229,7 @@ public class OrganizationalRole4 implements Estado, Antecessor {
 			if (or.assignedGoals.containsAll(this.assignedGoals)) {
 				if (!or.assignedGoals.contains(goalToBeAssociatedToRole)) or.assignedGoals.add(goalToBeAssociatedToRole);
 				// create a link which is same as another existing, in fact it will only change the hashcode of this state
-				//newState.graphLinks.add("\""+newState.parentRole.headGoal.getGoalName() + "\"->\"" + or.headGoal.getGoalName()+"\"");
+				newState.orgRoleIdLinks.add("\""+newState.parentRole.orgRoleId.getGoalName() + "\"->\"" + or.orgRoleId.getGoalName()+"\"");
 				newState.graphLinks.add("\""+newState.parentRole.roleName + "\"->\"" + or.roleName+"\"");
 				break;
 			}
@@ -246,7 +249,7 @@ public class OrganizationalRole4 implements Estado, Antecessor {
 			if (or.assignedGoals.containsAll(this.assignedGoals)) {
 				if (!or.assignedGoals.contains(goalToBeAssociatedToRole)) or.assignedGoals.add(goalToBeAssociatedToRole);
 				// create a link which is same as another existing, in fact it will only change the hashcode of this state
-				//newState.graphLinks.add("\""+or.headGoal.getGoalName() + "\"->\"" + or.headGoal.getGoalName()+"\"");
+				newState.orgRoleIdLinks.add("\""+or.orgRoleId.getGoalName() + "\"->\"" + or.orgRoleId.getGoalName()+"\"");
 				newState.graphLinks.add("\""+or.roleName + "\"->\"" + or.roleName+"\"");
 				break;
 			}
@@ -291,10 +294,10 @@ public class OrganizationalRole4 implements Estado, Antecessor {
 	public boolean equals(Object o) {
 		try {
 			if (o instanceof OrganizationalRole4) {
-				Collections.sort(this.graphLinks);
-				Collections.sort(((OrganizationalRole4) o).graphLinks);
-				if (this.graphLinks.equals(((OrganizationalRole4) o).graphLinks)) {
-					LOG.debug("Pruned" + this.graphLinks + " - " + ((OrganizationalRole4) o).graphLinks);
+				Collections.sort(this.orgRoleIdLinks);
+				Collections.sort(((OrganizationalRole4) o).orgRoleIdLinks);
+				if (this.orgRoleIdLinks.equals(((OrganizationalRole4) o).orgRoleIdLinks)) {
+					LOG.debug("Pruned" + this.orgRoleIdLinks + " - " + ((OrganizationalRole4) o).orgRoleIdLinks);
 					return true;
 				}
 				return false;
@@ -325,7 +328,7 @@ public class OrganizationalRole4 implements Estado, Antecessor {
 	
 	public OrganizationalRole4 clone() {
 		// Only the tree is not copied because of recursiveness
-		OrganizationalRole4 clone = new OrganizationalRole4(this.headGoal);
+		OrganizationalRole4 clone = new OrganizationalRole4(this.orgRoleId);
 		for (String skill : this.roleSkills) clone.roleSkills.add(skill);
 		clone.parentRole = this.parentRole;
 		clone.roleName = this.roleName;
