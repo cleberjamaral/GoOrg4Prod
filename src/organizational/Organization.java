@@ -149,7 +149,7 @@ public class Organization implements Estado, Antecessor {
 					} 
 				} else if ((role.getParent() != null) && (role.getParent().getAssignedGoals().contains(goalToBeAssociated.getParent()))) {
 					// creating successors, create a pair role (sibling)
-					addPair(role.getParent(), suc, goalToBeAssociated);
+					//addPair(role.getParent(), suc, goalToBeAssociated);
 
 					// creating successors, join goals of a pair
 					if (((role.getSkills().containsAll(goalToBeAssociated.getSkills())
@@ -224,7 +224,6 @@ public class Organization implements Estado, Antecessor {
 		for (RoleNode or : newState.rolesTree) {
 			if (or.getAssignedGoals().containsAll(role.getAssignedGoals())) {
 				if (!role.getAssignedGoals().contains(goalToBeAssociatedToRole)) {
-					System.out.println(role);
 					or.assignGoal(goalToBeAssociatedToRole);
 				}
 				// create a link which is same as another existing, in fact it will only change the hashcode of this state
