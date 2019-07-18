@@ -148,9 +148,6 @@ public class Organization implements Estado, Antecessor {
 							joinASubordinate(role, suc, goalToBeAssociated);
 					} 
 				} else if ((role.getParent() != null) && (role.getParent().getAssignedGoals().contains(goalToBeAssociated.getParent()))) {
-					// creating successors, create a pair role (sibling)
-					//addPair(role.getParent(), suc, goalToBeAssociated);
-
 					// creating successors, join goals of a pair
 					if (((role.getSkills().containsAll(goalToBeAssociated.getSkills())
 							) || (goalToBeAssociated.getSkills().isEmpty()))) {
@@ -169,6 +166,9 @@ public class Organization implements Estado, Antecessor {
 
 		RoleNode r = new RoleNode(parentRole, "r"+newState.rolesTree.size());
 		r.assignGoal(goalToBeAssociatedToRole);
+		// Copy all skills of the goal to this new role
+		for (String skill : goalToBeAssociatedToRole.getSkills()) r.addSkill(skill);
+		
 		newState.rolesTree.add(r);
 		
 		newState.orgRoleIdLinks.add("\""+parentRole.getRoleName() + "\"->\"" + goalToBeAssociatedToRole.getGoalName()+"\"");
@@ -177,21 +177,6 @@ public class Organization implements Estado, Antecessor {
 		suc.add(newState);
 
 		LOG.debug("addSubordinate	: " + newState.rolesTree + ", nSucc: " + newState.goalSuccessors + ", Name: " + r.getRoleName() + ", Parent: " + r.getParent().getRoleName() + ", Hash: " + newState.hashCode() + ", Str: " + newState.toString());
-	}
-
-	public void addPair(RoleNode parentRole, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
-
-		Organization newState = (Organization) createState(goalToBeAssociatedToRole);
-		RoleNode r = new RoleNode(parentRole, "r"+newState.rolesTree.size());
-		r.assignGoal(goalToBeAssociatedToRole);
-		newState.rolesTree.add(r);
-		
-		newState.orgRoleIdLinks.add("\""+parentRole.getRoleName() + "\"->\"" + goalToBeAssociatedToRole.getGoalName()+"\"");
-		newState.graphLinks.add("\""+parentRole.getRoleName() + "\"->\"" + r.getRoleName()+"\"");
-
-		suc.add(newState);
-
-		LOG.debug("addPair       	: " + newState.rolesTree + ", nSucc: " + newState.goalSuccessors + ", Name: " + r.getRoleName() + ", Parent: " + r.getParent().getRoleName() + ", Hash: " + newState.hashCode() + ", Str: " + newState.toString());
 	}
 	
 	public void joinAPair(RoleNode role, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
