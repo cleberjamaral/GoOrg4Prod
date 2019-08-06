@@ -1,12 +1,25 @@
 package simplelogger;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+
 public class SimpleLogger {
 	
 	int level = 1; //1 see everything, 2 hid trace, 3 hid trace and debug, 4 hid trace, debug and warn
 	private static SimpleLogger singleObj;
+	boolean printToFile = false;
 	
 	private SimpleLogger(int level) {
 		this.level = level;
+		if (printToFile) {
+			PrintStream fileOut;
+			try {
+				fileOut = new PrintStream("./log.log");
+				System.setOut(fileOut);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
     public static SimpleLogger getInstance(int level){

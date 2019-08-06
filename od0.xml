@@ -31,32 +31,32 @@
 
 	<functional-specification>
 		<scheme id="build_house_sch">
-			<goal id="paintHouse">
+			<goal id="pH">
 				<plan operator="sequence">
-					<goal id="contracting" ttf="20 minutes" ds="prepare the site for the next tasks">
-						<skill id="getBids" />
+					<goal id="c" ttf="20 minutes" ds="prepare the site for the next tasks">
+						<skill id="gB" />
 						<plan operator="parallel">
-							<goal id="bidInternalPaint">
-								<skill id="bid" />
-								<skill id="paint" />
+							<goal id="bIP">
+								<skill id="b" />
+								<skill id="p" />
 							</goal>
-							<goal id="bidExternalPaint">
-								<skill id="bid" />
-								<skill id="paint" />
+							<goal id="bEP">
+								<skill id="b" />
+								<skill id="p" />
 							</goal>
 						</plan>
 					</goal>
-					<goal id="execute">
+					<goal id="x">
 						<plan operator="sequence">
-							<goal id="contractWinner">
-								<skill id="contract" />
+							<goal id="cW">
+								<skill id="c" />
 							</goal>
-							<goal id="internalPaint">
-								<skill id="bid" />
-								<skill id="paint" />
+							<goal id="IP">
+								<skill id="b" />
+								<skill id="p" />
 							</goal>
-							<goal id="externalPaint">
-								<skill id="paint" />
+							<goal id="EP">
+								<skill id="p" />
 							</goal>
 
 						</plan>
@@ -64,7 +64,7 @@
 				</plan>
 			</goal>
 			<mission id="mtst1" min="1">
-				<goal id="internalPaint" />
+				<goal id="IP" />
 			</mission>
 		</scheme>
 	</functional-specification>

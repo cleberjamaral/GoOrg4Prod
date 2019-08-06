@@ -13,7 +13,7 @@ import busca.BuscaIterativo;
 import busca.BuscaLargura;
 import busca.BuscaProfundidade;
 import busca.Nodo;
-import organizational.OrganizationalRole;
+import organizational.Organization;
 import organizational.GoalNode;
 
 import java.io.BufferedReader;
@@ -73,7 +73,7 @@ public class OrganizationRoleTest {
 		
 		plotOrganizationalGoalTree();
 		
-		OrganizationalRole inicial = new OrganizationalRole(rootNode,3);
+		Organization inicial = new Organization(rootNode,3);
 
 		Nodo n = null;
 

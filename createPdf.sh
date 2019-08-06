@@ -1,11 +1,13 @@
 #!/bin/bash
 
-rm *.gv.pdf
+rm *.pdf
 
 for i in *.gv; do
+  number=$(echo $i | tr -cd '[[:digit:]]')
   new=$(printf "%s.pdf" "$i")
-  dot -Tpdf $i -o "$new"
+  dot -Tpdf $i -o "orgTreeBH_graph_$number.pdf"
 done
+rm *.gv
 
 
 #a=1
@@ -15,4 +17,3 @@ done
 #  let a=a+1
 #done
 
-rm *.gv

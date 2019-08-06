@@ -6,11 +6,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import busca.Antecessor;
 import busca.Estado;
@@ -29,24 +27,20 @@ public class Organization implements Estado, Antecessor {
 	private List<RoleNode> rolesTree = new ArrayList<RoleNode>();
 	// The goals that were not explored yet, the algorithm end when all goals were allocated into roles
 	private List<GoalNode> goalSuccessors = new ArrayList<GoalNode>();
-	// graphlinks is a list because it is used as hash and it allows multiple identical links when joining function is used
-	private List<String> graphLinks = new ArrayList<String>();
 	
 	// the orgRoleId is a reference, like an index for this state (node of the orgchart), other goals can be assigned besides the head
 	GoalNode orgRoleId;
-	// orgRoleIdLinks is a graph connecting ids, which leads to unique structures allowing to prune similar ones
-	private List<String> orgRoleIdLinks = new ArrayList<String>();
 	
 	// Cost supporting variables
-	private int flatCost = 0;
-	private int divisionalCost = 0;
+	private int cost = 0;
+	private int accCost = 0;
 	
 	/**
 	 * 1: unitary cost (no function)
 	 * 2: based on flat cost (flatter structures are more expensive)
-	 * 3: based on divisional cost (fewer divisions means the divisions are more populated and expensive) 
+	 * 3: based on specializationCost (joinAPair increments this cost making the organisation more generalist) 
 	 */
-	static int costFunction = 1;
+	static int costFunction = 3;
 
 	public String getDescricao() {
 		return "Empty\n";
@@ -78,7 +72,9 @@ public class Organization implements Estado, Antecessor {
 		{
 			if (!isGoalList.contains(this)) {
 				isGoalList.add(this);
-				LOG.info("GOAL ACHIEVED! Solution: #" + isGoalList.size() + " : " + this.rolesTree + " : " + this.graphLinks + " | " + this.hashCode());
+				LOG.info("GOAL ACHIEVED! Solution: #" + isGoalList.size() + " : " + this.toString() + " | " + this.hashCode());
+
+				List<String> links = new ArrayList<>();
 
 				try (FileWriter fw = new FileWriter("graph_" + isGoalList.size() + ".gv", false);
 						BufferedWriter bw = new BufferedWriter(fw);
@@ -93,9 +89,17 @@ public class Organization implements Estado, Antecessor {
 						for (String s : or.getSkills())
 							out.print("<tr><td align=\"left\">" + s + "</td></tr>");
 						out.println("</table>> ];");
+						
+						if (or.getParent() != null)
+							links.add("\""+or.getParent().getRoleName() + "\"->\"" + or.getRoleName()+"\"");
+						
+						if (isGoalList.size() == 38) {
+							LOG.info("\n\n38 :" + or.toString() + " | " + or.getRoleName() + "-" + or.getAssignedGoals() + "-" + or.getSkills() + "-" + or.hashCode());
+							if (or.getParent() != null) LOG.info(" " + or.getParent().hashCode());
+						}
 					}
 
-					for (String s : this.graphLinks)
+					for (String s : links)
 						out.println("\t" + s + ";");
 					out.println("}");
 				} catch (IOException e) {
@@ -113,13 +117,9 @@ public class Organization implements Estado, Antecessor {
 	}
 
 	public int custo() {
-		if (costFunction == 2) {
-			//LOG.debug("flatCost: " + flatCost);
-			return flatCost;
-		}
-		else if (costFunction == 3) {
-			//LOG.debug("divisionalCost: " + divisionalCost);
-			return divisionalCost;
+		if (costFunction == 3) {
+			LOG.debug("cost: " + cost + " accCost: " + accCost);
+			return cost;
 		} else {
 			// default cost function is unitary (any openning has same cost)
 			return 1; 
@@ -131,8 +131,8 @@ public class Organization implements Estado, Antecessor {
 		List<Estado> suc = new LinkedList<Estado>(); // Lista de sucessores
 
 		if (!goalSuccessors.isEmpty())
-			LOG.debug("\nSUCESSORES: Tree: " + this.rolesTree + " - OpenGoals: [" + goalSuccessors.toString() + "] - Size: "
-					+ goalSuccessors.size() + ", Hash: " + this.hashCode() + ", Str: " + this.toString());
+			LOG.debug("\nSTATE: " + this.toString() + "Tree:" + this.rolesTree.toString() + " - OpenGoals: [" + goalSuccessors.toString() + "] - Size: "
+					+ goalSuccessors.size() + ", Hash: " + this.hashCode());
 
 		// add all children as possible successors
 		for (GoalNode goalToBeAssociated : goalSuccessors) {
@@ -164,6 +164,9 @@ public class Organization implements Estado, Antecessor {
 
 		Organization newState = (Organization) createState(goalToBeAssociatedToRole);
 
+		newState.cost = 1;
+		newState.accCost = this.accCost + newState.cost;
+
 		RoleNode r = new RoleNode(parentRole, "r"+newState.rolesTree.size());
 		r.assignGoal(goalToBeAssociatedToRole);
 		// Copy all skills of the goal to this new role
@@ -171,9 +174,6 @@ public class Organization implements Estado, Antecessor {
 		
 		newState.rolesTree.add(r);
 		
-		newState.orgRoleIdLinks.add("\""+parentRole.getRoleName() + "\"->\"" + goalToBeAssociatedToRole.getGoalName()+"\"");
-		newState.graphLinks.add("\""+parentRole.getRoleName() + "\"->\"" + r.getRoleName()+"\"");
-
 		suc.add(newState);
 
 		LOG.debug("addSubordinate	: " + newState.rolesTree + ", nSucc: " + newState.goalSuccessors + ", Name: " + r.getRoleName() + ", Parent: " + r.getParent().getRoleName() + ", Hash: " + newState.hashCode() + ", Str: " + newState.toString());
@@ -182,18 +182,19 @@ public class Organization implements Estado, Antecessor {
 	public void joinAPair(RoleNode role, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
 
 		Organization newState = (Organization) createState(goalToBeAssociatedToRole);
-		
+
 		// this organization is being compressed in few divisions, so division cost increased
-		newState.divisionalCost = this.divisionalCost + 1;
+		newState.cost = 100;
+		newState.accCost = this.accCost + newState.cost;
 
 		// the new role is also assigned to a new goal (the joined one)
 		for (RoleNode or : newState.rolesTree) {
-			if (or.getAssignedGoals().containsAll(role.getAssignedGoals())) {
-				if (!or.getAssignedGoals().contains(goalToBeAssociatedToRole)) or.assignGoal(goalToBeAssociatedToRole);
-				// create a link which is same as another existing, in fact it will only change the hashcode of this state
-				newState.orgRoleIdLinks.add("\""+role.getParent().getRoleName() + "\"->\"" + or.getRoleName()+"\"");
-				newState.graphLinks.add("\""+role.getParent().getRoleName() + "\"->\"" + role.getRoleName()+"\"");
-				break;
+			// if all assigned goals are same, so it found the same role of the method argument 'role'
+			if (or.getAssignedGoals().containsAll(role.getAssignedGoals()) && role.getAssignedGoals().containsAll(or.getAssignedGoals())) {
+				if (!or.getAssignedGoals().contains(goalToBeAssociatedToRole)) {
+					or.assignGoal(goalToBeAssociatedToRole);
+					break;
+				}
 			}
 		}
 
@@ -206,14 +207,16 @@ public class Organization implements Estado, Antecessor {
 
 		Organization newState = (Organization) createState(goalToBeAssociatedToRole);
 		
+		newState.cost = 10;
+		newState.accCost = this.accCost + newState.cost;
+
 		for (RoleNode or : newState.rolesTree) {
-			if (or.getAssignedGoals().containsAll(role.getAssignedGoals())) {
+			// if all assigned goals are same, so it found the same role of the method argument 'role'
+			if (or.getAssignedGoals().containsAll(role.getAssignedGoals()) && role.getAssignedGoals().containsAll(or.getAssignedGoals())) {
 				if (!role.getAssignedGoals().contains(goalToBeAssociatedToRole)) {
 					or.assignGoal(goalToBeAssociatedToRole);
+					break;
 				}
-				// create a link which is same as another existing, in fact it will only change the hashcode of this state
-				newState.orgRoleIdLinks.add("\""+role.getRoleName() + "\"->\"" + role.getRoleName()+"\"");
-				newState.graphLinks.add("\""+role.getRoleName() + "\"->\"" + role.getRoleName()+"\"");
 			}
 		}
 
@@ -228,18 +231,17 @@ public class Organization implements Estado, Antecessor {
 	}
 
 	public String toString() {
-		String r = "{Roles{";
+		List<String> signature = new ArrayList<>();
 		if ((this.rolesTree != null) && (!this.rolesTree.isEmpty())) {
-			for (int i = 0; i < this.rolesTree.size(); i++) {
-				r += this.rolesTree.get(i).getRoleName();
-				r += this.rolesTree.get(i).getAssignedGoals();
+			Iterator<RoleNode> iterator = this.rolesTree.iterator(); 
+			while (iterator.hasNext()) {
+				RoleNode n = iterator.next(); 
+				signature.add(n.toString());
 			}
 		}
-		r += "}";
-		if ((this.graphLinks != null) && (!this.graphLinks.isEmpty())) r += " Links" + this.graphLinks + "";
-		r += "} ";
-		return r;
-		
+
+		Collections.sort(signature);
+		return signature.size() + signature.toString();	
 	}
 
 	/**
@@ -249,10 +251,8 @@ public class Organization implements Estado, Antecessor {
 	public boolean equals(Object o) {
 		try {
 			if (o instanceof Organization) {
-				Collections.sort(this.orgRoleIdLinks);
-				Collections.sort(((Organization) o).orgRoleIdLinks);
-				if (this.orgRoleIdLinks.equals(((Organization) o).orgRoleIdLinks)) {
-					LOG.debug("Pruned" + this.orgRoleIdLinks + " - " + ((Organization) o).orgRoleIdLinks);
+				if (this.toString().equals(((Organization) o).toString())) {
+					LOG.debug("Pruned" + this.toString());
 					return true;
 				}
 				return false;
@@ -268,7 +268,7 @@ public class Organization implements Estado, Antecessor {
 	 */
 
 	public int hashCode() {
-		if ((this.graphLinks != null) && (this.rolesTree != null))
+		if (this.rolesTree != null)
 			return this.toString().hashCode();
 		else
 			return -1;
@@ -278,15 +278,13 @@ public class Organization implements Estado, Antecessor {
 	 * Custo acumulado g
 	 */
 	public int custoAcumulado() {
-		return 0; 
+		return accCost; 
 	}
 	
 	public Organization createState(GoalNode gn) {
 
 		// new state
 		Organization newState = new Organization(gn);
-		// Copy all graph links tree
-		for (String s : this.graphLinks) newState.graphLinks.add(s);
 		// Copy all roles tree
 		for (RoleNode or : rolesTree) {
 			RoleNode nnewS = (RoleNode) or.clone();  			

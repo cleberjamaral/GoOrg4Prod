@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class RoleNode {
 	private Set<String> skills = new HashSet<String>();
-	private List<GoalNode> assignedGoals = new ArrayList<GoalNode>();
+	private Set<GoalNode> assignedGoals = new HashSet<GoalNode>();
 	private List<RoleNode> descendents = new ArrayList<RoleNode>();
 	private String roleName;
 	private RoleNode parent;
@@ -32,7 +32,7 @@ public class RoleNode {
 		assignedGoals.add(g);
 	}
 
-	public List<GoalNode> getAssignedGoals() {
+	public Set<GoalNode> getAssignedGoals() {
 		return assignedGoals;
 	}
 
@@ -55,7 +55,14 @@ public class RoleNode {
 	}
 
 	public String toString() {
-		return roleName;
+		String r = "";
+
+		r += "G{" + this.getAssignedGoals() + "}";
+		r += "S{" + this.getSkills() + "}";
+		if (this.getParent() != null) 
+			r += "^" + this.getParent().getAssignedGoals()+this.getParent().getSkills();
+		
+		return r;
 	}
 	
 	public RoleNode clone() {
