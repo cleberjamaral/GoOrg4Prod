@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
+
+<organisational-specification id="house_contruction" os-version="0.8"
+
+	xmlns='http://moise.sourceforge.net/os' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:schemaLocation='http://moise.sourceforge.net/os
+                        http://moise.sourceforge.net/xml/os.xsd'>
+
+	<structural-specification>
+
+		<role-definitions>
+			<role id="roletst1" />
+			<role id="roletst2" />
+		</role-definitions>
+
+		<group-specification id="group">
+			<roles>
+				<role id="roletst1" min="1" max="1" />
+				<role id="roletst2" min="0" max="300" />
+			</roles>
+
+			<links>
+				<link from="roletst1" to="roletst2" type="communication" scope="intra-group" extends-subgroups="false"
+					bi-dir="true" />
+			</links>
+		</group-specification>
+	</structural-specification>
+
+
+	<functional-specification>
+		<scheme id="dsn_sch">
+			<goal id="tT">
+				<plan operator="sequence">
+					<goal id="iP" ttf="20 minutes" ds="prepare the site for the next tasks">
+						<skill id="c" />
+						<plan operator="sequence">
+							<goal id="mA">
+								<skill id="c" />
+								<plan operator="sequence">
+									<goal id="mA1">
+										<skill id="mpA1" />
+									</goal>
+									<goal id="mA2">
+										<skill id="mpA2" />
+									</goal>
+									<goal id="mA3">
+										<skill id="mpA3" />
+									</goal>
+								</plan>
+							</goal>
+							<goal id="mB">
+								<skill id="c" />
+								<plan operator="sequence">
+									<goal id="mB1">
+										<skill id="mpB1" />
+									</goal>
+									<goal id="mB2">
+										<skill id="mpB2" />
+									</goal>
+									<goal id="mB3">
+										<skill id="mpB3" />
+									</goal>
+								</plan>
+							</goal>
+						</plan>
+					</goal>
+				</plan>
+			</goal>
+			<mission id="m" min="1">
+				<goal id="m" />
+			</mission>
+		</scheme>
+	</functional-specification>
+
+	<normative-specification>
+		<norm id="n1" type="permission" role="roletst1" mission="m" />
+	</normative-specification>
+
+</organisational-specification>
