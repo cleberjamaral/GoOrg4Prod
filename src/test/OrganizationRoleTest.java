@@ -47,7 +47,7 @@ public class OrganizationRoleTest {
 				SimpleLogger.getInstance(Integer.valueOf(args[1]));
 		}
 
-		String str = "od0.xml";
+		String str = "dsn.xml";
 		BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
 		if (args.length >= 2) {
 			if (args[0] == null) {

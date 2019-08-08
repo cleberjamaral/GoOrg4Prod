@@ -54,6 +54,10 @@ public class RoleNode {
 		return parent;
 	}
 
+	public void setParent(RoleNode p) {
+		parent = p;
+	}
+
 	public String toString() {
 		String r = "";
 

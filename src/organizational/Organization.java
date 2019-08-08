@@ -28,9 +28,6 @@ public class Organization implements Estado, Antecessor {
 	// The goals that were not explored yet, the algorithm end when all goals were allocated into roles
 	private List<GoalNode> goalSuccessors = new ArrayList<GoalNode>();
 	
-	// the orgRoleId is a reference, like an index for this state (node of the orgchart), other goals can be assigned besides the head
-	GoalNode orgRoleId;
-	
 	// Cost supporting variables
 	private int cost = 0;
 	private int accCost = 0;
@@ -53,22 +50,22 @@ public class Organization implements Estado, Antecessor {
 	}
 
 	public Organization(GoalNode gn) {
-		orgRoleId = gn;
 
 		if (gn.getParent() == null) {
 			for (GoalNode goal : gn.getSuccessors())
-				goalSuccessors.add(goal);
+				this.goalSuccessors.add(goal);
 
 			String roleName = "r"+this.rolesTree.size();
 			RoleNode r = new RoleNode(null, roleName);
 			r.assignGoal(gn);
-			rolesTree.add(r);
+			this.rolesTree.add(r);
+			LOG.info("FIRST STATE CREATED: " + this.toString() + " | " + this.hashCode());
 		}
 	}
 
 	public boolean ehMeta() {
 
-		if (goalSuccessors.size() <= 0) 
+		if (this.goalSuccessors.size() <= 0) 
 		{
 			if (!isGoalList.contains(this)) {
 				isGoalList.add(this);
@@ -92,11 +89,6 @@ public class Organization implements Estado, Antecessor {
 						
 						if (or.getParent() != null)
 							links.add("\""+or.getParent().getRoleName() + "\"->\"" + or.getRoleName()+"\"");
-						
-						if (isGoalList.size() == 38) {
-							LOG.info("\n\n38 :" + or.toString() + " | " + or.getRoleName() + "-" + or.getAssignedGoals() + "-" + or.getSkills() + "-" + or.hashCode());
-							if (or.getParent() != null) LOG.info(" " + or.getParent().hashCode());
-						}
 					}
 
 					for (String s : links)
@@ -130,7 +122,7 @@ public class Organization implements Estado, Antecessor {
 	public List<Estado> sucessores() {
 		List<Estado> suc = new LinkedList<Estado>(); // Lista de sucessores
 
-		if (!goalSuccessors.isEmpty())
+		if (!this.goalSuccessors.isEmpty())
 			LOG.debug("\nSTATE: " + this.toString() + "Tree:" + this.rolesTree.toString() + " - OpenGoals: [" + goalSuccessors.toString() + "] - Size: "
 					+ goalSuccessors.size() + ", Hash: " + this.hashCode());
 
@@ -176,7 +168,7 @@ public class Organization implements Estado, Antecessor {
 		
 		suc.add(newState);
 
-		LOG.debug("addSubordinate	: " + newState.rolesTree + ", nSucc: " + newState.goalSuccessors + ", Name: " + r.getRoleName() + ", Parent: " + r.getParent().getRoleName() + ", Hash: " + newState.hashCode() + ", Str: " + newState.toString());
+		LOG.debug("addSubordinate	: " + newState.toString() + ", nSucc: " + newState.goalSuccessors + ", Name: " + r.getRoleName() + ", Parent: " + r.getParent().getRoleName() + ", Hash: " + newState.hashCode());
 	}
 	
 	public void joinAPair(RoleNode role, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
@@ -193,14 +185,12 @@ public class Organization implements Estado, Antecessor {
 			if (or.getAssignedGoals().containsAll(role.getAssignedGoals()) && role.getAssignedGoals().containsAll(or.getAssignedGoals())) {
 				if (!or.getAssignedGoals().contains(goalToBeAssociatedToRole)) {
 					or.assignGoal(goalToBeAssociatedToRole);
+					suc.add(newState);
+					LOG.debug("joinAPair     	: " + newState.toString() + ", nSucc: " + newState.goalSuccessors + ", Name: " + role.getRoleName() + ", Parent: " + role.getParent().getRoleName() + ", Hash: " + newState.hashCode());
 					break;
 				}
 			}
 		}
-
-		suc.add(newState);
-
-		LOG.debug("joinAPair     	: " + newState.rolesTree + ", nSucc: " + newState.goalSuccessors + ", Name: " + role.getRoleName() + ", Parent: " + role.getParent().getRoleName() + ", Hash: " + newState.hashCode() + ", Str: " + newState.toString());
 	}
 
 	public void joinASubordinate(RoleNode role, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
@@ -213,16 +203,17 @@ public class Organization implements Estado, Antecessor {
 		for (RoleNode or : newState.rolesTree) {
 			// if all assigned goals are same, so it found the same role of the method argument 'role'
 			if (or.getAssignedGoals().containsAll(role.getAssignedGoals()) && role.getAssignedGoals().containsAll(or.getAssignedGoals())) {
-				if (!role.getAssignedGoals().contains(goalToBeAssociatedToRole)) {
+				if (!or.getAssignedGoals().contains(goalToBeAssociatedToRole)) {
 					or.assignGoal(goalToBeAssociatedToRole);
+					suc.add(newState);
+					if (role.getParent() != null)
+						LOG.debug("joinASubordinate : " + newState.toString() + ", nSucc: " + newState.goalSuccessors + ", Name: " + role.getRoleName() + ", Parent: " + role.getParent().getRoleName() + ", Hash: " + newState.hashCode());
+					else
+						LOG.debug("joinASubordinate : " + newState.toString() + ", nSucc: " + newState.goalSuccessors + ", Name: " + role.getRoleName() + ", Parent: null, Hash: " + newState.hashCode());
 					break;
 				}
 			}
 		}
-
-		suc.add(newState);
-
-		LOG.debug("joinASubordinate : " + newState.rolesTree + ", nSucc: " + newState.goalSuccessors + ", Name: " + role.getRoleName() + ", Hash: " + newState.hashCode() + ", Str: " + newState.toString());
 	}
 	
 	/** Lista de antecessores, para busca bidirecional */
@@ -241,7 +232,7 @@ public class Organization implements Estado, Antecessor {
 		}
 
 		Collections.sort(signature);
-		return signature.size() + signature.toString();	
+		return signature.toString() + " TreeSize: "+signature.size();	
 	}
 
 	/**
@@ -286,10 +277,23 @@ public class Organization implements Estado, Antecessor {
 		// new state
 		Organization newState = new Organization(gn);
 		// Copy all roles tree
-		for (RoleNode or : rolesTree) {
+		for (RoleNode or : this.rolesTree) {
 			RoleNode nnewS = (RoleNode) or.clone();  			
 			newState.rolesTree.add((RoleNode) nnewS);
 		}
+		// finding right parents of cloned roles in the new tree
+		for (RoleNode or : newState.rolesTree) {
+			if (or.getParent() != null) {
+				for (RoleNode pr : newState.rolesTree) {
+					// in case of a joining the parent may have more goals, so the list does not need to match exactly
+					if (pr.getAssignedGoals().containsAll(or.getParent().getAssignedGoals())) {
+						or.setParent(pr);
+						break;
+					}
+				}
+			}
+		}
+		
 		// Add all successors of current state but not the new state itself - list of goals does not need to be cloned because does not change
 		for (GoalNode goal : this.goalSuccessors) {
 			if (goal != gn) newState.goalSuccessors.add(goal);
