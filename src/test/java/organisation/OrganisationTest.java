@@ -86,14 +86,15 @@ public class OrganisationTest {
 	private static void plotOrganizationalGoalTree() {
 		try {
 			File filepath = new File("output/diagrams");
-			FileUtils.deleteDirectory(filepath);
+			FileUtils.deleteDirectory(filepath);		
 			
-			File file = new File("output/diagrams/orgTree.gv");
+			File file = new File("output/diagrams/tmp");
 			file.getParentFile().mkdirs();
-			FileWriter fw = new FileWriter(file, false);
-			BufferedWriter bw = new BufferedWriter(fw);
-			PrintWriter out = new PrintWriter(bw);
-			
+		} catch (IOException e) {}
+
+		try (FileWriter fw = new FileWriter("output/diagrams/orgTree.gv", false);
+				BufferedWriter bw = new BufferedWriter(fw);
+				PrintWriter out = new PrintWriter(bw)) {
 			
 			out.println("digraph G {");
     		for (GoalNode or : tree) {

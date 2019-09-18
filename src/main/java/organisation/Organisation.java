@@ -74,12 +74,12 @@ public class Organisation implements Estado, Antecessor {
 
 				List<String> links = new ArrayList<>();
 				
-				try {
-					File file = new File("output/diagrams/graph_" + isGoalList.size() + ".gv");
-					file.getParentFile().mkdirs();
-					FileWriter fw = new FileWriter(file, false);
-					BufferedWriter bw = new BufferedWriter(fw);
-					PrintWriter out = new PrintWriter(bw);
+				File file = new File("output/diagrams/tmp");
+				file.getParentFile().mkdirs();
+				
+				try (FileWriter fw = new FileWriter("output/diagrams/graph_" + isGoalList.size() + ".gv", false);
+						BufferedWriter bw = new BufferedWriter(fw);
+						PrintWriter out = new PrintWriter(bw)) {
 					
 					out.println("digraph G {");
 					for (RoleNode or : rolesTree) {

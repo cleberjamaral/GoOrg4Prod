@@ -156,13 +156,21 @@ public class OrganisationApp {
 	private static void plotOrganizationalGoalTree() {
 		try {
 			File filepath = new File("output/diagrams");
-			FileUtils.deleteDirectory(filepath);
+			FileUtils.deleteDirectory(filepath);		
 			
-			File file = new File("output/diagrams/orgTree.gv");
+			File file = new File("output/diagrams/tmp");
 			file.getParentFile().mkdirs();
-			FileWriter fw = new FileWriter(file, false);
+		} catch (IOException e) {}
+		
+		try (FileWriter fw = new FileWriter("output/diagrams/orgTree.gv", false);
 			BufferedWriter bw = new BufferedWriter(fw);
-			PrintWriter out = new PrintWriter(bw);
+			PrintWriter out = new PrintWriter(bw)) {
+			//File filepath = new File("output/diagrams");
+			//FileUtils.deleteDirectory(filepath);
+			
+			//File file = new File("orgTree.gv");
+			//file.getParentFile().mkdirs();
+			;
 			
         	out.println("digraph G {");
     		for (GoalNode or : tree) {
