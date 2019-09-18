@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import org.apache.commons.io.FileUtils;
 
 import main.java.simplelogger.SimpleLogger;
 
@@ -77,7 +78,7 @@ public class OrganisationApp {
 		
 		plotOrganizationalGoalTree();
 		
-		Organization inicial = new Organization(rootNode,3);
+		Organisation inicial = new Organisation(rootNode,3);
 
 		Nodo n = null;
 
@@ -153,9 +154,16 @@ public class OrganisationApp {
 	}
 	
 	private static void plotOrganizationalGoalTree() {
-		try (FileWriter fw = new FileWriter("orgTree.gv", false);
-				BufferedWriter bw = new BufferedWriter(fw);
-				PrintWriter out = new PrintWriter(bw)) {
+		try {
+			File filepath = new File("output/diagrams");
+			FileUtils.deleteDirectory(filepath);
+			
+			File file = new File("output/diagrams/orgTree.gv");
+			file.getParentFile().mkdirs();
+			FileWriter fw = new FileWriter(file, false);
+			BufferedWriter bw = new BufferedWriter(fw);
+			PrintWriter out = new PrintWriter(bw);
+			
         	out.println("digraph G {");
     		for (GoalNode or : tree) {
     			if (or.getOperator().equals("parallel")) {

@@ -5,10 +5,11 @@ import main.java.busca.BuscaLargura;
 import main.java.busca.BuscaProfundidade;
 import main.java.busca.Nodo;
 import main.java.organisation.GoalNode;
-import main.java.organisation.Organization;
+import main.java.organisation.Organisation;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,6 +17,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import org.apache.commons.io.FileUtils;
 
 import static org.junit.Assert.*;
 import org.junit.Test;    
@@ -48,7 +50,7 @@ public class OrganisationTest {
 		//GoalNode g6 = new GoalNode(g4, "g6");
 		//g6.addSkill("s4");
 		//g6.addSkill("s5");
-		Organization inicial = new Organization(g0,3);
+		Organisation inicial = new Organisation(g0,3);
 	
 /*
 		// Sample organization : paint a house
@@ -82,10 +84,18 @@ public class OrganisationTest {
 	}
 	
 	private static void plotOrganizationalGoalTree() {
-		try (FileWriter fw = new FileWriter("orgTree.gv", false);
-				BufferedWriter bw = new BufferedWriter(fw);
-				PrintWriter out = new PrintWriter(bw)) {
-        	out.println("digraph G {");
+		try {
+			File filepath = new File("output/diagrams");
+			FileUtils.deleteDirectory(filepath);
+			
+			File file = new File("output/diagrams/orgTree.gv");
+			file.getParentFile().mkdirs();
+			FileWriter fw = new FileWriter(file, false);
+			BufferedWriter bw = new BufferedWriter(fw);
+			PrintWriter out = new PrintWriter(bw);
+			
+			
+			out.println("digraph G {");
     		for (GoalNode or : tree) {
     			if (or.getOperator().equals("parallel")) {
     				out.print("\t\"" + or.getGoalName()	+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "

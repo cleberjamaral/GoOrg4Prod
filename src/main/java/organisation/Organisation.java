@@ -1,6 +1,7 @@
 package main.java.organisation;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,12 +16,12 @@ import main.java.busca.Estado;
 
 import main.java.simplelogger.SimpleLogger;
 
-public class Organization implements Estado, Antecessor {
+public class Organisation implements Estado, Antecessor {
 
 	/*** STATIC ***/
 	private static SimpleLogger LOG = SimpleLogger.getInstance(1);
 	// list of target states, i.e., complete charts
-	private static List<Organization> isGoalList = new ArrayList<Organization>();
+	private static List<Organisation> isGoalList = new ArrayList<Organisation>();
 
 	/*** LOCAL ***/
 	// this is the chart that is being created by the algorithm, potentially a complete chart
@@ -43,13 +44,13 @@ public class Organization implements Estado, Antecessor {
 		return "Empty\n";
 	}
 
-	public Organization(GoalNode gn, int costFunction) {
+	public Organisation(GoalNode gn, int costFunction) {
 		this(gn);
 		
-		Organization.costFunction = costFunction;
+		Organisation.costFunction = costFunction;
 	}
 
-	public Organization(GoalNode gn) {
+	public Organisation(GoalNode gn) {
 
 		if (gn.getParent() == null) {
 			for (GoalNode goal : gn.getSuccessors())
@@ -72,10 +73,14 @@ public class Organization implements Estado, Antecessor {
 				LOG.info("GOAL ACHIEVED! Solution: #" + isGoalList.size() + " : " + this.toString() + " | " + this.hashCode());
 
 				List<String> links = new ArrayList<>();
-
-				try (FileWriter fw = new FileWriter("graph_" + isGoalList.size() + ".gv", false);
-						BufferedWriter bw = new BufferedWriter(fw);
-						PrintWriter out = new PrintWriter(bw)) {
+				
+				try {
+					File file = new File("output/diagrams/graph_" + isGoalList.size() + ".gv");
+					file.getParentFile().mkdirs();
+					FileWriter fw = new FileWriter(file, false);
+					BufferedWriter bw = new BufferedWriter(fw);
+					PrintWriter out = new PrintWriter(bw);
+					
 					out.println("digraph G {");
 					for (RoleNode or : rolesTree) {
 						out.print("\t\"" + or.getRoleName()//headGoal.getGoalName()
@@ -154,7 +159,7 @@ public class Organization implements Estado, Antecessor {
 
 	public void addSubordinate(RoleNode parentRole, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
 
-		Organization newState = (Organization) createState(goalToBeAssociatedToRole);
+		Organisation newState = (Organisation) createState(goalToBeAssociatedToRole);
 
 		newState.cost = 1;
 		newState.accCost = this.accCost + newState.cost;
@@ -173,7 +178,7 @@ public class Organization implements Estado, Antecessor {
 	
 	public void joinAPair(RoleNode role, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
 
-		Organization newState = (Organization) createState(goalToBeAssociatedToRole);
+		Organisation newState = (Organisation) createState(goalToBeAssociatedToRole);
 
 		// this organization is being compressed in few divisions, so division cost increased
 		newState.cost = 100;
@@ -195,7 +200,7 @@ public class Organization implements Estado, Antecessor {
 
 	public void joinASubordinate(RoleNode role, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
 
-		Organization newState = (Organization) createState(goalToBeAssociatedToRole);
+		Organisation newState = (Organisation) createState(goalToBeAssociatedToRole);
 		
 		newState.cost = 10;
 		newState.accCost = this.accCost + newState.cost;
@@ -241,8 +246,8 @@ public class Organization implements Estado, Antecessor {
 	 */
 	public boolean equals(Object o) {
 		try {
-			if (o instanceof Organization) {
-				if (this.toString().equals(((Organization) o).toString())) {
+			if (o instanceof Organisation) {
+				if (this.toString().equals(((Organisation) o).toString())) {
 					LOG.debug("Pruned" + this.toString());
 					return true;
 				}
@@ -272,10 +277,10 @@ public class Organization implements Estado, Antecessor {
 		return accCost; 
 	}
 	
-	public Organization createState(GoalNode gn) {
+	public Organisation createState(GoalNode gn) {
 
 		// new state
-		Organization newState = new Organization(gn);
+		Organisation newState = new Organisation(gn);
 		// Copy all roles tree
 		for (RoleNode or : this.rolesTree) {
 			RoleNode nnewS = (RoleNode) or.clone();  			
