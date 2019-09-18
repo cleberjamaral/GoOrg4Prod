@@ -1,22 +1,6 @@
-**.class
-**.log
-**.zip
-**.rar
-**.war
-**.tar.gz
+# Ignore Gradle project-specific cache directory
+.gradle
 
-**/hs_err_pid*
-
-**/target/*
-**/bin/classes/*
-**/bin/*
-**/log/*
+# Ignore Gradle build output directory
+build
 /bin/
-
-# jason / jacamo agent temporary files
-**.mas2j~
-**.asl~
-
-# graphviz (gv) and compiled graphs (pdf)
-*.gv
-*.pdf
