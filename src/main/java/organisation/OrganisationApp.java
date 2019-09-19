@@ -29,7 +29,7 @@ import org.apache.commons.io.FileUtils;
 import main.java.simplelogger.SimpleLogger;
 
 public class OrganisationApp {
-	
+
 	static List<GoalNode> tree = new ArrayList<GoalNode>();
 	static Stack<GoalNode> stack = new Stack<GoalNode>();
 	static GoalNode rootNode = null;
@@ -37,83 +37,81 @@ public class OrganisationApp {
 	static GoalNode referenceGoalNode = null;
 
 	public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
-		
+
 		// set verbose level
 		SimpleLogger.getInstance(1);
-		
-		String str = "1";
-		if (args.length >= 1) {
-			if (args[0] != null) {
-				str = args[0];
-			} else {
-				SimpleLogger.getInstance().error("Wrong argument!");
-			}
+
+		Organisation inicial;
+		if ((args.length < 1) || (args[0].equals("0"))) {
+			// Sample organization
+			GoalNode g0 = new GoalNode(null, "g0");
+			tree.add(g0);
+			GoalNode g1 = new GoalNode(g0, "g1");
+			g1.addSkill("s1");
+			tree.add(g1);
+			GoalNode g2 = new GoalNode(g0, "g2");
+			tree.add(g2);
+			// GoalNode g3 = new GoalNode(g1, "g3");
+			// g3.addSkill("s2");
+			// GoalNode g4 = new GoalNode(g0, "g4");
+			// GoalNode g5 = new GoalNode(g4, "g5");
+			// g5.addSkill("s5");
+			// GoalNode g6 = new GoalNode(g4, "g6");
+			// g6.addSkill("s4");
+			// g6.addSkill("s5");
+			inicial = new Organisation(g0, 3);
 		} else {
-			BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
-			System.out.print("Digite sua opcao de busca { Digite S para finalizar }\n");
-			System.out.print("\t1  -  Largura\n");
-			System.out.print("\t2  -  Profundidade\n");
-			System.out.print("\t3  -  Pronfundidade Iterativo\n");
-			System.out.print("Opcao: ");
-			str = teclado.readLine().toUpperCase();
-		}
-
-		String file = "od0.xml";
-		if (args.length >= 2) {
+			String file = "od0.xml";
+			if (args.length >= 2) {
 				file = args[1];
+			}
+
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document document = builder.parse(new File(file));
+
+			if (!document.getDocumentElement().getNodeName().equals("organisational-specification"))
+				throw new IllegalArgumentException(
+						"Error! It is expected an 'organisational-specification' XML structure");
+
+			document.getDocumentElement().normalize();
+			// Visit all possible schemes from Moise 'functional-specification'
+			NodeList nList = document.getElementsByTagName("scheme");
+			visitNodes(nList);
+
+			inicial = new Organisation(rootNode, 3);
+//					BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
+//					System.out.print("Digite sua opcao de busca { Digite S para finalizar }\n");
+//					System.out.print("\t1  -  Largura\n");
+//					System.out.print("\t2  -  Profundidade\n");
+//					System.out.print("\t3  -  Pronfundidade Iterativo\n");
+//					System.out.print("Opcao: ");
+//					str = teclado.readLine().toUpperCase();
+
 		}
 
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		Document document = builder.parse(new File(file));
-
-		if (!document.getDocumentElement().getNodeName().equals("organisational-specification"))
-			throw new IllegalArgumentException("Error! It is expected an 'organisational-specification' XML structure");
-
-		document.getDocumentElement().normalize();
-		//Visit all possible schemes from Moise 'functional-specification'
-		NodeList nList = document.getElementsByTagName("scheme");
-
-		visitNodes(nList);		
-		
 		plotOrganizationalGoalTree();
-		
-		Organisation inicial = new Organisation(rootNode,3);
 
 		Nodo n = null;
 
-		if (!str.equals("S")) {
-			if (str.equals("1")) {
-				
-				System.out.println("Busca em Largura");
-				n = new BuscaLargura().busca(inicial);
-			} else {
-				if (str.equals("2")) {
-					System.out.println("Busca em Profundidade");
-					n = new BuscaProfundidade(100).busca(inicial);
-				} else {
-					if (str.equals("3")) {
-						System.out.println("Busca em Profundidade Iterativo");
-						n = new BuscaIterativo().busca(inicial);
-					}
-				}
-			}
-			if (str.equals("1") || str.equals("2") || str.equals("3")) {
-				if (n == null) {
-					System.out.println("Sem Solucao!");
-				} else {
-					System.out.println("Solucao:\n" + n.montaCaminho() + "\n\n");
-				}
-			}
-		}
-		
+		n = new BuscaLargura().busca(inicial);
+//	n = new BuscaProfundidade(100).busca(inicial);
+//	n = new BuscaIterativo().busca(inicial);
+		String solutionDepth = "[G{[g0]}S{[]}, G{[g1]}S{[s1]}^[g0][], G{[g2]}S{[]}^[g0][]] TreeSize: 3";
+		if (n.getEstado().toString().equals(solutionDepth))
+			System.out.println("true");
+		else
+			System.out.println("false");
+
+		System.out.println(n.getEstado().toString());
+
 	}
 
 	private static void visitNodes(NodeList nList) {
 		for (int temp = 0; temp < nList.getLength(); temp++) {
-			
+
 			Node node = nList.item(temp);
-			
+
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 
 				Element eGoal = (Element) node;
@@ -121,28 +119,30 @@ public class OrganisationApp {
 					SimpleLogger.getInstance().debug("Node id = " + eGoal.getAttribute("id"));
 
 					if (rootNode == null) {
-						rootNode = new GoalNode(null,eGoal.getAttribute("id"));
+						rootNode = new GoalNode(null, eGoal.getAttribute("id"));
 						tree.add(rootNode);
 						referenceGoalNode = rootNode;
 					} else {
-						GoalNode gn = new GoalNode(stack.peek(),eGoal.getAttribute("id"));
+						GoalNode gn = new GoalNode(stack.peek(), eGoal.getAttribute("id"));
 						tree.add(gn);
 						referenceGoalNode = gn;
 					}
-					
+
 				} else if (node.getNodeName().equals("plan")) {
 					Element ePlan = (Element) node;
 					stack.push(referenceGoalNode);
 					referenceGoalNode.setOperator(ePlan.getAttribute("operator"));
-					SimpleLogger.getInstance().debug("Push = " + referenceGoalNode.toString() + " - Op: " + referenceGoalNode.getOperator());
+					SimpleLogger.getInstance().debug(
+							"Push = " + referenceGoalNode.toString() + " - Op: " + referenceGoalNode.getOperator());
 				} else if (node.getNodeName().equals("skill")) {
 					referenceGoalNode.addSkill(eGoal.getAttribute("id"));
-					SimpleLogger.getInstance().debug("Skill = " + referenceGoalNode.toString() + " : " + referenceGoalNode.getSkills());
+					SimpleLogger.getInstance()
+							.debug("Skill = " + referenceGoalNode.toString() + " : " + referenceGoalNode.getSkills());
 				} else if (node.getNodeName().equals("mission")) {
 					return; // end of scheme goals
 				}
 				if (node.hasChildNodes()) {
-		
+
 					visitNodes(node.getChildNodes());
 					if (node.getNodeName().equals("plan")) {
 						GoalNode tempGN = stack.pop();
@@ -152,47 +152,49 @@ public class OrganisationApp {
 			}
 		}
 	}
-	
+
 	private static void plotOrganizationalGoalTree() {
 		try {
 			File filepath = new File("output/diagrams");
-			FileUtils.deleteDirectory(filepath);		
-			
+			FileUtils.deleteDirectory(filepath);
+
 			File file = new File("output/diagrams/tmp");
 			file.getParentFile().mkdirs();
-		} catch (IOException e) {}
-		
+		} catch (IOException e) {
+		}
+
 		try (FileWriter fw = new FileWriter("output/diagrams/orgTree.gv", false);
-			BufferedWriter bw = new BufferedWriter(fw);
-			PrintWriter out = new PrintWriter(bw)) {
-			//File filepath = new File("output/diagrams");
-			//FileUtils.deleteDirectory(filepath);
-			
-			//File file = new File("orgTree.gv");
-			//file.getParentFile().mkdirs();
+				BufferedWriter bw = new BufferedWriter(fw);
+				PrintWriter out = new PrintWriter(bw)) {
+			// File filepath = new File("output/diagrams");
+			// FileUtils.deleteDirectory(filepath);
+
+			// File file = new File("orgTree.gv");
+			// file.getParentFile().mkdirs();
 			;
-			
-        	out.println("digraph G {");
-    		for (GoalNode or : tree) {
-    			if (or.getOperator().equals("parallel")) {
-    				out.print("\t\"" + or.getGoalName()	+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
-    						+ "shape = \"diamond\" label = <<table border=\"0\" cellborder=\"0\">"
-    						+ "<tr><td align=\"center\"><font color=\"black\"><b>" 
-    						+ or.getGoalName() + "</b></font></td></tr>");
-    			} else {
-    				out.print("\t\"" + or.getGoalName()	+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
-    						+ "shape = \"ellipse\" label = <<table border=\"0\" cellborder=\"0\">"
-    						+ "<tr><td align=\"center\"><b>" 
-    						+ or.getGoalName() + "</b></td></tr>");
-    			}
+
+			out.println("digraph G {");
+			for (GoalNode or : tree) {
+				if (or.getOperator().equals("parallel")) {
+					out.print("\t\"" + or.getGoalName()
+							+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
+							+ "shape = \"diamond\" label = <<table border=\"0\" cellborder=\"0\">"
+							+ "<tr><td align=\"center\"><font color=\"black\"><b>" + or.getGoalName()
+							+ "</b></font></td></tr>");
+				} else {
+					out.print("\t\"" + or.getGoalName()
+							+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
+							+ "shape = \"ellipse\" label = <<table border=\"0\" cellborder=\"0\">"
+							+ "<tr><td align=\"center\"><b>" + or.getGoalName() + "</b></td></tr>");
+				}
 				for (String s : or.getSkills())
 					out.print("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
 				out.println("</table>> ];");
 				if (or.getParent() != null)
 					out.println("\t\"" + or.getParent().getGoalName() + "\"->\"" + or.getGoalName() + "\";");
-    		}
-        		
-        	out.println("}");
+			}
+
+			out.println("}");
 		} catch (IOException e) {
 		}
 	}

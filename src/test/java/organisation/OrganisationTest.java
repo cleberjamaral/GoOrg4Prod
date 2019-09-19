@@ -79,8 +79,10 @@ public class OrganisationTest {
 		Nodo n = new BuscaLargura().busca(inicial);
 		//n = new BuscaProfundidade(100).busca(inicial);
 		//n = new BuscaIterativo().busca(inicial);
-		System.out.println(n.getEstado()); 
-		assertEquals(n, null);
+		System.out.println(n.getEstado());
+		String solutionDepth = "[G{[g0]}S{[]}, G{[g1]}S{[s1]}^[g0][], G{[g2]}S{[]}^[g0][]] TreeSize: 3";
+
+		assertEquals(solutionDepth, n.getEstado().toString());
 		
 	}
 	
