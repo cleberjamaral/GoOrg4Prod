@@ -107,7 +107,7 @@ public class Organisation implements Estado, Antecessor {
 				// This should not happen again, it has occurred because searching process
 				// (deepth) was calling ehMeta 2 times
 				LOG.warn("Goal achieved but duplicated!" + " : " + this.hashCode());
-				//return true; // if only one solution is needed
+				return true; // if only one solution is needed
 			}
 		}
 		return false;

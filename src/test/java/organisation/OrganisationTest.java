@@ -79,6 +79,7 @@ public class OrganisationTest {
 		Nodo n = new BuscaLargura().busca(inicial);
 		//n = new BuscaProfundidade(100).busca(inicial);
 		//n = new BuscaIterativo().busca(inicial);
+		System.out.println(n.getEstado()); 
 		assertEquals(n, null);
 		
 	}
