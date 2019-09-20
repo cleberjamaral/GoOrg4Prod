@@ -9,10 +9,13 @@ import main.java.organisation.Organisation;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +23,7 @@ import java.util.Stack;
 import org.apache.commons.io.FileUtils;
 
 import static org.junit.Assert.*;
-import org.junit.Test;    
+import org.junit.Test;  
 
 public class OrganisationTest {
 	
@@ -29,61 +32,73 @@ public class OrganisationTest {
 	static GoalNode rootNode = null;
 	static boolean pushGoalNode = false;
 	static GoalNode referenceGoalNode = null;
-
+    
 	@Test
 	public void testOrg() {
 	//public static void main(String[] a) throws IOException {
 	
 		// Sample organization
-		GoalNode g0 = new GoalNode(null, "g0");
-		tree.add(g0);
-		GoalNode g1 = new GoalNode(g0, "g1");
+		GoalNode g1 = new GoalNode(null, "g1");
 		g1.addSkill("s1");
 		tree.add(g1);
-		GoalNode g2 = new GoalNode(g0, "g2");
-		tree.add(g2);
-		//GoalNode g3 = new GoalNode(g1, "g3");
-		//g3.addSkill("s2");
-		//GoalNode g4 = new GoalNode(g0, "g4");
-		//GoalNode g5 = new GoalNode(g4, "g5");
-		//g5.addSkill("s5");
-		//GoalNode g6 = new GoalNode(g4, "g6");
-		//g6.addSkill("s4");
-		//g6.addSkill("s5");
-		Organisation inicial = new Organisation(g0,3);
-	
-/*
-		// Sample organization : paint a house
-		GoalNode paintHouse = new GoalNode(null, "paintHouse");
-		GoalNode contracting = new GoalNode(paintHouse, "contracting");
-		contracting.setOperator("parallel");
-		contracting.addSkill("getBids");
-		GoalNode bidIPaint = new GoalNode(contracting, "bidIPaint");
-		bidIPaint.addSkill("bid");
-		bidIPaint.addSkill("paint");
-		GoalNode bidEPaint = new GoalNode(contracting, "bidEPaint");
-		bidEPaint.addSkill("bid");
-		bidEPaint.addSkill("paint");
-		GoalNode execute = new GoalNode(paintHouse, "execute");
-		GoalNode ePaint = new GoalNode(execute, "ePaint");
-		ePaint.addSkill("paint");
-		GoalNode iPaint = new GoalNode(execute, "iPaint");
-		iPaint.addSkill("bid");
-		iPaint.addSkill("paint");
-		GoalNode contractWinner = new GoalNode(execute, "contractWinner");
-		contractWinner.addSkill("contract");
-		OrganizationalRole3 inicial = new OrganizationalRole3(paintHouse,3);
-*/		
-		plotOrganizationalGoalTree();
+		GoalNode g11 = new GoalNode(g1, "g11");
+		g11.addSkill("s1");
+		tree.add(g11);
+		GoalNode g12 = new GoalNode(g1, "g12");
+		tree.add(g12);
+		GoalNode g111 = new GoalNode(g11, "g111");
+		g111.addSkill("s2");
+		GoalNode g112 = new GoalNode(g11, "g112");
+		g12.addSkill("s2");
+		GoalNode g121 = new GoalNode(g12, "g121");
+		g121.addSkill("s2");
+		GoalNode g122 = new GoalNode(g12, "g122");
+		GoalNode g1221 = new GoalNode(g122, "g1221");
+		g1221.addSkill("s2");
+		GoalNode g13 = new GoalNode(g1, "g13");
+		g13.addSkill("s3");
+		GoalNode g14 = new GoalNode(g1, "g14");
+
 		
-		Nodo n = new BuscaLargura().busca(inicial);
+		
+		
+		// Test of the taller structure
+		Organisation o1 = new Organisation(g1,1);
+		Nodo n1 = new BuscaLargura().busca(o1);
+		System.out.println("1>>>"+n1.getEstado()+"<<<\n\n\n\n\n");
+		String expectedSolution1 = "[G{[g111]}S{[s2]}^[g14, g11][s1], G{[g112]}S{[]}^[g14, g11][s1], G{[g122, g121]}S{[s2]}^[g12][s2], G{[g1221]}S{[s2]}^[g122, g121][s2], G{[g12]}S{[s2]}^[g1][s1], G{[g13]}S{[s3]}^[g1][s1], G{[g14, g11]}S{[s1]}^[g1][s1], G{[g1]}S{[s1]}] TreeSize: 8";
+		
+		// Test of the flatter structure
+		Organisation o2 = new Organisation(g1,2);
+		Nodo n2 = new BuscaLargura().busca(o2);
+		System.out.println("2>>>"+n2.getEstado()+"<<<\n\n\n\n\n");
+		String expectedSolution2 = "[G{[g122, g112, g121, g12, g1221, g111]}S{[s2]}^[g14, g11, g1][s1], G{[g13]}S{[s3]}^[g14, g11, g1][s1], G{[g14, g11, g1]}S{[s1]}] TreeSize: 3";
+
+		// Test of the most specialist structure
+		Organisation o3 = new Organisation(g1,3);
+		Nodo n3 = new BuscaLargura().busca(o3);
+		System.out.println("3>>>"+n3.getEstado()+"<<<\n\n\n\n\n");
+		String expectedSolution3 = "[G{[g111]}S{[s2]}^[g11][s1], G{[g112]}S{[]}^[g11][s1], G{[g11]}S{[s1]}^[g1][s1], G{[g121]}S{[s2]}^[g12][s2], G{[g1221]}S{[s2]}^[g122][], G{[g122]}S{[]}^[g12][s2], G{[g12]}S{[s2]}^[g1][s1], G{[g13]}S{[s3]}^[g1][s1], G{[g14]}S{[]}^[g1][s1], G{[g1]}S{[s1]}] TreeSize: 10";
+
+		// Test of the most generalist structure
+		Organisation o4 = new Organisation(g1,4);
+		Nodo n4 = new BuscaLargura().busca(o4);
+		System.out.println("4>>>"+n4.getEstado()+"<<<\n\n\n\n\n");
+		String expectedSolution4 = "[G{[g122, g112, g121, g12, g1221, g111]}S{[s2]}^[g14, g11, g1][s1], G{[g13]}S{[s3]}^[g14, g11, g1][s1], G{[g14, g11, g1]}S{[s1]}] TreeSize: 3";
+
+		plotOrganizationalGoalTree();
+		o1.plotOrganisation(1);
+		o2.plotOrganisation(2);
+		o3.plotOrganisation(3);
+		o4.plotOrganisation(4);
+
+		assertEquals(expectedSolution1, n1.getEstado().toString());
+		assertEquals(expectedSolution2, n2.getEstado().toString());
+		assertEquals(expectedSolution3, n3.getEstado().toString());
+		assertEquals(expectedSolution4, n4.getEstado().toString());
+		
 		//n = new BuscaProfundidade(100).busca(inicial);
 		//n = new BuscaIterativo().busca(inicial);
-		System.out.println(n.getEstado());
-		String solutionDepth = "[G{[g0]}S{[]}, G{[g1]}S{[s1]}^[g0][], G{[g2]}S{[]}^[g0][]] TreeSize: 3";
-
-		assertEquals(solutionDepth, n.getEstado().toString());
-		
 	}
 	
 	private static void plotOrganizationalGoalTree() {

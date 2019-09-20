@@ -22,6 +22,8 @@ public class Organisation implements Estado, Antecessor {
 	private static SimpleLogger LOG = SimpleLogger.getInstance(1);
 	// list of target states, i.e., complete charts
 	private static List<Organisation> isGoalList = new ArrayList<Organisation>();
+	// Cost penalty used to infer bad decisions on search
+	private static int costPenalty = 0;
 
 	/*** LOCAL ***/
 	// this is the chart that is being created by the algorithm, potentially a complete chart
@@ -29,16 +31,17 @@ public class Organisation implements Estado, Antecessor {
 	// The goals that were not explored yet, the algorithm end when all goals were allocated into roles
 	private List<GoalNode> goalSuccessors = new ArrayList<GoalNode>();
 	
+	/**
+	 * 0: unitary cost (no function)
+	 * 1: Taller hierarchies are preferrable 
+	 * 2: Flatter hierarchies are preferrable 
+	 * 3: More specilist roles are preferrable
+	 * 4: More generalist roles are preferrable 
+	 */
+	static int costFunction = 3;
 	// Cost supporting variables
 	private int cost = 0;
 	private int accCost = 0;
-	
-	/**
-	 * 1: unitary cost (no function)
-	 * 2: based on flat cost (flatter structures are more expensive)
-	 * 3: based on specializationCost (joinAPair increments this cost making the organisation more generalist) 
-	 */
-	static int costFunction = 3;
 
 	public String getDescricao() {
 		return "Empty\n";
@@ -52,6 +55,7 @@ public class Organisation implements Estado, Antecessor {
 
 	public Organisation(GoalNode gn) {
 
+		// Is the first state that is going to be created
 		if (gn.getParent() == null) {
 			for (GoalNode goal : gn.getSuccessors())
 				this.goalSuccessors.add(goal);
@@ -59,8 +63,13 @@ public class Organisation implements Estado, Antecessor {
 			String roleName = "r"+this.rolesTree.size();
 			RoleNode r = new RoleNode(null, roleName);
 			r.assignGoal(gn);
+			for (String skill : gn.getSkills()) r.addSkill(skill);
 			this.rolesTree.add(r);
-			LOG.info("FIRST STATE CREATED: " + this.toString() + " | " + this.hashCode());
+			
+			// Used to infer a bad decision on the search
+			this.costPenalty = this.goalSuccessors.size() + 1;
+			
+			LOG.info("FIRST STATE CREATED: " + this.toString() + " | " + this.hashCode() + " | Cost penalty: " + this.costPenalty);
 		}
 	}
 
@@ -72,37 +81,9 @@ public class Organisation implements Estado, Antecessor {
 				isGoalList.add(this);
 				LOG.info("GOAL ACHIEVED! Solution: #" + isGoalList.size() + " : " + this.toString() + " | " + this.hashCode());
 
-				List<String> links = new ArrayList<>();
+				plotOrganisation(isGoalList.size());
 				
-				File file = new File("output/diagrams/tmp");
-				file.getParentFile().mkdirs();
-				
-				try (FileWriter fw = new FileWriter("output/diagrams/graph_" + isGoalList.size() + ".gv", false);
-						BufferedWriter bw = new BufferedWriter(fw);
-						PrintWriter out = new PrintWriter(bw)) {
-					
-					out.println("digraph G {");
-					for (RoleNode or : rolesTree) {
-						out.print("\t\"" + or.getRoleName()//headGoal.getGoalName()
-								+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
-								+ "shape = \"Mrecord\" label = <<table border=\"0\" cellborder=\"0\" bgcolor=\"white\">"
-								+ "<tr><td bgcolor=\"black\" align=\"center\"><font color=\"white\">"
-								+ or.getRoleName() + "</font></td></tr><tr><td align=\"center\">" + or.getAssignedGoals() + "</td></tr>");
-						for (String s : or.getSkills())
-							out.print("<tr><td align=\"left\">" + s + "</td></tr>");
-						out.println("</table>> ];");
-						
-						if (or.getParent() != null)
-							links.add("\""+or.getParent().getRoleName() + "\"->\"" + or.getRoleName()+"\"");
-					}
-
-					for (String s : links)
-						out.println("\t" + s + ";");
-					out.println("}");
-				} catch (IOException e) {
-				}
-				
-				//return true; // if only one solution is needed
+				return true; // if only one solution is needed
 			} else {
 				// This should not happen again, it has occurred because searching process
 				// (deepth) was calling ehMeta 2 times
@@ -113,14 +94,49 @@ public class Organisation implements Estado, Antecessor {
 		return false;
 	}
 
-	public int custo() {
-		if (costFunction == 3) {
-			LOG.debug("cost: " + cost + " accCost: " + accCost);
-			return cost;
-		} else {
-			// default cost function is unitary (any openning has same cost)
-			return 1; 
+	public void plotOrganisation(int organisationId) {
+		List<String> links = new ArrayList<>();
+		
+		File file = new File("output/diagrams/tmp");
+		file.getParentFile().mkdirs();
+		
+		try (FileWriter fw = new FileWriter("output/diagrams/graph_" + organisationId + ".gv", false);
+				BufferedWriter bw = new BufferedWriter(fw);
+				PrintWriter out = new PrintWriter(bw)) {
+			
+			out.println("digraph G {");
+			for (RoleNode or : this.rolesTree) {
+				out.print("\t\"" + or.getRoleName()//headGoal.getGoalName()
+						+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
+						+ "shape = \"Mrecord\" label = <<table border=\"0\" cellborder=\"0\" bgcolor=\"white\">"
+						+ "<tr><td bgcolor=\"black\" align=\"center\"><font color=\"white\">"
+						+ or.getRoleName() + "</font></td></tr><tr><td align=\"center\">" + or.getAssignedGoals() + "</td></tr>");
+				for (String s : or.getSkills())
+					out.print("<tr><td align=\"left\">" + s + "</td></tr>");
+				out.println("</table>> ];");
+				
+				if (or.getParent() != null)
+					links.add("\""+or.getParent().getRoleName() + "\"->\"" + or.getRoleName()+"\"");
+			}
+
+			for (String s : links)
+				out.println("\t" + s + ";");
+			out.println("}");
+		} catch (IOException e) {
 		}
+		
+		try (FileWriter fw = new FileWriter("output/diagrams/graph_" + organisationId + ".txt", false);
+				BufferedWriter bw = new BufferedWriter(fw);
+				PrintWriter out = new PrintWriter(bw)) {
+			
+			out.println(this.toString());
+		} catch (IOException e) {
+		}
+	}
+
+	public int custo() {
+		LOG.debug("cost: " + cost + " accCost: " + accCost);
+		return cost;
 	}
 
 	/** Lista de sucessores */
@@ -161,7 +177,11 @@ public class Organisation implements Estado, Antecessor {
 
 		Organisation newState = (Organisation) createState(goalToBeAssociatedToRole);
 
-		newState.cost = 1;
+		if ((costFunction == 2) || (costFunction == 4)) {
+			newState.cost = Organisation.costPenalty;
+		} else {
+			newState.cost = 1;
+		}
 		newState.accCost = this.accCost + newState.cost;
 
 		RoleNode r = new RoleNode(parentRole, "r"+newState.rolesTree.size());
@@ -180,8 +200,11 @@ public class Organisation implements Estado, Antecessor {
 
 		Organisation newState = (Organisation) createState(goalToBeAssociatedToRole);
 
-		// this organization is being compressed in few divisions, so division cost increased
-		newState.cost = 100;
+		if (costFunction == 3) {
+			newState.cost = Organisation.costPenalty;
+		} else {
+			newState.cost = 1;
+		}
 		newState.accCost = this.accCost + newState.cost;
 
 		// the new role is also assigned to a new goal (the joined one)
@@ -202,7 +225,11 @@ public class Organisation implements Estado, Antecessor {
 
 		Organisation newState = (Organisation) createState(goalToBeAssociatedToRole);
 		
-		newState.cost = 10;
+		if ((costFunction == 1) || (costFunction == 3)) {
+			newState.cost = Organisation.costPenalty;
+		} else {
+			newState.cost = 1;
+		}
 		newState.accCost = this.accCost + newState.cost;
 
 		for (RoleNode or : newState.rolesTree) {

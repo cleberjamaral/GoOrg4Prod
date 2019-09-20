@@ -59,12 +59,13 @@ public class OrganisationApp {
 			// GoalNode g6 = new GoalNode(g4, "g6");
 			// g6.addSkill("s4");
 			// g6.addSkill("s5");
-			inicial = new Organisation(g0, 3);
-		} else {
-			String file = "od0.xml";
-			if (args.length >= 2) {
-				file = args[1];
+			if (args.length == 2) {
+				inicial = new Organisation(g0, Integer.parseInt(args[1]));
+			} else {
+				inicial = new Organisation(g0, 3);
 			}
+		} else {
+			String file = args[0];
 
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
