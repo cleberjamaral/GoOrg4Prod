@@ -255,6 +255,7 @@ public class Organisation implements Estado, Antecessor {
 
 	public String toString() {
 		List<String> signature = new ArrayList<>();
+		
 		if ((this.rolesTree != null) && (!this.rolesTree.isEmpty())) {
 			Iterator<RoleNode> iterator = this.rolesTree.iterator(); 
 			while (iterator.hasNext()) {

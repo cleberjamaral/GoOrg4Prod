@@ -161,18 +161,11 @@ public class OrganisationApp {
 
 			File file = new File("output/diagrams/tmp");
 			file.getParentFile().mkdirs();
-		} catch (IOException e) {
-		}
+		} catch (IOException e) {}
 
-		try (FileWriter fw = new FileWriter("output/diagrams/orgTree.gv", false);
+		try (FileWriter fw = new FileWriter("output/diagrams/graph_0.gv", false);
 				BufferedWriter bw = new BufferedWriter(fw);
 				PrintWriter out = new PrintWriter(bw)) {
-			// File filepath = new File("output/diagrams");
-			// FileUtils.deleteDirectory(filepath);
-
-			// File file = new File("orgTree.gv");
-			// file.getParentFile().mkdirs();
-			;
 
 			out.println("digraph G {");
 			for (GoalNode or : tree) {

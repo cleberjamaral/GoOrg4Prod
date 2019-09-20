@@ -9,7 +9,7 @@ cd output/diagrams
 for i in *.gv; do
   number=$(echo $i | tr -cd '[[:digit:]]')
   new=$(printf "%s.pdf" "$i")
-  dot -Tpdf $i -o "../graphs/orgTreeDSN_graph_$number.pdf"
+  dot -Tpdf $i -o "../graphs/orgTree_graph_$number.pdf"
 done
 #rm *.gv
 
