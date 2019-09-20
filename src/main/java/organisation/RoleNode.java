@@ -1,7 +1,9 @@
 package main.java.organisation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -61,10 +63,38 @@ public class RoleNode {
 	public String toString() {
 		String r = "";
 
-		r += "G{" + this.getAssignedGoals() + "}";
-		r += "S{" + this.getSkills() + "}";
-		if (this.getParent() != null) 
-			r += "^" + this.getParent().getAssignedGoals()+this.getParent().getSkills();
+		List<String> assignedGoals = new ArrayList<>();
+		if ((this.getAssignedGoals() != null) && (!this.getAssignedGoals().isEmpty())) {
+			Iterator<GoalNode> iterator = this.getAssignedGoals().iterator(); 
+			while (iterator.hasNext()) {
+				GoalNode n = iterator.next(); 
+				assignedGoals.add(n.toString());
+			}
+		}
+		Collections.sort(assignedGoals);
+		r += "G{" + assignedGoals + "}";
+
+		List<String> skills = new ArrayList<>(this.getSkills());
+		Collections.sort(skills);
+		r += "S{" + skills + "}";
+		
+		if (this.getParent() != null) {
+			r += "^";
+			List<String> parentAssignedGoals = new ArrayList<>();
+			if ((this.getParent().getAssignedGoals() != null) && (!this.getParent().getAssignedGoals().isEmpty())) {
+				Iterator<GoalNode> iterator = this.getParent().getAssignedGoals().iterator(); 
+				while (iterator.hasNext()) {
+					GoalNode n = iterator.next(); 
+					parentAssignedGoals.add(n.toString());
+				}
+			}
+			Collections.sort(parentAssignedGoals);
+			r += assignedGoals;
+			
+			List<String> parentSkills = new ArrayList<>(this.getParent().getSkills());
+			Collections.sort(parentSkills);
+			r += skills;
+		}
 		
 		return r;
 	}

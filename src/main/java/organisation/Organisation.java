@@ -264,7 +264,8 @@ public class Organisation implements Estado, Antecessor {
 		}
 
 		Collections.sort(signature);
-		return signature.toString() + " TreeSize: "+signature.size();	
+		
+		return signature.toString();	
 	}
 
 	/**

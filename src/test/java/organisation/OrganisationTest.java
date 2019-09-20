@@ -66,25 +66,25 @@ public class OrganisationTest {
 		Organisation o1 = new Organisation(g1,1);
 		Nodo n1 = new BuscaLargura().busca(o1);
 		System.out.println("1>>>"+n1.getEstado()+"<<<\n\n\n\n\n");
-		String expectedSolution1 = "[G{[g111]}S{[s2]}^[g14, g11][s1], G{[g112]}S{[]}^[g14, g11][s1], G{[g122, g121]}S{[s2]}^[g12][s2], G{[g1221]}S{[s2]}^[g122, g121][s2], G{[g12]}S{[s2]}^[g1][s1], G{[g13]}S{[s3]}^[g1][s1], G{[g14, g11]}S{[s1]}^[g1][s1], G{[g1]}S{[s1]}] TreeSize: 8";
+		String expectedSolution1 = "[G{[g11, g14]}S{[s1]}^[g11, g14][s1], G{[g111]}S{[s2]}^[g111][s2], G{[g112]}S{[]}^[g112][], G{[g121, g122]}S{[s2]}^[g121, g122][s2], G{[g1221]}S{[s2]}^[g1221][s2], G{[g12]}S{[s2]}^[g12][s2], G{[g13]}S{[s3]}^[g13][s3], G{[g1]}S{[s1]}]";
 		
 		// Test of the flatter structure
 		Organisation o2 = new Organisation(g1,2);
 		Nodo n2 = new BuscaLargura().busca(o2);
 		System.out.println("2>>>"+n2.getEstado()+"<<<\n\n\n\n\n");
-		String expectedSolution2 = "[G{[g122, g112, g121, g12, g1221, g111]}S{[s2]}^[g14, g11, g1][s1], G{[g13]}S{[s3]}^[g14, g11, g1][s1], G{[g14, g11, g1]}S{[s1]}] TreeSize: 3";
+		String expectedSolution2 = "[G{[g1, g11, g14]}S{[s1]}, G{[g111, g112, g12, g121, g122, g1221]}S{[s2]}^[g111, g112, g12, g121, g122, g1221][s2], G{[g13]}S{[s3]}^[g13][s3]]";
 
 		// Test of the most specialist structure
 		Organisation o3 = new Organisation(g1,3);
 		Nodo n3 = new BuscaLargura().busca(o3);
 		System.out.println("3>>>"+n3.getEstado()+"<<<\n\n\n\n\n");
-		String expectedSolution3 = "[G{[g111]}S{[s2]}^[g11][s1], G{[g112]}S{[]}^[g11][s1], G{[g11]}S{[s1]}^[g1][s1], G{[g121]}S{[s2]}^[g12][s2], G{[g1221]}S{[s2]}^[g122][], G{[g122]}S{[]}^[g12][s2], G{[g12]}S{[s2]}^[g1][s1], G{[g13]}S{[s3]}^[g1][s1], G{[g14]}S{[]}^[g1][s1], G{[g1]}S{[s1]}] TreeSize: 10";
+		String expectedSolution3 = "[G{[g111]}S{[s2]}^[g111][s2], G{[g112]}S{[]}^[g112][], G{[g11]}S{[s1]}^[g11][s1], G{[g121]}S{[s2]}^[g121][s2], G{[g1221]}S{[s2]}^[g1221][s2], G{[g122]}S{[]}^[g122][], G{[g12]}S{[s2]}^[g12][s2], G{[g13]}S{[s3]}^[g13][s3], G{[g14]}S{[]}^[g14][], G{[g1]}S{[s1]}]";
 
 		// Test of the most generalist structure
 		Organisation o4 = new Organisation(g1,4);
 		Nodo n4 = new BuscaLargura().busca(o4);
 		System.out.println("4>>>"+n4.getEstado()+"<<<\n\n\n\n\n");
-		String expectedSolution4 = "[G{[g122, g112, g121, g12, g1221, g111]}S{[s2]}^[g14, g11, g1][s1], G{[g13]}S{[s3]}^[g14, g11, g1][s1], G{[g14, g11, g1]}S{[s1]}] TreeSize: 3";
+		String expectedSolution4 = "[G{[g1, g11, g14]}S{[s1]}, G{[g111, g112, g12, g121, g122, g1221]}S{[s2]}^[g111, g112, g12, g121, g122, g1221][s2], G{[g13]}S{[s3]}^[g13][s3]]";
 
 		plotOrganizationalGoalTree();
 		o1.plotOrganisation(1);
