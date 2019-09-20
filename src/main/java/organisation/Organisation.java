@@ -19,7 +19,7 @@ import main.java.simplelogger.SimpleLogger;
 public class Organisation implements Estado, Antecessor {
 
 	/*** STATIC ***/
-	private static SimpleLogger LOG = SimpleLogger.getInstance(1);
+	private static SimpleLogger LOG = SimpleLogger.getInstance(4);
 	// list of target states, i.e., complete charts
 	private static List<Organisation> isGoalList = new ArrayList<Organisation>();
 	// Cost penalty used to infer bad decisions on search
@@ -87,7 +87,7 @@ public class Organisation implements Estado, Antecessor {
 			} else {
 				// This should not happen again, it has occurred because searching process
 				// (deepth) was calling ehMeta 2 times
-				LOG.warn("Goal achieved but duplicated!" + " : " + this.hashCode());
+				LOG.info("Goal achieved but duplicated!" + " : " + this.hashCode());
 				return true; // if only one solution is needed
 			}
 		}
@@ -135,7 +135,7 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public int custo() {
-		LOG.debug("cost: " + cost + " accCost: " + accCost);
+		LOG.info("cost: " + cost + " accCost: " + accCost);
 		return cost;
 	}
 
@@ -144,7 +144,7 @@ public class Organisation implements Estado, Antecessor {
 		List<Estado> suc = new LinkedList<Estado>(); // Lista de sucessores
 
 		if (!this.goalSuccessors.isEmpty())
-			LOG.debug("\nSTATE: " + this.toString() + "Tree:" + this.rolesTree.toString() + " - OpenGoals: [" + goalSuccessors.toString() + "] - Size: "
+			LOG.info("\nSTATE: " + this.toString() + "Tree:" + this.rolesTree.toString() + " - OpenGoals: [" + goalSuccessors.toString() + "] - Size: "
 					+ goalSuccessors.size() + ", Hash: " + this.hashCode());
 
 		// add all children as possible successors
@@ -193,7 +193,7 @@ public class Organisation implements Estado, Antecessor {
 		
 		suc.add(newState);
 
-		LOG.debug("addSubordinate	: " + newState.toString() + ", nSucc: " + newState.goalSuccessors + ", Name: " + r.getRoleName() + ", Parent: " + r.getParent().getRoleName() + ", Hash: " + newState.hashCode());
+		LOG.info("addSubordinate	: " + newState.toString() + ", nSucc: " + newState.goalSuccessors + ", Name: " + r.getRoleName() + ", Parent: " + r.getParent().getRoleName() + ", Hash: " + newState.hashCode());
 	}
 	
 	public void joinAPair(RoleNode role, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
@@ -214,7 +214,7 @@ public class Organisation implements Estado, Antecessor {
 				if (!or.getAssignedGoals().contains(goalToBeAssociatedToRole)) {
 					or.assignGoal(goalToBeAssociatedToRole);
 					suc.add(newState);
-					LOG.debug("joinAPair     	: " + newState.toString() + ", nSucc: " + newState.goalSuccessors + ", Name: " + role.getRoleName() + ", Parent: " + role.getParent().getRoleName() + ", Hash: " + newState.hashCode());
+					LOG.info("joinAPair     	: " + newState.toString() + ", nSucc: " + newState.goalSuccessors + ", Name: " + role.getRoleName() + ", Parent: " + role.getParent().getRoleName() + ", Hash: " + newState.hashCode());
 					break;
 				}
 			}
@@ -239,9 +239,9 @@ public class Organisation implements Estado, Antecessor {
 					or.assignGoal(goalToBeAssociatedToRole);
 					suc.add(newState);
 					if (role.getParent() != null)
-						LOG.debug("joinASubordinate : " + newState.toString() + ", nSucc: " + newState.goalSuccessors + ", Name: " + role.getRoleName() + ", Parent: " + role.getParent().getRoleName() + ", Hash: " + newState.hashCode());
+						LOG.info("joinASubordinate : " + newState.toString() + ", nSucc: " + newState.goalSuccessors + ", Name: " + role.getRoleName() + ", Parent: " + role.getParent().getRoleName() + ", Hash: " + newState.hashCode());
 					else
-						LOG.debug("joinASubordinate : " + newState.toString() + ", nSucc: " + newState.goalSuccessors + ", Name: " + role.getRoleName() + ", Parent: null, Hash: " + newState.hashCode());
+						LOG.info("joinASubordinate : " + newState.toString() + ", nSucc: " + newState.goalSuccessors + ", Name: " + role.getRoleName() + ", Parent: null, Hash: " + newState.hashCode());
 					break;
 				}
 			}
@@ -275,7 +275,7 @@ public class Organisation implements Estado, Antecessor {
 		try {
 			if (o instanceof Organisation) {
 				if (this.toString().equals(((Organisation) o).toString())) {
-					LOG.debug("Pruned" + this.toString());
+					LOG.info("Pruned" + this.toString());
 					return true;
 				}
 				return false;
