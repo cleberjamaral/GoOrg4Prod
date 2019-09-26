@@ -26,22 +26,18 @@ import org.apache.commons.io.FileUtils;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeFalse;
 
+import org.junit.Before;
 import org.junit.Test;  
 
 public class OrganisationTest {
 	
 	static List<GoalNode> tree = new ArrayList<GoalNode>();
-	static Stack<GoalNode> stack = new Stack<GoalNode>();
-	static GoalNode rootNode = null;
-	static boolean pushGoalNode = false;
-	static GoalNode referenceGoalNode = null;
-    
-	@Test
-	public void testOrg() {
-	//public static void main(String[] a) throws IOException {
 	
+	GoalNode g1;
+	@Before
+	public void setupTest() {
 		// Sample organization
-		GoalNode g1 = new GoalNode(null, "g1");
+		g1 = new GoalNode(null, "g1");
 		g1.addSkill("s1");
 		tree.add(g1);
 		
@@ -54,7 +50,10 @@ public class OrganisationTest {
 		addGoalToTree("g1221","g122","s2");
 		addGoalToTree("g13","g1","s3");
 		addGoalToTree("g14","g1",null);
-		
+	}
+	
+	@Test
+	public void testOrg() {
 		// Test of the taller structure
 		Organisation o1 = new Organisation(g1,1);
 		Nodo n1 = new BuscaLargura().busca(o1);
