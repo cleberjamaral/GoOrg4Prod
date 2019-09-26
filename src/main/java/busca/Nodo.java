@@ -1,10 +1,10 @@
-package main.java.busca;
+package busca;
 
 
 /**
  * Representa um nodo da Arvore de busca
  */
-public class Nodo implements Comparable {
+public class Nodo implements Comparable<Object> {
     
     Estado estado;  // o estado
     Nodo   pai;     // o pai

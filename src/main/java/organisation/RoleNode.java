@@ -1,4 +1,4 @@
-package main.java.organisation;
+package organisation;
 
 import java.util.ArrayList;
 import java.util.Collections;

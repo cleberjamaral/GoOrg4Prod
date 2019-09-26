@@ -1,4 +1,4 @@
-package main.java.organisation;
+package organisation;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -9,31 +9,26 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import main.java.busca.BuscaIterativo;
-import main.java.busca.BuscaLargura;
-import main.java.busca.BuscaProfundidade;
-import main.java.busca.Nodo;
+import busca.BuscaLargura;
+import busca.Nodo;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import org.apache.commons.io.FileUtils;
 
-import main.java.simplelogger.SimpleLogger;
+import simplelogger.SimpleLogger;
 
 public class OrganisationApp {
 
 	static List<GoalNode> tree = new ArrayList<GoalNode>();
 	static Stack<GoalNode> stack = new Stack<GoalNode>();
 	static GoalNode rootNode = null;
-	static boolean pushGoalNode = false;
 	static GoalNode referenceGoalNode = null;
 
 	public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {

@@ -1,30 +1,21 @@
-package test.java.organisation;
+package organisation;
 
-import main.java.busca.BuscaIterativo;
-import main.java.busca.BuscaLargura;
-import main.java.busca.BuscaProfundidade;
-import main.java.busca.Nodo;
-import main.java.organisation.GoalNode;
-import main.java.organisation.Organisation;
+import busca.BuscaLargura;
+import busca.Nodo;
+import organisation.GoalNode;
+import organisation.Organisation;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 import org.apache.commons.io.FileUtils;
 
 import static org.junit.Assert.*;
-import static org.junit.Assume.assumeFalse;
 
 import org.junit.Before;
 import org.junit.Test;  

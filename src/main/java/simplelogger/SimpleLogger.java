@@ -1,4 +1,4 @@
-package main.java.simplelogger;
+package simplelogger;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;

@@ -1,7 +1,4 @@
-package main.java.busca;
-
-
-
+package busca;
 
 /**
  *   Algoritmos de Busca (geral, qquer problema)

@@ -1,4 +1,4 @@
-package main.java.organisation;
+package organisation;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,10 +11,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import main.java.busca.Antecessor;
-import main.java.busca.Estado;
+import busca.Antecessor;
+import busca.Estado;
 
-import main.java.simplelogger.SimpleLogger;
+import simplelogger.SimpleLogger;
 
 public class Organisation implements Estado, Antecessor {
 
@@ -67,9 +67,9 @@ public class Organisation implements Estado, Antecessor {
 			this.rolesTree.add(r);
 			
 			// Used to infer a bad decision on the search
-			this.costPenalty = this.goalSuccessors.size() + 1;
+			Organisation.costPenalty = this.goalSuccessors.size() + 1;
 			
-			LOG.info("FIRST STATE CREATED: " + this.toString() + " | " + this.hashCode() + " | Cost penalty: " + this.costPenalty);
+			LOG.info("FIRST STATE CREATED: " + this.toString() + " | " + this.hashCode() + " | Cost penalty: " + Organisation.costPenalty);
 		}
 	}
 

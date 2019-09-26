@@ -1,4 +1,4 @@
-package main.java.busca;
+package busca;
 
 import java.util.HashMap;
 import java.util.LinkedList;
