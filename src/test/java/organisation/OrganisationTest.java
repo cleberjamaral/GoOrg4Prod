@@ -62,7 +62,7 @@ public class OrganisationTest {
     		 * After generating proofs it must be checked manually and then turn this argument false for
     		 * further right assertions
     		 */
-    		((Organisation) n.getEstado()).plotOrganisation(c.ordinal(),true);
+    		((Organisation) n.getEstado()).plotOrganisation(c.ordinal(),false);
 
     		String proof = "";
     		BufferedReader fr;
@@ -77,8 +77,6 @@ public class OrganisationTest {
     		
     		assertEquals(proof, n.getEstado().toString());
         } 
-		
-
 	}
 	
 

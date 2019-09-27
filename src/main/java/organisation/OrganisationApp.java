@@ -46,14 +46,18 @@ public class OrganisationApp {
 			tree.add(g1);
 			GoalNode g2 = new GoalNode(g0, "g2");
 			tree.add(g2);
-			// GoalNode g3 = new GoalNode(g1, "g3");
-			// g3.addSkill("s2");
-			// GoalNode g4 = new GoalNode(g0, "g4");
-			// GoalNode g5 = new GoalNode(g4, "g5");
-			// g5.addSkill("s5");
-			// GoalNode g6 = new GoalNode(g4, "g6");
-			// g6.addSkill("s4");
-			// g6.addSkill("s5");
+			GoalNode g3 = new GoalNode(g1, "g3");
+			tree.add(g3);
+			g3.addSkill("s2");
+			GoalNode g4 = new GoalNode(g0, "g4");
+			tree.add(g4);
+			GoalNode g5 = new GoalNode(g4, "g5");
+			tree.add(g5);
+			g5.addSkill("s5");
+			GoalNode g6 = new GoalNode(g4, "g6");
+			tree.add(g6);
+			g6.addSkill("s4");
+			g6.addSkill("s5");
 			if (args.length == 2) {
 				inicial = new Organisation(g0, Cost.valueOf(args[1]));
 			} else {
@@ -71,19 +75,12 @@ public class OrganisationApp {
 						"Error! It is expected an 'organisational-specification' XML structure");
 
 			document.getDocumentElement().normalize();
+
 			// Visit all possible schemes from Moise 'functional-specification'
 			NodeList nList = document.getElementsByTagName("scheme");
 			visitNodes(nList);
 
 			inicial = new Organisation(rootNode, Cost.SPECIALIST);
-//					BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
-//					System.out.print("Digite sua opcao de busca { Digite S para finalizar }\n");
-//					System.out.print("\t1  -  Largura\n");
-//					System.out.print("\t2  -  Profundidade\n");
-//					System.out.print("\t3  -  Pronfundidade Iterativo\n");
-//					System.out.print("Opcao: ");
-//					str = teclado.readLine().toUpperCase();
-
 		}
 
 		plotOrganizationalGoalTree();
@@ -91,16 +88,19 @@ public class OrganisationApp {
 		Nodo n = null;
 
 		n = new BuscaLargura().busca(inicial);
-//	n = new BuscaProfundidade(100).busca(inicial);
-//	n = new BuscaIterativo().busca(inicial);
-		String solutionDepth = "[G{[g0]}S{[]}, G{[g1]}S{[s1]}^[g0][], G{[g2]}S{[]}^[g0][]] TreeSize: 3";
-		if (n.getEstado().toString().equals(solutionDepth))
-			System.out.println("true");
+		
+		/**
+		 * To create the proof for the current gdt:
+		 * ((Organisation) n.getEstado()).plotOrganisation(Cost.SPECIALIST.ordinal(),true);
+		 */
+		String expectedSolution = "[G{[g0]}S{[]}, G{[g1]}S{[s1]}^[g1][s1], G{[g2]}S{[]}^[g2][], G{[g3]}S{[s2]}^[g3][s2], G{[g4]}S{[]}^[g4][], G{[g5]}S{[s5]}^[g5][s5], G{[g6]}S{[s4, s5]}^[g6][s4, s5]]";
+		System.out.println("\n\nProduced output:" + n.getEstado().toString());
+		System.out.println("Given proof    :" + expectedSolution);
+		                           
+		if (n.getEstado().toString().equals(expectedSolution))
+			System.out.println("\nThe given solution is correct according to the given proof, the project seems to be creating correct organisations!\n\n");
 		else
-			System.out.println("false");
-
-		System.out.println(n.getEstado().toString());
-
+			System.out.println("\nFALSE!!! Something went wrong on comparing the created organisation with the available proof.\n\n");
 	}
 
 	private static void visitNodes(NodeList nList) {
@@ -158,7 +158,7 @@ public class OrganisationApp {
 			file.getParentFile().mkdirs();
 		} catch (IOException e) {}
 
-		try (FileWriter fw = new FileWriter("output/diagrams/graph_0.gv", false);
+		try (FileWriter fw = new FileWriter("output/diagrams/gdt.gv", false);
 				BufferedWriter bw = new BufferedWriter(fw);
 				PrintWriter out = new PrintWriter(bw)) {
 
