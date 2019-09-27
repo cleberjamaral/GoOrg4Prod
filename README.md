@@ -10,10 +10,13 @@ It should grab all dependencies of the project and run a very simple example whi
 A graphviz representation of the input and of the output should be created in the folder `output/diagrams`. In \*nux systems, assuming it has `dot` installed, to generate PDF versions of these files type `.createPDF.sh`. The pdf files go to `output/graphs`.
 
 To run other examples and with other cost function use the first argument to refer to a moise organisational description file and the second argument to select a cost function (see cost enumeration in javadocs for details). An example:
+
 `gradle run --args="od0.xml FLATTER`
-* For other examples the proof will fail.
+
+For other examples the proof will fail since it is set for the embedded example.
 
 It is available an integrated test of all cost functions. This test proposes a simple goals tree and runs it with every cost function asserting if the output matches with the existing proofs. For generating this test enabling text outputs, execute:
+
 `gradle test -i`
 
 ## Project status and roadmap
