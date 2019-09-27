@@ -76,7 +76,7 @@ public class Organisation implements Estado, Antecessor {
 				isGoalList.add(this);
 				LOG.info("GOAL ACHIEVED! Solution: #" + isGoalList.size() + " : " + this.toString() + " | " + this.hashCode());
 
-				plotOrganisation(isGoalList.size());
+				plotOrganisation(isGoalList.size(),false);
 				
 				return true; // if only one solution is needed
 			} else {
@@ -89,11 +89,11 @@ public class Organisation implements Estado, Antecessor {
 		return false;
 	}
 
-	public void plotOrganisation(int organisationId) {
+	public void plotOrganisation(int organisationId, boolean generateProof) {
 		List<String> links = new ArrayList<>();
 		
-		File file = new File("output/diagrams/tmp");
-		file.getParentFile().mkdirs();
+		File diagramFile = new File("output/diagrams/tmp");
+		diagramFile.getParentFile().mkdirs();
 		
 		try (FileWriter fw = new FileWriter("output/diagrams/graph_" + organisationId + ".gv", false);
 				BufferedWriter bw = new BufferedWriter(fw);
@@ -120,12 +120,17 @@ public class Organisation implements Estado, Antecessor {
 		} catch (IOException e) {
 		}
 		
-		try (FileWriter fw = new FileWriter("output/diagrams/graph_" + organisationId + ".txt", false);
-				BufferedWriter bw = new BufferedWriter(fw);
-				PrintWriter out = new PrintWriter(bw)) {
-			
-			out.println(this.toString());
-		} catch (IOException e) {
+		if (generateProof) {
+			File proofFile = new File("output/proofs/tmp");
+			proofFile.getParentFile().mkdirs();
+
+			try (FileWriter fw = new FileWriter("output/proofs/graph_" + organisationId + ".txt", false);
+					BufferedWriter bw = new BufferedWriter(fw);
+					PrintWriter out = new PrintWriter(bw)) {
+				
+				out.println(this.toString());
+			} catch (IOException e) {
+			}
 		}
 	}
 
