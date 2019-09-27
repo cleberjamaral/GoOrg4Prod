@@ -44,18 +44,37 @@ public class OrganisationTest {
 		addGoalToTree("g1221","g122","s2");
 		addGoalToTree("g13","g1","s3");
 		addGoalToTree("g14","g1",null);
+		
+		plotOrganizationalGoalTree();
 	}
 	
 	@Test
 	public void testOrg() {
 		
-		
+		String expectedSolution[] = {
+				"[G{[g1, g11, g12, g122]}S{[s1]}, G{[g111, g112, g1221]}S{[s2]}^[g111, g112, g1221][s2], G{[g121, g14]}S{[s2]}^[g121, g14][s2], G{[g13]}S{[s3]}^[g13][s3]]",
+				"[G{[g111]}S{[s2]}^[g111][s2], G{[g112]}S{[s2]}^[g112][s2], G{[g11]}S{[s1]}^[g11][s1], G{[g12, g13]}S{[s3]}^[g12, g13][s3], G{[g121, g122]}S{[s2]}^[g121, g122][s2], G{[g1221]}S{[s2]}^[g1221][s2], G{[g14]}S{[]}^[g14][], G{[g1]}S{[s1]}]",
+				"[G{[g1, g11, g12, g122]}S{[s1]}, G{[g111, g112, g121, g1221]}S{[s2]}^[g111, g112, g121, g1221][s2], G{[g13, g14]}S{[s3]}^[g13, g14][s3]]",
+				"[G{[g111]}S{[s2]}^[g111][s2], G{[g112]}S{[s2]}^[g112][s2], G{[g11]}S{[s1]}^[g11][s1], G{[g121]}S{[s2]}^[g121][s2], G{[g1221]}S{[s2]}^[g1221][s2], G{[g122]}S{[]}^[g122][], G{[g12]}S{[]}^[g12][], G{[g13]}S{[s3]}^[g13][s3], G{[g14]}S{[]}^[g14][], G{[g1]}S{[s1]}]",
+				"[G{[g1, g11, g12, g122]}S{[s1]}, G{[g111, g112, g121, g1221]}S{[s2]}^[g111, g112, g121, g1221][s2], G{[g13, g14]}S{[s3]}^[g13, g14][s3]]"
+		};
+		Cost cost[] = Cost.values(); 
+        for (Cost c : cost) 
+        { 
+    		Organisation o = new Organisation(g1,((Cost) c));
+    		Nodo n = new BuscaLargura().busca(o);
+    		System.out.println("1>>>"+n.getEstado()+"<<<\n\n\n\n\n");
+
+    		((Organisation) n.getEstado()).plotOrganisation(c.ordinal());
+    		assertEquals(expectedSolution[c.ordinal()], n.getEstado().toString());
+        } 
 		
 		// Test of the taller structure
-		Organisation o1 = new Organisation(g1,Cost.TALLER);
-		Nodo n1 = new BuscaLargura().busca(o1);
-		System.out.println("1>>>"+n1.getEstado()+"<<<\n\n\n\n\n");
-		String expectedSolution1 = "[G{[g111]}S{[s2]}^[g111][s2], G{[g112]}S{[s2]}^[g112][s2], G{[g11]}S{[s1]}^[g11][s1], G{[g12, g13]}S{[s3]}^[g12, g13][s3], G{[g121, g122]}S{[s2]}^[g121, g122][s2], G{[g1221]}S{[s2]}^[g1221][s2], G{[g14]}S{[]}^[g14][], G{[g1]}S{[s1]}]";
+//		Organisation o1 = new Organisation(g1,Cost.TALLER);
+//		Nodo n1 = new BuscaLargura().busca(o1);
+//		System.out.println("1>>>"+n1.getEstado()+"<<<\n\n\n\n\n");
+//		String expectedSolution1 = "[G{[g111]}S{[s2]}^[g111][s2], G{[g112]}S{[s2]}^[g112][s2], G{[g11]}S{[s1]}^[g11][s1], G{[g12, g13]}S{[s3]}^[g12, g13][s3], G{[g121, g122]}S{[s2]}^[g121, g122][s2], G{[g1221]}S{[s2]}^[g1221][s2], G{[g14]}S{[]}^[g14][], G{[g1]}S{[s1]}]";
+		
 //		BufferedReader fr;
 //		try {
 //			fr = new BufferedReader(new FileReader("output/diagrams/graph_1.txt"));
@@ -65,34 +84,33 @@ public class OrganisationTest {
 //		}
 		
 		// Test of the flatter structure
-		Organisation o2 = new Organisation(g1,Cost.FLATTER);
-		Nodo n2 = new BuscaLargura().busca(o2);
-		System.out.println("2>>>"+n2.getEstado()+"<<<\n\n\n\n\n");
-		String expectedSolution2 = "[G{[g1, g11, g12, g122]}S{[s1]}, G{[g111, g112, g121, g1221]}S{[s2]}^[g111, g112, g121, g1221][s2], G{[g13, g14]}S{[s3]}^[g13, g14][s3]]";
-
-		// Test of the most specialist structure
-		Organisation o3 = new Organisation(g1,Cost.SPECIALIST);
-		Nodo n3 = new BuscaLargura().busca(o3);
-		System.out.println("3>>>"+n3.getEstado()+"<<<\n\n\n\n\n");
-		String expectedSolution3 = "[G{[g111]}S{[s2]}^[g111][s2], G{[g112]}S{[s2]}^[g112][s2], G{[g11]}S{[s1]}^[g11][s1], G{[g121]}S{[s2]}^[g121][s2], G{[g1221]}S{[s2]}^[g1221][s2], G{[g122]}S{[]}^[g122][], G{[g12]}S{[]}^[g12][], G{[g13]}S{[s3]}^[g13][s3], G{[g14]}S{[]}^[g14][], G{[g1]}S{[s1]}]";
-
-		// Test of the most generalist structure
-		Organisation o4 = new Organisation(g1,Cost.GENERALIST);
-		Nodo n4 = new BuscaLargura().busca(o4);
-		System.out.println("4>>>"+n4.getEstado()+"<<<\n\n\n\n\n");
-		String expectedSolution4 = "[G{[g1, g11, g12, g122]}S{[s1]}, G{[g111, g112, g121, g1221]}S{[s2]}^[g111, g112, g121, g1221][s2], G{[g13, g14]}S{[s3]}^[g13, g14][s3]]";
-		
-		
-		plotOrganizationalGoalTree();
-		((Organisation) n1.getEstado()).plotOrganisation(1);
-		((Organisation) n2.getEstado()).plotOrganisation(2);
-		((Organisation) n3.getEstado()).plotOrganisation(3);
-		((Organisation) n4.getEstado()).plotOrganisation(4);
-
-		assertEquals(expectedSolution1, n1.getEstado().toString());
-		assertEquals(expectedSolution2, n2.getEstado().toString());
-		assertEquals(expectedSolution3, n3.getEstado().toString());
-		assertEquals(expectedSolution4, n4.getEstado().toString());
+//		Organisation o2 = new Organisation(g1,Cost.FLATTER);
+//		Nodo n2 = new BuscaLargura().busca(o2);
+//		System.out.println("2>>>"+n2.getEstado()+"<<<\n\n\n\n\n");
+//		String expectedSolution2 = "[G{[g1, g11, g12, g122]}S{[s1]}, G{[g111, g112, g121, g1221]}S{[s2]}^[g111, g112, g121, g1221][s2], G{[g13, g14]}S{[s3]}^[g13, g14][s3]]";
+//
+//		// Test of the most specialist structure
+//		Organisation o3 = new Organisation(g1,Cost.SPECIALIST);
+//		Nodo n3 = new BuscaLargura().busca(o3);
+//		System.out.println("3>>>"+n3.getEstado()+"<<<\n\n\n\n\n");
+//		String expectedSolution3 = "[G{[g111]}S{[s2]}^[g111][s2], G{[g112]}S{[s2]}^[g112][s2], G{[g11]}S{[s1]}^[g11][s1], G{[g121]}S{[s2]}^[g121][s2], G{[g1221]}S{[s2]}^[g1221][s2], G{[g122]}S{[]}^[g122][], G{[g12]}S{[]}^[g12][], G{[g13]}S{[s3]}^[g13][s3], G{[g14]}S{[]}^[g14][], G{[g1]}S{[s1]}]";
+//
+//		// Test of the most generalist structure
+//		Organisation o4 = new Organisation(g1,Cost.GENERALIST);
+//		Nodo n4 = new BuscaLargura().busca(o4);
+//		System.out.println("4>>>"+n4.getEstado()+"<<<\n\n\n\n\n");
+//		String expectedSolution4 = "[G{[g1, g11, g12, g122]}S{[s1]}, G{[g111, g112, g121, g1221]}S{[s2]}^[g111, g112, g121, g1221][s2], G{[g13, g14]}S{[s3]}^[g13, g14][s3]]";
+//		
+//		
+//		((Organisation) n1.getEstado()).plotOrganisation(1);
+//		((Organisation) n2.getEstado()).plotOrganisation(2);
+//		((Organisation) n3.getEstado()).plotOrganisation(3);
+//		((Organisation) n4.getEstado()).plotOrganisation(4);
+//
+//		assertEquals(expectedSolution1, n1.getEstado().toString());
+//		assertEquals(expectedSolution2, n2.getEstado().toString());
+//		assertEquals(expectedSolution3, n3.getEstado().toString());
+//		assertEquals(expectedSolution4, n4.getEstado().toString());
 		
 		//n = new BuscaProfundidade(100).busca(inicial);
 		//n = new BuscaIterativo().busca(inicial);
@@ -128,7 +146,7 @@ public class OrganisationTest {
 			file.getParentFile().mkdirs();
 		} catch (IOException e) {}
 
-		try (FileWriter fw = new FileWriter("output/diagrams/graph_0.gv", false);
+		try (FileWriter fw = new FileWriter("output/diagrams/gdt.gv", false);
 				BufferedWriter bw = new BufferedWriter(fw);
 				PrintWriter out = new PrintWriter(bw)) {
 			
