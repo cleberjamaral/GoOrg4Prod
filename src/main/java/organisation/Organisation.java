@@ -31,14 +31,9 @@ public class Organisation implements Estado, Antecessor {
 	// The goals that were not explored yet, the algorithm end when all goals were allocated into roles
 	private List<GoalNode> goalSuccessors = new ArrayList<GoalNode>();
 	
-	/**
-	 * 0: unitary cost (no function)
-	 * 1: Taller hierarchies are preferrable 
-	 * 2: Flatter hierarchies are preferrable 
-	 * 3: More specilist roles are preferrable
-	 * 4: More generalist roles are preferrable 
-	 */
-	static int costFunction = 3;
+	//static Cost costFunction = Cost.SPECIALIST;
+	static Cost costFunction = Cost.SPECIALIST;
+	
 	// Cost supporting variables
 	private int cost = 0;
 	private int accCost = 0;
@@ -47,7 +42,7 @@ public class Organisation implements Estado, Antecessor {
 		return "Empty\n";
 	}
 
-	public Organisation(GoalNode gn, int costFunction) {
+	public Organisation(GoalNode gn, Cost costFunction) {
 		this(gn);
 		
 		Organisation.costFunction = costFunction;
@@ -177,7 +172,8 @@ public class Organisation implements Estado, Antecessor {
 
 		Organisation newState = (Organisation) createState(goalToBeAssociatedToRole);
 
-		if ((costFunction == 2) || (costFunction == 4)) {
+		
+		if ((costFunction == Cost.FLATTER) || (costFunction == Cost.GENERALIST)) {
 			newState.cost = Organisation.costPenalty;
 		} else {
 			newState.cost = 1;
@@ -200,7 +196,7 @@ public class Organisation implements Estado, Antecessor {
 
 		Organisation newState = (Organisation) createState(goalToBeAssociatedToRole);
 
-		if (costFunction == 3) {
+		if (costFunction == Cost.SPECIALIST) {
 			newState.cost = Organisation.costPenalty;
 		} else {
 			newState.cost = 1;
@@ -225,7 +221,7 @@ public class Organisation implements Estado, Antecessor {
 
 		Organisation newState = (Organisation) createState(goalToBeAssociatedToRole);
 		
-		if ((costFunction == 1) || (costFunction == 3)) {
+		if ((costFunction == Cost.TALLER) || (costFunction == Cost.SPECIALIST)) {
 			newState.cost = Organisation.costPenalty;
 		} else {
 			newState.cost = 1;

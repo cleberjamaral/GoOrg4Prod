@@ -55,9 +55,9 @@ public class OrganisationApp {
 			// g6.addSkill("s4");
 			// g6.addSkill("s5");
 			if (args.length == 2) {
-				inicial = new Organisation(g0, Integer.parseInt(args[1]));
+				inicial = new Organisation(g0, Cost.valueOf(args[1]));
 			} else {
-				inicial = new Organisation(g0, 3);
+				inicial = new Organisation(g0, Cost.SPECIALIST);
 			}
 		} else {
 			String file = args[0];
@@ -75,7 +75,7 @@ public class OrganisationApp {
 			NodeList nList = document.getElementsByTagName("scheme");
 			visitNodes(nList);
 
-			inicial = new Organisation(rootNode, 3);
+			inicial = new Organisation(rootNode, Cost.SPECIALIST);
 //					BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
 //					System.out.print("Digite sua opcao de busca { Digite S para finalizar }\n");
 //					System.out.print("\t1  -  Largura\n");
