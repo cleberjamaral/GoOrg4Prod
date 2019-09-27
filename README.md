@@ -26,4 +26,3 @@ To add this project to eclipse use Import > Gradle > Existing Gradle Project.
 ## Further documentation
 
 The [javadoc documentation](http://htmlpreview.github.io/?https://github.com/cleberjamaral/autoOrgDesignProject/blob/master/doc/apidoc/overview-tree.html) is available!
-
