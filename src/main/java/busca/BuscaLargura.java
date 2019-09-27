@@ -15,7 +15,10 @@ public class BuscaLargura extends Busca {
     public BuscaLargura() {
     }
     
-    /** busca mostrando status */
+    /** 
+     * busca mostrando status
+     * @param ms shows console
+     */
     public BuscaLargura(MostraStatusConsole ms) {
         super(ms);
     }

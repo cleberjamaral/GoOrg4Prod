@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
-
 /**
  *   Algoritmos de Busca (geral, qquer problema)
  *
@@ -31,7 +29,10 @@ public abstract class Busca {
     public Busca() {
     }
 
-    /** busca mostrando status */
+    /**
+     * busca mostrando status
+     * @param ms shows console
+     */
     public Busca(MostraStatusConsole ms) {
         setMostra(ms);
     }
@@ -83,6 +84,7 @@ public abstract class Busca {
     
     /**
      * Numero maximo permitido de nodos Abertos
+     * @return int maxAbertos
      */
     public int getMaxAbertos() {
     	return maxAbertos;
@@ -90,6 +92,7 @@ public abstract class Busca {
 
     /**
      * Configura numero maximo de nodos Abertos -1 para desabilitar
+     * @param ma int maxAbertos
      */
     public void setMaxAbertos(int ma) {
     	maxAbertos = ma;
@@ -97,6 +100,7 @@ public abstract class Busca {
 
     /**
      * Numero maximo permitido de nodos Visitados
+     * @return maxVisitados
      */
     public int getMaxVisitados() {
     	return maxVisitados;
@@ -104,6 +108,7 @@ public abstract class Busca {
     
     /**
      * Configura numero maximo de nodos Visitados -1 para desabilitar
+     * @param mv maxVisitados
      */
     public void setMaxVisitados(int mv) {
     	maxVisitados = mv;
@@ -111,6 +116,7 @@ public abstract class Busca {
     
     /**
      * Numero maximo permitido de nodos Visitados
+     * @return maxTempo
      */
     public long getMaxTempo() {
     	return maxTempo;
@@ -118,6 +124,7 @@ public abstract class Busca {
     
     /**
      * Configura numero maximo de nodos Visitados -1 para desabilitar
+     * @param mt maxTempo
      */
     public void setMaxTempo(long mt) {
     	maxTempo = mt;
@@ -125,6 +132,8 @@ public abstract class Busca {
 
     /**
      * gera uma lista de sucessores do nodo.
+     * @param pai a node
+     * @return the list of nodes
      */
     public List<Nodo> sucessores(Nodo pai) {
 
@@ -140,6 +149,11 @@ public abstract class Busca {
     	return soNovos(pai.estado.sucessores(),pai); // lista de todos os sucessores
     }
 
+    /**
+     * Return list of antecessors of the given parent
+     * @param pai a node
+     * @return the list of nodes
+     */
     public List<Nodo> antecessores(Nodo pai) {
         try {
             return soNovos( ((Antecessor)pai.estado).antecessores(),pai);
@@ -148,8 +162,13 @@ public abstract class Busca {
             return new LinkedList<Nodo>();
         }
     }
-    
 
+    /**
+     * Return list of new nodes
+     * @param estados a list of States
+     * @param pai a node
+     * @return the list of nodes
+     */
     private List<Nodo> soNovos(List<Estado> estados, Nodo pai) {
         List<Nodo> sucNodo   = new LinkedList<Nodo>(); // a lista de sucessores novos
         for (Estado e: estados) {

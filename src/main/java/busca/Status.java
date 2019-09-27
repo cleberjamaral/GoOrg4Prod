@@ -61,7 +61,12 @@ public class Status {
         return custoTotal;
     }
     
-    /** o algoritmo pegou n para explorar de um total de s */
+    /** 
+     * o algoritmo pegou n para explorar de um total de s 
+     * @param n a node
+     * @param s the size of opened nodes list
+     * @return true if it is a goal state
+     */
     public boolean explorandoEhMeta(Nodo n, int s) {
         boolean ehMeta = false;
     	tamAbertos = s;
@@ -80,7 +85,10 @@ public class Status {
         return ehMeta;
     }
 
-    /** o algoritmo pegou n para explorar de um total de s */
+    /** o algoritmo pegou n para explorar de um total de s 
+     * @param n a node
+     * @param s the size of opened nodes list
+     */
     public void explorando(Nodo n, int s) {
         tamAbertos = s;
         nroVisitados++;

@@ -17,7 +17,9 @@ public class SubidaMontanha extends BuscaHeuristica {
     public SubidaMontanha() {
     }
     
-    /** busca mostrando status */
+    /** busca mostrando status 
+     * @param ms shows console
+     */
     public SubidaMontanha(MostraStatusConsole ms) {
         super(ms);
     }

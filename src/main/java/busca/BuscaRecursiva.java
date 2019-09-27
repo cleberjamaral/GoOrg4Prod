@@ -16,7 +16,10 @@ public class BuscaRecursiva extends BuscaProfundidade {
     public BuscaRecursiva() {
     }
     
-    /** busca mostrando status */
+    /** 
+     * busca mostrando status
+     * @param ms shows console 
+     */
     public BuscaRecursiva(MostraStatusConsole ms) {
         super(ms);
     }

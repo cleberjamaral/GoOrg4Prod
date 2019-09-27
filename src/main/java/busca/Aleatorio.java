@@ -6,8 +6,9 @@ package busca;
  * @author  jomi
  */
 public interface Aleatorio {
-   /**
+    /**
      * gera um estado aleatorio
+     * @return generated State
      */
     public Estado geraAleatorio();
 

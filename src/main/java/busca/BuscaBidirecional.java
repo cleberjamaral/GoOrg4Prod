@@ -13,24 +13,25 @@ public class BuscaBidirecional extends Busca {
     /** busca sem mostrar status */
     public BuscaBidirecional() {
     }
-    
-    /** busca mostrando status */
+
+    /**
+     * busca mostrando status
+     * @param ms shows console
+     */
     public BuscaBidirecional(MostraStatusConsole ms) {
         super(ms);
     }
 
     /**
-     *
      * Busca a solucao por busca em Bi-direcional.
-     *                              -------------
+     * @param inicial first state
+     * @param meta a goal state
+     * @return Node
      */
     public Nodo busca(Estado inicial, Estado meta) {
         status.inicia();
         usarFechado = false; // tem que usar poda so por ascendencia! nao pode usar fechados
         
-        // TODO: ter duas tabelas de fechados, uma para cada lado!
-        
-        // TODO: usar tree para ter ordem (g) e ser rapido de achar
         List<Nodo> abertosCima  = new LinkedList<Nodo>();
         List<Nodo> abertosBaixo = new LinkedList<Nodo>();
         

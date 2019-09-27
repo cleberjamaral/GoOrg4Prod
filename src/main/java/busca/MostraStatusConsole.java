@@ -49,11 +49,6 @@ public class MostraStatusConsole extends Thread {
         println("\t"+status.nroVisitados+" nodos visitados, nodos em aberto="+status.tamAbertos);
         println("\tProfundidade atual="+status.profundidadeMax);
         println("\tTempo decorrido="+status.getTempoDecorrido());
-        /* 
-        print("\nNUmero mEdio de sucessores="+melhor.nroMedioSucessores());
-        print("\nMEdia de profundidade="+melhor.getProfundidadeMedia());
-        print("\nProfundidade mAxima="+melhor.profundidadeMax);
-        */
     }
 
     protected void println(String s) {

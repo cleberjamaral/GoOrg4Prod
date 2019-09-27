@@ -22,7 +22,10 @@ public class BuscaProfundidade extends Busca {
         profMax = m;
     }
     
-    /** busca mostrando status */
+    /** 
+     * busca mostrando status
+     * @param ms shows console
+     */
     public BuscaProfundidade(MostraStatusConsole ms) {
         super(ms);
     }
@@ -31,7 +34,6 @@ public class BuscaProfundidade extends Busca {
         profMax = m;
     }
     
-	
 	public void setProfMax(int m) {
 		profMax = m;
 	}

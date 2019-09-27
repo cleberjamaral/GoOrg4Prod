@@ -8,7 +8,6 @@ import organisation.Organisation;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -63,7 +62,7 @@ public class OrganisationTest {
     		 * After generating proofs it must be checked manually and then turn this argument false for
     		 * further right assertions
     		 */
-    		((Organisation) n.getEstado()).plotOrganisation(c.ordinal(),false);
+    		((Organisation) n.getEstado()).plotOrganisation(c.ordinal(),true);
 
     		String proof = "";
     		BufferedReader fr;

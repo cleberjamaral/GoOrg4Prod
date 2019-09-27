@@ -7,6 +7,7 @@ package busca;
  *
  *   @author Jomi Fred Hubner
  */
+
 public class BuscaIterativo extends BuscaProfundidade {
 
     private Status status = new Status();
@@ -15,7 +16,10 @@ public class BuscaIterativo extends BuscaProfundidade {
     public BuscaIterativo() {
     }
     
-    /** busca mostrando status */
+    /**
+     * busca mostrando status
+     * @param ms shows console
+     */
     public BuscaIterativo(MostraStatusConsole ms) {
         setMostra(ms);
     }
@@ -35,13 +39,6 @@ public class BuscaIterativo extends BuscaProfundidade {
         return status;
     }
     
-
-    /**
-     *
-     * Busca a solucao por busca em profundidade iterativo.
-     *                              ----------------------
-     *
-     */
     public Nodo busca(Estado inicial) {
         status.inicia();
         initFechados();

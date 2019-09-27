@@ -11,28 +11,26 @@ import java.util.Queue;
 public class AEstrela extends BuscaHeuristica {
     
 	int maxF = -1; // max F
-    //int maxAbertos = -1; // max abertos
 	Nodo theBest;
 
-    /** busca sem mostrar status */
+    /** 
+     * busca sem mostrar status 
+     */
     public AEstrela() {
     }
     
-    /** busca mostrando status */
+    /**
+     * busca mostrando status
+     * @param ms shows status on console
+     */
     public AEstrela(MostraStatusConsole ms) {
         super(ms);
     }
 	
-	/** seta o limite para f(), -1 e ilimitado */
-	//public void setMaxF(int m) {
-		//maxF = m;
-	//}
-
-    /** seta o limite para o nro de abertos, -1 e ilimitado */
-    //public void setMaxAbertos(int m) {
-        //maxAbertos = m;
-    //}
-	
+	/**
+	 * Return the best node
+	 * @return best node
+	 */
 	public Nodo getTheBest() {
 		return theBest;
 	}
@@ -41,13 +39,12 @@ public class AEstrela extends BuscaHeuristica {
      *
      * Busca a solucao por busca em heuristica.
      *                              ----------
-     * (baseado no Russel & Norvig)
+     * (baseado no Russel and Norvig)
      */
     public Nodo busca(Estado inicial) {
         status.inicia();
         initFechados();
         
-        //Priority_Queue abertos = new Heap(100, getNodoComparatorF()); // lista ordenada por f()
         Queue<Nodo> abertos = new PriorityQueue<Nodo>(100, getNodoComparatorF()); // lista ordenada por f()
         Nodo nInicial = new Nodo(inicial, null);
         abertos.add(nInicial);
@@ -73,9 +70,6 @@ public class AEstrela extends BuscaHeuristica {
             // o "the best" e o codigo que segue so para fins de interface
             if (melhor.f() < theBest.f()) {
                 theBest = melhor;
-                //print("\nMelhor (em profundidade "+melhor.getProfundidade()+", h="+((Heuristica)theBest.estado).h()+")="+melhor);
-            	//Esta busca poderia estar sendo chamada da BPI que faria com que fossem geradas mais soluções?
-
             }
             
         }

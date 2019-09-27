@@ -38,6 +38,7 @@ public class Nodo implements Comparable<Object> {
     
     /** retorna o custo acumulado de gerar o nodo 
      *  (baseado no acumulo do custo de gerar os estados)
+     * @return int representing cost
      */
     public int g() {
         return g;
@@ -45,6 +46,7 @@ public class Nodo implements Comparable<Object> {
     
     /**
      * Custo total
+     * @return integer representing cost + heuristic
      */
     public int f() {
         if (f == -1) {
@@ -76,6 +78,8 @@ public class Nodo implements Comparable<Object> {
     /**
      * testa se o nodo nAo tem um ascensor igual a ele
      * (se um dos pais eh igual a ele)
+     * @param ascensor is a node to check if this current one is descending to
+     * @return true if it is
      */
     boolean ehDescendenteNovo(Nodo ascensor) {
         if (ascensor == null) {
@@ -123,6 +127,7 @@ public class Nodo implements Comparable<Object> {
     
     /**
      *  imprime o caminho atE a raIz
+     * @return String of the path
      */
     public String montaCaminho() {
         return montaCaminho(this);
