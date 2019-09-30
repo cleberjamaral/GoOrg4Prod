@@ -1,6 +1,6 @@
-# autoOrgDesignProject
+# GoOrg - From Goals to Organisations: automated organisation design method (Project)
 
-This is the implementation of [GoOrg](https://link.springer.com/chapter/10.1007/978-3-030-24299-2_28) project. GoOrg is a method for automatic creation of organisations. This demand comes from complex projects of multiple systems working in a coordinated way in order to achieve mutual goals which are situations where Multi-Agent Systems are often applied. To design such systems it is necessary to define how they will work together, i.e., how they will be organised which can be a tough task for humans encharged for the design of the whole system. To track this problem and help humans to easier develop Multi-Agent Systems we propose GoOrg for generating the organisational structure of the system.
+This is the implementation of GoOrg ([PAAMS'19](https://link.springer.com/chapter/10.1007/978-3-030-24299-2_28) and [EMAS'19](http://cgi.csc.liv.ac.uk/~lad/emas2019/accepted/EMAS2019_paper_5.pdf) papers available) project. GoOrg is a method for automatic creation of organisations. This demand comes from complex projects of multiple systems working in a coordinated way in order to achieve mutual goals which are situations where Multi-Agent Systems are often applied. To design such systems it is necessary to define how they will work together, i.e., how they will be organised which can be a tough task for humans encharged for the design of the whole system. To track this problem and help humans to easier develop Multi-Agent Systems we propose GoOrg for generating the organisational structure of the system.
 
 ## Running and testing
 
