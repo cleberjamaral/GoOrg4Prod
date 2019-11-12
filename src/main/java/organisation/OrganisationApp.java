@@ -12,6 +12,7 @@ import org.xml.sax.SAXException;
 import busca.BuscaLargura;
 import busca.Nodo;
 import properties.Workload;
+import resources.Agent;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -38,8 +39,10 @@ public class OrganisationApp {
 		SimpleLogger.getInstance(1);
 
 		Organisation inicial;
+		// if a Moise XML file was not provided, use a sample organisation
 		if ((args.length < 1) || (args[0].equals("0"))) {
-			// Sample organization
+			
+			// Sample goals tree
 			GoalNode g0 = new GoalNode(null, "g0");
 			tree.add(g0);
 			GoalNode g1 = new GoalNode(g0, "g1");
@@ -63,10 +66,37 @@ public class OrganisationApp {
 			Workload w4 = new Workload("s4",0);
 			g6.addRequirement(w4);
 			g6.addRequirement(w5);
+			
+			// Sample list of agents
+			List<Object> agents = new ArrayList<>();
+			Agent a0 = new Agent();
+			agents.add(a0);
+			Agent a1 = new Agent();
+			agents.add(a1);
+			Workload wa1 = new Workload("s1",0);
+			a1.addProperty(wa1);
+			Agent a2 = new Agent();
+			Workload wa2 = new Workload("s2",0);
+			a1.addProperty(wa2);
+			agents.add(a2);
+			Agent a3 = new Agent();
+			agents.add(a3);
+			Agent a4 = new Agent();
+			Workload wa4 = new Workload("s4",0);
+			a4.addProperty(wa4);
+			agents.add(a4);
+			Agent a5 = new Agent();
+			Workload wa5 = new Workload("s5",0);
+			a5.addProperty(wa5);
+			agents.add(a5);
+			Agent a6 = new Agent();
+			agents.add(a6);
+			
+			// if an argument to choose a cost function was given
 			if (args.length == 2) {
-				inicial = new Organisation(g0, Cost.valueOf(args[1]));
+				inicial = new Organisation(g0, Cost.valueOf(args[1]), agents);
 			} else {
-				inicial = new Organisation(g0, Cost.SPECIALIST);
+				inicial = new Organisation(g0, Cost.SPECIALIST, agents);
 			}
 		} else {
 			String file = args[0];

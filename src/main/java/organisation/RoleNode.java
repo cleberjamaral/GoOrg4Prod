@@ -30,6 +30,13 @@ public class RoleNode {
 		return requirements;
 	}
 
+	public boolean matchRequirements(List<Object> reqs) {
+		if ((requirements.containsAll(reqs)) || (reqs.isEmpty())) {
+			return true;
+		}
+		return false;
+	}
+	
 	public void assignGoal(GoalNode g) {
 		assignedGoals.add(g);
 	}
@@ -107,7 +114,5 @@ public class RoleNode {
 		}
 		
 	    return clone;
-
-	    
 	}
 }
