@@ -107,15 +107,15 @@ public class Organisation implements Estado, Antecessor {
 						+ "<tr><td bgcolor=\"black\" align=\"center\"><font color=\"white\">"
 						+ or.getRoleName() + "</font></td></tr><tr><td align=\"center\">" + or.getAssignedGoals() + "</td></tr>");
 				for (Object s : or.getRequirements())
-					out.print("<tr><td align=\"left\">" + s + "</td></tr>");
+					out.print("<tr><td align=\"left\">" + s.toString() + "</td></tr>");
 				out.println("</table>> ];");
 				
 				if (or.getParent() != null)
 					links.add("\""+or.getParent().getRoleName() + "\"->\"" + or.getRoleName()+"\"");
 			}
 
-			for (String s : links)
-				out.println("\t" + s + ";");
+			for (String l : links)
+				out.println("\t" + l + ";");
 			out.println("}");
 		} catch (IOException e) {
 		}
@@ -187,8 +187,8 @@ public class Organisation implements Estado, Antecessor {
 
 		RoleNode r = new RoleNode(parentRole, "r"+newState.rolesTree.size());
 		r.assignGoal(goalToBeAssociatedToRole);
-		// Copy all skills of the goal to this new role
-		for (Object skill : goalToBeAssociatedToRole.getRequirements()) r.addRequirement(skill);
+		// Copy all requirements of the goal to this new role
+		for (Object requirement : goalToBeAssociatedToRole.getRequirements()) r.addRequirement(requirement);
 		
 		newState.rolesTree.add(r);
 		

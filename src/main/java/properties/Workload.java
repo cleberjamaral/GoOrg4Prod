@@ -1,28 +1,33 @@
 package properties;
 
 public class Workload {
-	private String symbol;
-	private int workload;
+	private String id;
+	private int effort;
 
-	public Workload(String symbol, int workload) {
+	public Workload(String id, int effort) {
 		super();
-		this.symbol = symbol;
-		this.workload = workload;
+		this.id = id;
+		this.effort = effort;
 	}
 	
 	public String getSymbol() {
-		return symbol;
+		return id;
 	}
 	
 	public void setSymbol(String symbol) {
-		this.symbol = symbol;
+		this.id = symbol;
 	}
 	
 	public int getWorkload() {
-		return workload;
+		return effort;
 	}
 	
-	public void setWorkload(int workload) {
-		this.workload = workload;
-	}	
+	public void setWorkload(int effort) {
+		this.effort = effort;
+	}
+	
+	@Override
+	public String toString() {
+		return "workload[id=" + id + ",effort=" + effort + "]";
+	}
 }
