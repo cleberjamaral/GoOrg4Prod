@@ -93,14 +93,18 @@ public class OrganisationApp {
 		 * To create the proof for the current gdt:
 		 * ((Organisation) n.getEstado()).plotOrganisation(Cost.SPECIALIST.ordinal(),true);
 		 */
-		String expectedSolution = "[G{[g0]}S{[]}, G{[g1]}S{[s1]}^[g1][s1], G{[g2]}S{[]}^[g2][], G{[g3]}S{[s2]}^[g3][s2], G{[g4]}S{[]}^[g4][], G{[g5]}S{[s5]}^[g5][s5], G{[g6]}S{[s4, s5]}^[g6][s4, s5]]";
-		System.out.println("\n\nProduced output:" + n.getEstado().toString());
-		System.out.println("Given proof    :" + expectedSolution);
-		                           
-		if (n.getEstado().toString().equals(expectedSolution))
-			System.out.println("\nThe given solution is correct according to the given proof, the project seems to be creating correct organisations!\n\n");
-		else
-			System.out.println("\nFALSE!!! Something went wrong on comparing the created organisation with the available proof.\n\n");
+		if (n != null) {
+			String expectedSolution = "[G{[g0]}S{[]}, G{[g1]}S{[s1]}^[g1][s1], G{[g2]}S{[]}^[g2][], G{[g3]}S{[s2]}^[g3][s2], G{[g4]}S{[]}^[g4][], G{[g5]}S{[s5]}^[g5][s5], G{[g6]}S{[s4, s5]}^[g6][s4, s5]]";
+			System.out.println("\n\nProduced output:" + n.getEstado().toString());
+			System.out.println("Given proof    :" + expectedSolution);
+			                           
+			if (n.getEstado().toString().equals(expectedSolution))
+				System.out.println("\nThe given solution is correct according to the given proof, the project seems to be creating correct organisations!\n\n");
+			else
+				System.out.println("\nFALSE!!! Something went wrong on comparing the created organisation with the available proof.\n\n");
+		} else {
+			System.out.println("\nThe resulting state is null. This behaviour is expected when Organisation.ehMeta() method is set to always return false.\nDid you set the algorithm to find all possible solutions?\n\n");
+		}
 	}
 
 	private static void visitNodes(NodeList nList) {
