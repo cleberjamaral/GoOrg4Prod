@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GoalNode {
-	private List<String> skills = new ArrayList<String>();
+	private List<Object> requirements = new ArrayList<Object>();
 	private List<GoalNode> descendents = new ArrayList<GoalNode>();
 	private String goalName;
 	private GoalNode parent;
@@ -19,12 +19,12 @@ public class GoalNode {
 		}
 	}
 
-	public void addSkill(String newSkill) {
-		skills.add(newSkill);
+	public void addRequirement(Object newRequirement) {
+		requirements.add(newRequirement);
 	}
 
-	public List<String> getSkills() {
-		return skills;
+	public List<Object> getRequirements() {
+		return requirements;
 	}
 
 	private void addDescendent(GoalNode newDescendent) {
@@ -60,7 +60,7 @@ public class GoalNode {
 	public GoalNode clone() {
 		GoalNode clone = new GoalNode(this.parent, this.goalName);
 		
-		for (String s : this.skills) clone.skills.add(s);
+		for (Object s : this.requirements) clone.requirements.add(s);
 		for (GoalNode gn : this.descendents) clone.descendents.add(gn);
 		clone.operator = this.operator;
 		

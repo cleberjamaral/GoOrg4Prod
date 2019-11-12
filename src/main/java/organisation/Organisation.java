@@ -58,7 +58,7 @@ public class Organisation implements Estado, Antecessor {
 			String roleName = "r"+this.rolesTree.size();
 			RoleNode r = new RoleNode(null, roleName);
 			r.assignGoal(gn);
-			for (String skill : gn.getSkills()) r.addSkill(skill);
+			for (Object requirement : gn.getRequirements()) r.addRequirement(requirement);
 			this.rolesTree.add(r);
 			
 			// Used to infer a bad decision on the search
@@ -106,7 +106,7 @@ public class Organisation implements Estado, Antecessor {
 						+ "shape = \"Mrecord\" label = <<table border=\"0\" cellborder=\"0\" bgcolor=\"white\">"
 						+ "<tr><td bgcolor=\"black\" align=\"center\"><font color=\"white\">"
 						+ or.getRoleName() + "</font></td></tr><tr><td align=\"center\">" + or.getAssignedGoals() + "</td></tr>");
-				for (String s : or.getSkills())
+				for (Object s : or.getRequirements())
 					out.print("<tr><td align=\"left\">" + s + "</td></tr>");
 				out.println("</table>> ];");
 				
@@ -156,14 +156,14 @@ public class Organisation implements Estado, Antecessor {
 					// creating successors, create a subordinate role (child)
 					addSubordinate(role, suc, goalToBeAssociated);
 					// creating successors, join goals of a pair
-					if ((role.getSkills().containsAll(goalToBeAssociated.getSkills())) || 
-						(goalToBeAssociated.getSkills().isEmpty())) {
+					if ((role.getRequirements().containsAll(goalToBeAssociated.getRequirements())) || 
+						(goalToBeAssociated.getRequirements().isEmpty())) {
 							joinASubordinate(role, suc, goalToBeAssociated);
 					} 
 				} else if ((role.getParent() != null) && (role.getParent().getAssignedGoals().contains(goalToBeAssociated.getParent()))) {
 					// creating successors, join goals of a pair
-					if (((role.getSkills().containsAll(goalToBeAssociated.getSkills())
-							) || (goalToBeAssociated.getSkills().isEmpty()))) {
+					if (((role.getRequirements().containsAll(goalToBeAssociated.getRequirements())
+							) || (goalToBeAssociated.getRequirements().isEmpty()))) {
 						joinAPair(role, suc, goalToBeAssociated);
 					} 
 				}
@@ -188,7 +188,7 @@ public class Organisation implements Estado, Antecessor {
 		RoleNode r = new RoleNode(parentRole, "r"+newState.rolesTree.size());
 		r.assignGoal(goalToBeAssociatedToRole);
 		// Copy all skills of the goal to this new role
-		for (String skill : goalToBeAssociatedToRole.getSkills()) r.addSkill(skill);
+		for (Object skill : goalToBeAssociatedToRole.getRequirements()) r.addRequirement(skill);
 		
 		newState.rolesTree.add(r);
 		

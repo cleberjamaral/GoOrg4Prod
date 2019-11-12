@@ -11,6 +11,7 @@ import org.xml.sax.SAXException;
 
 import busca.BuscaLargura;
 import busca.Nodo;
+import properties.Workload;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -42,22 +43,26 @@ public class OrganisationApp {
 			GoalNode g0 = new GoalNode(null, "g0");
 			tree.add(g0);
 			GoalNode g1 = new GoalNode(g0, "g1");
-			g1.addSkill("s1");
+			Workload w1 = new Workload("s1",0);
+			g1.addRequirement(w1);
 			tree.add(g1);
 			GoalNode g2 = new GoalNode(g0, "g2");
 			tree.add(g2);
 			GoalNode g3 = new GoalNode(g1, "g3");
 			tree.add(g3);
-			g3.addSkill("s2");
+			Workload w2 = new Workload("s2",0);
+			g3.addRequirement(w2);
 			GoalNode g4 = new GoalNode(g0, "g4");
 			tree.add(g4);
 			GoalNode g5 = new GoalNode(g4, "g5");
 			tree.add(g5);
-			g5.addSkill("s5");
+			Workload w5 = new Workload("s5",0);
+			g5.addRequirement(w5);
 			GoalNode g6 = new GoalNode(g4, "g6");
 			tree.add(g6);
-			g6.addSkill("s4");
-			g6.addSkill("s5");
+			Workload w4 = new Workload("s4",0);
+			g6.addRequirement(w4);
+			g6.addRequirement(w5);
 			if (args.length == 2) {
 				inicial = new Organisation(g0, Cost.valueOf(args[1]));
 			} else {
@@ -131,9 +136,9 @@ public class OrganisationApp {
 					SimpleLogger.getInstance().debug(
 							"Push = " + referenceGoalNode.toString() + " - Op: " + referenceGoalNode.getOperator());
 				} else if (node.getNodeName().equals("skill")) {
-					referenceGoalNode.addSkill(eGoal.getAttribute("id"));
+					referenceGoalNode.addRequirement(eGoal.getAttribute("id"));
 					SimpleLogger.getInstance()
-							.debug("Skill = " + referenceGoalNode.toString() + " : " + referenceGoalNode.getSkills());
+							.debug("Skill = " + referenceGoalNode.toString() + " : " + referenceGoalNode.getRequirements());
 				} else if (node.getNodeName().equals("mission")) {
 					return; // end of scheme goals
 				}
@@ -176,7 +181,7 @@ public class OrganisationApp {
 							+ "shape = \"ellipse\" label = <<table border=\"0\" cellborder=\"0\">"
 							+ "<tr><td align=\"center\"><b>" + or.getGoalName() + "</b></td></tr>");
 				}
-				for (String s : or.getSkills())
+				for (Object s : or.getRequirements())
 					out.print("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
 				out.println("</table>> ];");
 				if (or.getParent() != null)

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 public class RoleNode {
-	private Set<String> skills = new HashSet<String>();
+	private Set<Object> requirements = new HashSet<Object>();
 	private Set<GoalNode> assignedGoals = new HashSet<GoalNode>();
 	private List<RoleNode> descendents = new ArrayList<RoleNode>();
 	private String roleName;
@@ -22,12 +22,12 @@ public class RoleNode {
 		}
 	}
 
-	public void addSkill(String newSkill) {
-		skills.add(newSkill);
+	public void addRequirement(Object skill) {
+		requirements.add(skill);
 	}
 
-	public Set<String> getSkills() {
-		return skills;
+	public Set<Object> getRequirements() {
+		return requirements;
 	}
 
 	public void assignGoal(GoalNode g) {
@@ -74,9 +74,8 @@ public class RoleNode {
 		Collections.sort(assignedGoals);
 		r += "G{" + assignedGoals + "}";
 
-		List<String> skills = new ArrayList<>(this.getSkills());
-		Collections.sort(skills);
-		r += "S{" + skills + "}";
+		List<Object> reqs = new ArrayList<>(this.getRequirements());
+		r += "S{" + reqs + "}";
 		
 		if (this.getParent() != null) {
 			r += "^";
@@ -91,9 +90,8 @@ public class RoleNode {
 			Collections.sort(parentAssignedGoals);
 			r += assignedGoals;
 			
-			List<String> parentSkills = new ArrayList<>(this.getParent().getSkills());
-			Collections.sort(parentSkills);
-			r += skills;
+			List<Object> parentReqs = new ArrayList<>(this.getParent().getRequirements());
+			r += parentReqs;
 		}
 		
 		return r;
@@ -102,7 +100,7 @@ public class RoleNode {
 	public RoleNode clone() {
 		RoleNode clone = new RoleNode(this.parent, this.roleName);
 		
-		for (String s : this.skills) clone.skills.add(s);
+		for (Object s : this.requirements) clone.requirements.add(s);
 		for (RoleNode gn : this.descendents) clone.descendents.add(gn);
 		for (GoalNode goal : this.assignedGoals) {
 			if (!clone.assignedGoals.contains(goal)) clone.assignedGoals.add(goal);

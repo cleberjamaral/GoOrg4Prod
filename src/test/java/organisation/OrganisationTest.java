@@ -31,7 +31,7 @@ public class OrganisationTest {
 	public void setupTest() {
 		// Sample organization
 		g1 = new GoalNode(null, "g1");
-		g1.addSkill("s1");
+		g1.addRequirement("s1");
 		tree.add(g1);
 		
 		addGoalToTree("g11","g1","s1");
@@ -88,14 +88,14 @@ public class OrganisationTest {
 				GoalNode n = iterator.next(); 
 				if (n.getGoalName().equals(parent)) {
 					GoalNode g = new GoalNode(n, name);
-					if (skill != null) g.addSkill(skill);
+					if (skill != null) g.addRequirement(skill);
 					tree.add(g);
 					break;
 				}
 			}
 		} else {
 			GoalNode g = new GoalNode(null, name);
-			if (skill != null) g.addSkill(skill);
+			if (skill != null) g.addRequirement(skill);
 			tree.add(g);
 		}
 	}
@@ -127,7 +127,7 @@ public class OrganisationTest {
     						+ "<tr><td align=\"center\"><b>" 
     						+ or.getGoalName() + "</b></td></tr>");
     			}
-				for (String s : or.getSkills())
+				for (Object s : or.getRequirements())
 					out.print("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
 				out.println("</table>> ];");
 				if (or.getParent() != null)
