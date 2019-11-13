@@ -47,8 +47,6 @@ public class RoleNode {
 
 	private void addDescendent(RoleNode newDescendent) {
 		descendents.add(newDescendent);
-		if (parent != null)
-			parent.addDescendent(newDescendent);
 	}
 
 	public List<RoleNode> getSuccessors() {

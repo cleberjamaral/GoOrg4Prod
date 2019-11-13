@@ -2,9 +2,9 @@ package properties;
 
 public class Workload {
 	private String id;
-	private int effort;
+	private float effort;
 
-	public Workload(String id, int effort) {
+	public Workload(String id, float effort) {
 		super();
 		this.id = id;
 		this.effort = effort;
@@ -18,12 +18,12 @@ public class Workload {
 		this.id = id;
 	}
 	
-	public int getWorkload() {
+	public float getWorkload() {
 		return effort;
 	}
 	
-	public void setWorkload(int effort) {
-		this.effort = effort;
+	public void setWorkload(float f) {
+		this.effort = f;
 	}
 	
 	@Override

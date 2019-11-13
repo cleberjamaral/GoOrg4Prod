@@ -46,7 +46,7 @@ public class OrganisationApp {
 			GoalNode g0 = new GoalNode(null, "g0");
 			tree.add(g0);
 			GoalNode g1 = new GoalNode(g0, "g1");
-			Workload w1 = new Workload("s1",0);
+			Workload w1 = new Workload("s1",4);
 			g1.addRequirement(w1);
 			tree.add(g1);
 			GoalNode g2 = new GoalNode(g0, "g2");
@@ -59,44 +59,48 @@ public class OrganisationApp {
 			tree.add(g4);
 			GoalNode g5 = new GoalNode(g4, "g5");
 			tree.add(g5);
-			Workload w5 = new Workload("s5",0);
+			Workload w5 = new Workload("s5",20);
 			g5.addRequirement(w5);
 			GoalNode g6 = new GoalNode(g4, "g6");
 			tree.add(g6);
-			Workload w4 = new Workload("s4",0);
+			Workload w4 = new Workload("s4",8);
 			g6.addRequirement(w4);
 			g6.addRequirement(w5);
 			
 			// Sample list of agents
-			List<Object> agents = new ArrayList<>();
-			Agent a0 = new Agent();
-			agents.add(a0);
-			Agent a1 = new Agent();
-			agents.add(a1);
-			Workload wa1 = new Workload("s1",0);
-			a1.addProperty(wa1);
-			Agent a2 = new Agent();
-			Workload wa2 = new Workload("s2",0);
-			a1.addProperty(wa2);
-			agents.add(a2);
-			Agent a3 = new Agent();
-			agents.add(a3);
-			Agent a4 = new Agent();
-			Workload wa4 = new Workload("s4",0);
-			a4.addProperty(wa4);
-			agents.add(a4);
-			Agent a5 = new Agent();
-			Workload wa5 = new Workload("s5",0);
-			a5.addProperty(wa5);
-			agents.add(a5);
-			Agent a6 = new Agent();
-			agents.add(a6);
+//			List<Object> agents = new ArrayList<>();
+//			Agent a0 = new Agent();
+//			agents.add(a0);
+//			Agent a1 = new Agent();
+//			agents.add(a1);
+//			Workload wa1 = new Workload("s1",0);
+//			a1.addProperty(wa1);
+//			Agent a2 = new Agent();
+//			Workload wa2 = new Workload("s2",0);
+//			a1.addProperty(wa2);
+//			agents.add(a2);
+//			Agent a3 = new Agent();
+//			agents.add(a3);
+//			Agent a4 = new Agent();
+//			Workload wa4 = new Workload("s4",0);
+//			a4.addProperty(wa4);
+//			agents.add(a4);
+//			Agent a5 = new Agent();
+//			Workload wa5 = new Workload("s5",0);
+//			a5.addProperty(wa5);
+//			agents.add(a5);
+//			Agent a6 = new Agent();
+//			agents.add(a6);
+			
+			List<Object> limits = new ArrayList<>();
+			Workload w = new Workload("s",8);
+			limits.add(w);
 			
 			// if an argument to choose a cost function was given
 			if (args.length == 2) {
-				inicial = new Organisation(g0, Cost.valueOf(args[1]), agents);
+				inicial = new Organisation(g0, Cost.valueOf(args[1]));
 			} else {
-				inicial = new Organisation(g0, Cost.SPECIALIST, agents);
+				inicial = new Organisation(g0, Cost.SPECIALIST);
 			}
 		} else {
 			String file = args[0];
@@ -138,7 +142,7 @@ public class OrganisationApp {
 			else
 				System.out.println("\nFALSE!!! Something went wrong on comparing the created organisation with the available proof.\n\n");
 		} else {
-			System.out.println("\nThe resulting state is null. Did you set the algorithm to find all possible solutions?\n\n");
+			System.out.println("\nThe resulting state is null. This behaviour is expected when Organisation.ehMeta() method is set to always return false.\nDid you set the algorithm to find all possible solutions?\n\n");
 		}
 	}
 

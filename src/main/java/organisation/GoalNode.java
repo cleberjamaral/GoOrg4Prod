@@ -3,6 +3,8 @@ package organisation;
 import java.util.ArrayList;
 import java.util.List;
 
+import properties.Workload;
+
 public class GoalNode {
 	private List<Object> requirements = new ArrayList<Object>();
 	private List<GoalNode> descendents = new ArrayList<GoalNode>();
@@ -27,10 +29,8 @@ public class GoalNode {
 		return requirements;
 	}
 
-	private void addDescendent(GoalNode newDescendent) {
+	public void addDescendent(GoalNode newDescendent) {
 		descendents.add(newDescendent);
-		if (parent != null)
-			parent.addDescendent(newDescendent);
 	}
 
 	public List<GoalNode> getSuccessors() {

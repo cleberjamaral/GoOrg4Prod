@@ -60,8 +60,7 @@ public class Organisation implements Estado, Antecessor {
 
 		// Is the first state that is going to be created
 		if (gn.getParent() == null) {
-			for (GoalNode goal : gn.getSuccessors())
-				this.goalSuccessors.add(goal);
+			addAllGoalsSuccessors(gn);
 
 			String roleName = "r" + this.rolesTree.size();
 			RoleNode r = new RoleNode(null, roleName);
@@ -75,6 +74,13 @@ public class Organisation implements Estado, Antecessor {
 
 			LOG.info("FIRST STATE CREATED: " + this.toString() + " | " + this.hashCode() + " | Cost penalty: "
 					+ Organisation.costPenalty);
+		}
+	}
+
+	private void addAllGoalsSuccessors(GoalNode gn) {
+		for (GoalNode goal : gn.getSuccessors()) {
+			this.goalSuccessors.add(goal);
+			addAllGoalsSuccessors(goal);
 		}
 	}
 
