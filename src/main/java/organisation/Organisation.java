@@ -61,14 +61,13 @@ public class Organisation implements Estado, Antecessor {
 
 	public Organisation(GoalNode gn) {
 
-		// Is the first state that is going to be created
+		// If it is the first state that is going to be created
 		if (gn.getParent() == null) {
-			//GoalNode newRoot = gn;
 			GoalNode newRoot = gn.cloneContent();
 			brakeGoalTree(gn, newRoot);
 			
 			plotOrganizationalGoalTree(newRoot);
-
+			
 			addAllGoalsSuccessors(newRoot);
 
 			String roleName = "r" + this.rolesTree.size();
@@ -88,9 +87,37 @@ public class Organisation implements Estado, Antecessor {
 
 	private static void brakeGoalTree(GoalNode original, GoalNode parent) {
 		original.getDescendents().forEach(s -> {
-			GoalNode g = s.cloneContent();
-			g.setParent(parent);
-			brakeGoalTree(s, g);
+			if (!s.containsWorkload()) {
+				GoalNode g = s.cloneContent();
+				g.setParent(parent);
+				brakeGoalTree(s, g);
+			} else {
+				// get the biggest effort and divide all workloads by the limit
+				double greaterEffort = 0;
+				for (Object w : s.getRequirements()) {
+					if (w instanceof Workload) {
+						if (((Workload) w).getEffort() > greaterEffort) {
+							greaterEffort = ((Workload) w).getEffort();
+						}
+					}
+				}
+				//TODO: get a limit as a parameter
+				int slices = (int) Math.ceil(greaterEffort/8);
+				if (slices == 0) slices = 1;
+				for (int i = 1; i <= slices; i++) {
+					GoalNode g = s.cloneContent();
+					g.setParent(parent);
+					if (slices > 1) g.setGoalName(g.getGoalName()+"$"+i);
+					for (Object w : g.getRequirements()) {
+						
+						if ((w instanceof Workload) && (slices > 1)) {
+							((Workload) w).setEffort(((Workload) w).getEffort()/slices);
+						}
+					}
+					if (i == slices) brakeGoalTree(s, g);
+				}
+				
+			}
 		});
 	}
 

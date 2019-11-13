@@ -14,15 +14,11 @@ import busca.Nodo;
 import properties.Workload;
 import resources.Agent;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import org.apache.commons.io.FileUtils;
 
 import simplelogger.SimpleLogger;
 
@@ -59,13 +55,14 @@ public class OrganisationApp {
 			tree.add(g4);
 			GoalNode g5 = new GoalNode(g4, "g5");
 			tree.add(g5);
-			Workload w5 = new Workload("s5",20);
+			Workload w5 = new Workload("s5",10);
 			g5.addRequirement(w5);
 			GoalNode g6 = new GoalNode(g4, "g6");
 			tree.add(g6);
 			Workload w4 = new Workload("s4",8);
 			g6.addRequirement(w4);
-			g6.addRequirement(w5);
+			Workload w5b = new Workload("s5",9);
+			g6.addRequirement(w5b);
 			
 			// Sample list of agents
 //			List<Object> agents = new ArrayList<>();

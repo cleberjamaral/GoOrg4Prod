@@ -2,9 +2,9 @@ package properties;
 
 public class Workload {
 	private String id;
-	private float effort;
+	private double effort;
 
-	public Workload(String id, float effort) {
+	public Workload(String id, double effort) {
 		super();
 		this.id = id;
 		this.effort = effort;
@@ -18,17 +18,17 @@ public class Workload {
 		this.id = id;
 	}
 	
-	public float getEffort() {
+	public double getEffort() {
 		return effort;
 	}
 	
-	public void setEffort(float f) {
-		this.effort = f;
+	public void setEffort(double d) {
+		this.effort = d;
 	}
 	
 	@Override
 	public String toString() {
-		return "workload[id=" + id + ",effort=" + effort + "]";
+		return "workload[id=" + id + ",effort=" + String.format("%.1f", effort) + "]";
 	}
 	
 	@Override

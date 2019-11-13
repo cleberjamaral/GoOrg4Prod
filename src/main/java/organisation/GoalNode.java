@@ -64,6 +64,12 @@ public class GoalNode {
 		this.operator = op;
 	}
 	
+	public boolean containsWorkload() {
+		for (Object s : this.requirements) 
+			if (s instanceof Workload) return true;
+		return false;
+	}
+	
 	public String toString() {
 		return goalName;
 	}
@@ -71,7 +77,7 @@ public class GoalNode {
 	public GoalNode cloneContent() {
 		GoalNode clone = new GoalNode(null, this.goalName);
 		
-		for (Object s : this.requirements) clone.requirements.add(s);
+		for (Object s : this.requirements) clone.requirements.add(((Workload)s).clone());
 		clone.operator = this.operator;
 		
 	    return clone;
@@ -80,7 +86,7 @@ public class GoalNode {
 	public GoalNode clone() {
 		GoalNode clone = new GoalNode(this.parent, this.goalName);
 		
-		for (Object s : this.requirements) clone.requirements.add(s);
+		for (Object s : this.requirements) clone.requirements.add(((Workload)s).clone());
 		for (GoalNode gn : this.descendents) clone.descendents.add(gn);
 		clone.operator = this.operator;
 		
