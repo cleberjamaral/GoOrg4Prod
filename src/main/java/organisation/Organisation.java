@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+
 import busca.Antecessor;
 import busca.Estado;
 import properties.Performer;
@@ -61,12 +63,18 @@ public class Organisation implements Estado, Antecessor {
 
 		// Is the first state that is going to be created
 		if (gn.getParent() == null) {
-			addAllGoalsSuccessors(gn);
+			//GoalNode newRoot = gn;
+			GoalNode newRoot = gn.cloneContent();
+			brakeGoalTree(gn, newRoot);
+			
+			plotOrganizationalGoalTree(newRoot);
+
+			addAllGoalsSuccessors(newRoot);
 
 			String roleName = "r" + this.rolesTree.size();
 			RoleNode r = new RoleNode(null, roleName);
-			r.assignGoal(gn);
-			for (Object requirement : gn.getRequirements())
+			r.assignGoal(newRoot);
+			for (Object requirement : newRoot.getRequirements())
 				r.addRequirement(((Workload)requirement).clone());
 			this.rolesTree.add(r);
 
@@ -78,8 +86,16 @@ public class Organisation implements Estado, Antecessor {
 		}
 	}
 
+	private static void brakeGoalTree(GoalNode original, GoalNode parent) {
+		original.getDescendents().forEach(s -> {
+			GoalNode g = s.cloneContent();
+			g.setParent(parent);
+			brakeGoalTree(s, g);
+		});
+	}
+
 	private void addAllGoalsSuccessors(GoalNode gn) {
-		for (GoalNode goal : gn.getSuccessors()) {
+		for (GoalNode goal : gn.getDescendents()) {
 			this.goalSuccessors.add(goal);
 			addAllGoalsSuccessors(goal);
 		}
@@ -151,6 +167,51 @@ public class Organisation implements Estado, Antecessor {
 		}
 	}
 
+	private static void plotOrganizationalGoalTree(GoalNode gn) {
+		try {
+			File filepath = new File("output/diagrams");
+			FileUtils.deleteDirectory(filepath);
+
+			File file = new File("output/diagrams/tmp");
+			file.getParentFile().mkdirs();
+		} catch (IOException e) {}
+
+		try (FileWriter fw = new FileWriter("output/diagrams/gdt.gv", false);
+				BufferedWriter bw = new BufferedWriter(fw);
+				PrintWriter out = new PrintWriter(bw)) {
+
+			out.println("digraph G {");
+			plotGoalNode(out, gn);
+
+			out.println("}");
+		} catch (IOException e) {
+		}
+	}
+
+	private static void plotGoalNode(PrintWriter out, GoalNode or) {
+		if (or.getOperator().equals("parallel")) {
+			out.print("\t\"" + or.getGoalName()
+					+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
+					+ "shape = \"diamond\" label = <<table border=\"0\" cellborder=\"0\">"
+					+ "<tr><td align=\"center\"><font color=\"black\"><b>" + or.getGoalName()
+					+ "</b></font></td></tr>");
+		} else {
+			out.print("\t\"" + or.getGoalName()
+					+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
+					+ "shape = \"ellipse\" label = <<table border=\"0\" cellborder=\"0\">"
+					+ "<tr><td align=\"center\"><b>" + or.getGoalName() + "</b></td></tr>");
+		}
+		for (Object s : or.getRequirements())
+			out.print("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
+		out.println("</table>> ];");
+		or.getDescendents().forEach(g -> {
+			plotGoalNode(out, g);
+			if (g.getParent() != null)
+				out.println("\t\"" + g.getParent().getGoalName() + "\"->\"" + g.getGoalName() + "\";");
+
+		});
+	}
+	
 	public int custo() {
 		LOG.info("cost: " + cost + " accCost: " + accCost);
 		return cost;

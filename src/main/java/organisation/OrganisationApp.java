@@ -96,12 +96,17 @@ public class OrganisationApp {
 			Workload w = new Workload("s",8);
 			limits.add(w);
 			
+			//GoalNode newRoot = g0;
+			GoalNode newRoot = g0.cloneContent();
+			brakeGoalTree(g0, newRoot);
+
 			// if an argument to choose a cost function was given
 			if (args.length == 2) {
-				inicial = new Organisation(g0, Cost.valueOf(args[1]));
+				inicial = new Organisation(newRoot, Cost.valueOf(args[1]));
 			} else {
-				inicial = new Organisation(g0, Cost.SPECIALIST);
+				inicial = new Organisation(newRoot, Cost.SPECIALIST);
 			}
+
 		} else {
 			String file = args[0];
 
@@ -121,8 +126,6 @@ public class OrganisationApp {
 
 			inicial = new Organisation(rootNode, Cost.SPECIALIST);
 		}
-
-		plotOrganizationalGoalTree();
 
 		Nodo n = null;
 
@@ -144,6 +147,14 @@ public class OrganisationApp {
 		} else {
 			System.out.println("\nThe resulting state is null. This behaviour is expected when Organisation.ehMeta() method is set to always return false.\nDid you set the algorithm to find all possible solutions?\n\n");
 		}
+	}
+	
+	private static void brakeGoalTree(GoalNode original, GoalNode parent) {
+		original.getDescendents().forEach(s -> {
+			GoalNode g = s.cloneContent();
+			g.setParent(parent);
+			brakeGoalTree(s, g);
+		});
 	}
 
 	private static void visitNodes(NodeList nList) {
@@ -192,42 +203,5 @@ public class OrganisationApp {
 		}
 	}
 
-	private static void plotOrganizationalGoalTree() {
-		try {
-			File filepath = new File("output/diagrams");
-			FileUtils.deleteDirectory(filepath);
 
-			File file = new File("output/diagrams/tmp");
-			file.getParentFile().mkdirs();
-		} catch (IOException e) {}
-
-		try (FileWriter fw = new FileWriter("output/diagrams/gdt.gv", false);
-				BufferedWriter bw = new BufferedWriter(fw);
-				PrintWriter out = new PrintWriter(bw)) {
-
-			out.println("digraph G {");
-			for (GoalNode or : tree) {
-				if (or.getOperator().equals("parallel")) {
-					out.print("\t\"" + or.getGoalName()
-							+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
-							+ "shape = \"diamond\" label = <<table border=\"0\" cellborder=\"0\">"
-							+ "<tr><td align=\"center\"><font color=\"black\"><b>" + or.getGoalName()
-							+ "</b></font></td></tr>");
-				} else {
-					out.print("\t\"" + or.getGoalName()
-							+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
-							+ "shape = \"ellipse\" label = <<table border=\"0\" cellborder=\"0\">"
-							+ "<tr><td align=\"center\"><b>" + or.getGoalName() + "</b></td></tr>");
-				}
-				for (Object s : or.getRequirements())
-					out.print("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
-				out.println("</table>> ];");
-				if (or.getParent() != null)
-					out.println("\t\"" + or.getParent().getGoalName() + "\"->\"" + or.getGoalName() + "\";");
-			}
-
-			out.println("}");
-		} catch (IOException e) {
-		}
-	}
 }

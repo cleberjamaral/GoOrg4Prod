@@ -33,7 +33,7 @@ public class GoalNode {
 		descendents.add(newDescendent);
 	}
 
-	public List<GoalNode> getSuccessors() {
+	public List<GoalNode> getDescendents() {
 		return descendents;
 	}
 
@@ -41,20 +41,40 @@ public class GoalNode {
 		return goalName;
 	}
 
+	public void setGoalName(String goalName) {
+		this.goalName = goalName;
+	} 
+	
 	public GoalNode getParent() {
 		return parent;
 	}
 
-	public void setOperator(String op) {
-		this.operator = op;
+	public void setParent(GoalNode parent) {
+		this.parent = parent;
+		if (this.parent != null) {
+			this.parent.addDescendent(this);
+		}
 	}
 
 	public String getOperator() {
 		return operator;
 	}
 
+	public void setOperator(String op) {
+		this.operator = op;
+	}
+	
 	public String toString() {
 		return goalName;
+	}
+
+	public GoalNode cloneContent() {
+		GoalNode clone = new GoalNode(null, this.goalName);
+		
+		for (Object s : this.requirements) clone.requirements.add(s);
+		clone.operator = this.operator;
+		
+	    return clone;
 	}
 	
 	public GoalNode clone() {
