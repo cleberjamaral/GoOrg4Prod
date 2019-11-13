@@ -1,13 +1,13 @@
 package properties;
 
-public class Workload {
+public class Performer {
 	private String id;
-	private float effort;
+	private int number;
 
-	public Workload(String id, float effort) {
+	public Performer(String id, int number) {
 		super();
 		this.id = id;
-		this.effort = effort;
+		this.number = number;
 	}
 	
 	public String getId() {
@@ -18,17 +18,17 @@ public class Workload {
 		this.id = id;
 	}
 	
-	public float getEffort() {
-		return effort;
+	public int getNumber() {
+		return number;
 	}
-	
-	public void setEffort(float f) {
-		this.effort = f;
+
+	public void setNumber(int number) {
+		this.number = number;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "workload[id=" + id + ",effort=" + effort + "]";
+		return "performer[id=" + id + ", number=" + number + "]";
 	}
 	
 	@Override
@@ -47,7 +47,7 @@ public class Workload {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Workload other = (Workload) obj;
+		Performer other = (Performer) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -56,8 +56,8 @@ public class Workload {
 		return true;
 	}
 	
-	public Workload clone() {
-		Workload clone = new Workload(this.id, this.effort);
+	public Performer clone() {
+		Performer clone = new Performer(this.id, this.number);
 	
 	    return clone;
 	}

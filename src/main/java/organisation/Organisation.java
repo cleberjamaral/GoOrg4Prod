@@ -13,6 +13,7 @@ import java.util.List;
 
 import busca.Antecessor;
 import busca.Estado;
+import properties.Performer;
 import properties.Workload;
 import simplelogger.SimpleLogger;
 
