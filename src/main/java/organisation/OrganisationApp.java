@@ -12,7 +12,6 @@ import org.xml.sax.SAXException;
 import busca.BuscaLargura;
 import busca.Nodo;
 import properties.Workload;
-import resources.Agent;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,36 +31,36 @@ public class OrganisationApp {
 	public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
 
 		// set verbose level
-		SimpleLogger.getInstance(1);
+		SimpleLogger.getInstance(3);
 
 		Organisation inicial;
 		// if a Moise XML file was not provided, use a sample organisation
 		if ((args.length < 1) || (args[0].equals("0"))) {
 			
 			// Sample goals tree
-			GoalNode g0 = new GoalNode(null, "g0");
+			GoalNode g0 = new GoalNode(null, "PaintHouse");
 			tree.add(g0);
-			GoalNode g1 = new GoalNode(g0, "g1");
-			Workload w1 = new Workload("s1",4);
+			GoalNode g1 = new GoalNode(g0, "GetInputs");
+			Workload w1 = new Workload("Contract",0);
 			g1.addRequirement(w1);
 			tree.add(g1);
-			GoalNode g2 = new GoalNode(g0, "g2");
+			GoalNode g2 = new GoalNode(g0, "Paint");
 			tree.add(g2);
-			GoalNode g3 = new GoalNode(g1, "g3");
+			GoalNode g3 = new GoalNode(g1, "BuyInputs");
 			tree.add(g3);
-			Workload w2 = new Workload("s2",0);
+			Workload w2 = new Workload("Purchase",4);
 			g3.addRequirement(w2);
-			GoalNode g4 = new GoalNode(g0, "g4");
+			GoalNode g4 = new GoalNode(g0, "Inspect");
 			tree.add(g4);
-			GoalNode g5 = new GoalNode(g4, "g5");
+			GoalNode g5 = new GoalNode(g2, "PaintInt");
 			tree.add(g5);
-			Workload w5 = new Workload("s5",10);
+			Workload w5 = new Workload("Paint",8);
 			g5.addRequirement(w5);
-			GoalNode g6 = new GoalNode(g4, "g6");
+			GoalNode g6 = new GoalNode(g2, "PaintExt");
 			tree.add(g6);
-			Workload w4 = new Workload("s4",8);
+			Workload w4 = new Workload("Paint",4);
 			g6.addRequirement(w4);
-			Workload w5b = new Workload("s5",9);
+			Workload w5b = new Workload("Scaffold",2);
 			g6.addRequirement(w5b);
 			
 			// Sample list of agents

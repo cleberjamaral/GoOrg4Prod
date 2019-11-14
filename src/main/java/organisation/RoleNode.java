@@ -14,11 +14,11 @@ public class RoleNode {
 	private String roleName;
 	private RoleNode parent;
 
-	public RoleNode(RoleNode p, String name) {
+	public RoleNode(RoleNode parent, String name) {
+		this.parent = parent;
 		roleName = name;
-		parent = p;
-		if (parent != null) {
-			parent.addDescendent(this);
+		if (this.parent != null) {
+			this.parent.addDescendent(this);
 		}
 	}
 
@@ -93,7 +93,7 @@ public class RoleNode {
 				}
 			}
 			Collections.sort(parentAssignedGoals);
-			r += assignedGoals;
+			r += parentAssignedGoals;
 			
 			List<Object> parentReqs = new ArrayList<>(this.getParent().getRequirements());
 			r += parentReqs;
@@ -112,5 +112,30 @@ public class RoleNode {
 		}
 		
 	    return clone;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((assignedGoals == null) ? 0 : assignedGoals.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RoleNode other = (RoleNode) obj;
+		if (assignedGoals == null) {
+			if (other.assignedGoals != null)
+				return false;
+		} else if (!assignedGoals.equals(other.assignedGoals))
+			return false;
+		return true;
 	}
 }

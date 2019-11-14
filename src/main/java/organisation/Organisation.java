@@ -15,25 +15,26 @@ import org.apache.commons.io.FileUtils;
 
 import busca.Antecessor;
 import busca.Estado;
-import properties.Performer;
 import properties.Workload;
 import simplelogger.SimpleLogger;
 
 public class Organisation implements Estado, Antecessor {
 
 	/*** STATIC ***/
-	private static SimpleLogger LOG = SimpleLogger.getInstance(4);
+	private static SimpleLogger LOG = SimpleLogger.getInstance();
 	// list of target states, i.e., complete charts
 	private static List<Organisation> isGoalList = new ArrayList<Organisation>();
 	// Cost penalty used to infer bad decisions on search
-	private static int costPenalty = 0;
-
+	private static int costPenalty = 1;
+	// Number of generated states
+	private static int generatedStates = 0;
+	// Number of generated states
+	private static int prunedStates = 0;
+	
 	/*** LOCAL ***/
-	// this is the chart that is being created by the algorithm, potentially a
-	// complete chart
+	// the chart that is being created, potentially a complete chart
 	private List<RoleNode> rolesTree = new ArrayList<RoleNode>();
-	// The goals that were not explored yet, the algorithm end when all goals were
-	// allocated into roles
+	// The goals that were not explored yet
 	private List<GoalNode> goalSuccessors = new ArrayList<GoalNode>();
 
 	// static Cost costFunction = Cost.SPECIALIST;
@@ -60,8 +61,8 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public Organisation(GoalNode gn) {
-
 		// If it is the first state that is going to be created
+		generatedStates++;
 		if (gn.getParent() == null) {
 			GoalNode newRoot = gn.cloneContent();
 			brakeGoalTree(gn, newRoot);
@@ -80,8 +81,8 @@ public class Organisation implements Estado, Antecessor {
 			// Used to infer a bad decision on the search
 			Organisation.costPenalty = this.goalSuccessors.size() + 1;
 
-			LOG.info("FIRST STATE CREATED: " + this.toString() + " | " + this.hashCode() + " | Cost penalty: "
-					+ Organisation.costPenalty);
+			LOG.debug("#(" + generatedStates + "/" + prunedStates + ") FIRST STATE: " + this.toString() + " | "
+					+ this.hashCode() + " | Cost penalty: " + Organisation.costPenalty);
 		}
 	}
 
@@ -93,30 +94,31 @@ public class Organisation implements Estado, Antecessor {
 				brakeGoalTree(s, g);
 			} else {
 				// get the biggest effort and divide all workloads by the limit
-				double greaterEffort = 0;
+				double sumEfforts = 0;
 				for (Object w : s.getRequirements()) {
 					if (w instanceof Workload) {
-						if (((Workload) w).getEffort() > greaterEffort) {
-							greaterEffort = ((Workload) w).getEffort();
-						}
+						sumEfforts += ((Workload) w).getEffort();
 					}
 				}
-				//TODO: get a limit as a parameter
-				int slices = (int) Math.ceil(greaterEffort/8);
-				if (slices == 0) slices = 1;
+				// TODO: get a limit as a parameter
+				int slices = (int) Math.ceil(sumEfforts / 8);
+				if (slices == 0)
+					slices = 1;
 				for (int i = 1; i <= slices; i++) {
 					GoalNode g = s.cloneContent();
 					g.setParent(parent);
-					if (slices > 1) g.setGoalName(g.getGoalName()+"$"+i);
+					if (slices > 1)
+						g.setGoalName(g.getGoalName() + "$" + i);
 					for (Object w : g.getRequirements()) {
-						
+
 						if ((w instanceof Workload) && (slices > 1)) {
-							((Workload) w).setEffort(((Workload) w).getEffort()/slices);
+							((Workload) w).setEffort(((Workload) w).getEffort() / slices);
 						}
 					}
-					if (i == slices) brakeGoalTree(s, g);
+					if (i == slices)
+						brakeGoalTree(s, g);
 				}
-				
+
 			}
 		});
 	}
@@ -133,18 +135,15 @@ public class Organisation implements Estado, Antecessor {
 		if (this.goalSuccessors.size() <= 0) {
 			if (!isGoalList.contains(this)) {
 				isGoalList.add(this);
-				LOG.info("GOAL ACHIEVED! Solution: #" + isGoalList.size() + " : " + this.toString() + " | "
-						+ this.hashCode());
+				LOG.info("#(" + generatedStates + "/" + prunedStates + ") Solution #" + isGoalList.size() + ", "
+						+ this.toString() + ", Hash: " + this.hashCode() + ", Cost: " + this.accCost + "/"
+						+ this.cost);
 
 				plotOrganisation(isGoalList.size(), false);
-
-				return true; // if only one solution is needed
 			} else {
-				// This should not happen again, it has occurred because searching process
-				// (deepth) was calling ehMeta 2 times
-				LOG.info("Goal achieved but duplicated!" + " : " + this.hashCode());
-				//return true; // if only one solution is needed
+				LOG.debug("#(" + generatedStates + "/" + prunedStates + ") Duplicated solution!" + ", Hash: " + this.hashCode());
 			}
+			return true; // true: if only one solution is needed
 		}
 		return false;
 	}
@@ -160,6 +159,7 @@ public class Organisation implements Estado, Antecessor {
 				PrintWriter out = new PrintWriter(bw)) {
 
 			out.println("digraph G {");
+			//TODO: build the roles tree as a nodes tree like in goals node?
 			for (RoleNode or : this.rolesTree) {
 				out.print("\t\"" + or.getRoleName()// headGoal.getGoalName()
 						+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
@@ -240,7 +240,6 @@ public class Organisation implements Estado, Antecessor {
 	}
 	
 	public int custo() {
-		LOG.info("cost: " + cost + " accCost: " + accCost);
 		return cost;
 	}
 
@@ -249,116 +248,106 @@ public class Organisation implements Estado, Antecessor {
 		List<Estado> suc = new LinkedList<Estado>(); // Lista de sucessores
 
 		if (!this.goalSuccessors.isEmpty())
-			LOG.info("\nSTATE: " + this.toString() + "Tree:" + this.rolesTree.toString() + " - OpenGoals: ["
+			LOG.debug("#(" + generatedStates + "/" + prunedStates + ") STATE: " + this.toString() + " - Open: ["
 					+ goalSuccessors.toString() + "] - Size: " + goalSuccessors.size() + ", Hash: " + this.hashCode());
 
-		// add all children as possible successors
+		// add all possible successors
 		for (GoalNode goalToBeAssociated : goalSuccessors) {
 			// add all children as possible successors
 			for (RoleNode role : rolesTree) {
-				// if one of assigned goals is parent, so open it as a child
-				if (role.getAssignedGoals().contains(goalToBeAssociated.getParent())) {
-					// creating successors, create a subordinate role (child)
-					addSubordinate(role, suc, goalToBeAssociated);
-					// creating successors, join goals of a pair
-					if (role.matchRequirements(goalToBeAssociated.getRequirements())) {
-						joinASubordinate(role, suc, goalToBeAssociated);
-					}
-				} else if ((role.getParent() != null)
-						&& (role.getParent().getAssignedGoals().contains(goalToBeAssociated.getParent()))) {
-					// creating successors, join goals of a pair
-					if (role.matchRequirements(goalToBeAssociated.getRequirements())) {
-						joinAPair(role, suc, goalToBeAssociated);
-					}
-				}
+				addRole(role, suc, goalToBeAssociated);
+				joinRole(role, suc, goalToBeAssociated);
 			}
 		}
 
 		return suc;
 	}
 
-	public void addSubordinate(RoleNode parentRole, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
+	public void addRole(RoleNode aGivenRole, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
 
 		Organisation newState = (Organisation) createState(goalToBeAssociatedToRole);
 
+		// the given role has goal's parent associated?
+		if (aGivenRole.getAssignedGoals().contains(goalToBeAssociatedToRole.getParent())) {
+			newState.cost = 1;
+		} else if ((aGivenRole.getParent() != null)
+				&& (aGivenRole.getParent().getAssignedGoals().contains(goalToBeAssociatedToRole.getParent()))) {
+			// a sibling has a little higher cost because by default aGivenROle will be parent
+			newState.cost = 2;
+		} else {
+			// Apart from the cost function, punish association of goals with no kinship
+			newState.cost = Organisation.costPenalty;
+		}
+		
+		// Punish when for instance it is preferred more generalist and flatter structures
 		if ((costFunction == Cost.FLATTER) || (costFunction == Cost.GENERALIST)) {
-			newState.cost = Organisation.costPenalty;
-		} else {
-			newState.cost = 1;
+			newState.cost += Organisation.costPenalty * 2;
 		}
 		newState.accCost = this.accCost + newState.cost;
 
-		RoleNode r = new RoleNode(parentRole, "r" + newState.rolesTree.size());
-		r.assignGoal(goalToBeAssociatedToRole);
-		// Copy all requirements of the goal to this new role
-		for (Object requirement : goalToBeAssociatedToRole.getRequirements())
-			r.addRequirement(((Workload)requirement).clone());
-
-		newState.rolesTree.add(r);
-
-		suc.add(newState);
-
-		LOG.info("addSubordinate	: " + newState.toString() + ", nSucc: " + newState.goalSuccessors + ", Name: "
-				+ r.getRoleName() + ", Parent: " + r.getParent().getRoleName() + ", Hash: " + newState.hashCode());
-	}
-
-	public void joinAPair(RoleNode role, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
-
-		Organisation newState = (Organisation) createState(goalToBeAssociatedToRole);
-
-		if (costFunction == Cost.SPECIALIST) {
-			newState.cost = Organisation.costPenalty;
-		} else {
-			newState.cost = 1;
-		}
-		newState.accCost = this.accCost + newState.cost;
-
-		// the new role is also assigned to a new goal (the joined one)
 		for (RoleNode or : newState.rolesTree) {
-			// if all assigned goals are same, so it found the same role of the method
-			// argument 'role'
-			if (or.getAssignedGoals().containsAll(role.getAssignedGoals())
-					&& role.getAssignedGoals().containsAll(or.getAssignedGoals())) {
-				if (!or.getAssignedGoals().contains(goalToBeAssociatedToRole)) {
-					or.assignGoal(goalToBeAssociatedToRole);
-					suc.add(newState);
-					LOG.info("joinAPair     	: " + newState.toString() + ", nSucc: " + newState.goalSuccessors
-							+ ", Name: " + role.getRoleName() + ", Parent: " + role.getParent().getRoleName()
-							+ ", Hash: " + newState.hashCode());
-					break;
-				}
+			if (or.equals(aGivenRole)) {
+				RoleNode r = new RoleNode(or, "r" + newState.rolesTree.size());
+				r.assignGoal(goalToBeAssociatedToRole);
+				// Copy all requirements of the goal to this new role
+				for (Object requirement : goalToBeAssociatedToRole.getRequirements())
+					r.addRequirement(((Workload)requirement).clone());
+
+				newState.rolesTree.add(r);
+
+				suc.add(newState);
+				
+				if (or != null)
+					LOG.warn("#(" + generatedStates + "/" + prunedStates + ") addRole  : " + r.getRoleName() + "^"
+							+ r.getParent().getRoleName() + " " + newState.rolesTree + ", nSucc: "
+							+ newState.goalSuccessors + ", Hash: " + newState.hashCode() + ", Cost: " + newState.accCost
+							+ "/" + newState.cost);
+				break;
 			}
 		}
+
 	}
 
-	public void joinASubordinate(RoleNode role, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
+	public void joinRole(RoleNode hostRole, List<Estado> suc, GoalNode goalToBeAssociatedToRole) {
 
 		Organisation newState = (Organisation) createState(goalToBeAssociatedToRole);
 
-		if ((costFunction == Cost.TALLER) || (costFunction == Cost.SPECIALIST)) {
-			newState.cost = Organisation.costPenalty;
-		} else {
+		// the given role has goal's parent associated?
+		if (hostRole.getAssignedGoals().contains(goalToBeAssociatedToRole.getParent())) {
 			newState.cost = 1;
+		} else if ((hostRole.getParent() != null)
+				&& (hostRole.getParent().getAssignedGoals().contains(goalToBeAssociatedToRole.getParent()))) {
+			//TODO: extra cost?
+			newState.cost = 2;
+		} else {
+			// Apart from the cost function, punish association of goals with no kinship
+			newState.cost = Organisation.costPenalty;
+		}
+		
+		// Punish when for instance it is preferred more specialist and taller structures
+		if ((costFunction == Cost.TALLER) || (costFunction == Cost.SPECIALIST)) {
+			newState.cost += Organisation.costPenalty * 2;
 		}
 		newState.accCost = this.accCost + newState.cost;
 
 		for (RoleNode or : newState.rolesTree) {
-			// if all assigned goals are same, so it found the same role of the method
-			// argument 'role'
-			if (or.getAssignedGoals().containsAll(role.getAssignedGoals())
-					&& role.getAssignedGoals().containsAll(or.getAssignedGoals())) {
-				if (!or.getAssignedGoals().contains(goalToBeAssociatedToRole)) {
-					or.assignGoal(goalToBeAssociatedToRole);
-					suc.add(newState);
-					if (role.getParent() != null)
-						LOG.info("joinASubordinate : " + newState.toString() + ", nSucc: " + newState.goalSuccessors
-								+ ", Name: " + role.getRoleName() + ", Parent: " + role.getParent().getRoleName()
-								+ ", Hash: " + newState.hashCode());
-					else
-						LOG.info("joinASubordinate : " + newState.toString() + ", nSucc: " + newState.goalSuccessors
-								+ ", Name: " + role.getRoleName() + ", Parent: null, Hash: " + newState.hashCode());
-					break;
-				}
+			if (or.equals(hostRole)) {
+				or.assignGoal(goalToBeAssociatedToRole);
+				// Copy all requirements of the goal to this new role
+				for (Object requirement : goalToBeAssociatedToRole.getRequirements())
+					or.addRequirement(((Workload) requirement).clone());
+				suc.add(newState);
+				if (or.getParent() != null)
+					LOG.trace("#(" + generatedStates + "/" + prunedStates + ") joinRole : " + or.getRoleName() + "^"
+							+ or.getParent().getRoleName() + " " + newState.rolesTree + ", nSucc: "
+							+ newState.goalSuccessors + ", Hash: " + newState.hashCode() + ", Cost: " + newState.accCost
+							+ "/" + newState.cost);
+				else
+					LOG.trace("#(" + generatedStates + "/" + prunedStates + ") joinRole : " + or.getRoleName() + "^__ "
+							+ newState.rolesTree + ", nSucc: " + newState.goalSuccessors + ", Hash: "
+							+ newState.hashCode() + ", Cost: " + newState.accCost + "/" + newState.cost);
+
+				break;
 			}
 		}
 	}
@@ -392,7 +381,7 @@ public class Organisation implements Estado, Antecessor {
 		try {
 			if (o instanceof Organisation) {
 				if (this.toString().equals(((Organisation) o).toString())) {
-					LOG.info("Pruned" + this.toString());
+					LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") Pruned" + this.toString() + ", Hash: " + o.hashCode());
 					return true;
 				}
 				return false;
@@ -436,7 +425,7 @@ public class Organisation implements Estado, Antecessor {
 				for (RoleNode pr : newState.rolesTree) {
 					// in case of a joining the parent may have more goals, so the list does not
 					// need to match exactly
-					if (pr.getAssignedGoals().containsAll(or.getParent().getAssignedGoals())) {
+					if (pr.equals(or.getParent())) {
 						or.setParent(pr);
 						break;
 					}

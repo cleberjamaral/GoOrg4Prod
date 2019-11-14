@@ -10,7 +10,9 @@ public class SimpleLogger {
 	boolean printToFile = false;
 	
 	private SimpleLogger(int level) {
-		this.level = level;
+		// Maintain a change if it was done
+		if (level != 1) 
+			this.level = level;
 		if (printToFile) {
 			PrintStream fileOut;
 			try {
@@ -37,7 +39,7 @@ public class SimpleLogger {
     }	
 
     public void trace(String msg){
-		System.out.println("TRACE: "+msg);
+    	if (level <= 1) System.out.println("TRACE: "+msg);
 	}
 	
 	public void debug(String msg){
@@ -45,11 +47,11 @@ public class SimpleLogger {
 	}
 
 	public void info(String msg){
-		if (level <= 3) System.out.println("INFO: "+msg);
+		if (level <= 3) System.out.println("INFO : "+msg);
 	}
 	
 	public void warn(String msg){
-		if (level <= 4) System.out.println("WARN: "+msg);
+		if (level <= 4) System.out.println("WARN : "+msg);
 	}
 
 	public void error(String msg){
