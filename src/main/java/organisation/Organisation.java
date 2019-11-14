@@ -54,18 +54,26 @@ public class Organisation implements Estado, Antecessor {
 		Organisation.costFunction = costFunction;
 	}
 
-	public Organisation(GoalNode gn, Cost costFunction, List<Object> agents) {
-		this(gn);
+	public Organisation(GoalNode gn, Cost costFunction, List<Object> limits) {
+		for (Object w : limits) {
+			if (w instanceof Workload) {
+				createOrganisation(gn,((Workload)w).getEffort());
+			}
+		}
 
 		Organisation.costFunction = costFunction;
 	}
 
 	public Organisation(GoalNode gn) {
+		createOrganisation(gn, 8);
+	}
+
+	private void createOrganisation(GoalNode gn, double maxEffort) {
 		// If it is the first state that is going to be created
 		generatedStates++;
 		if (gn.getParent() == null) {
 			GoalNode newRoot = gn.cloneContent();
-			brakeGoalTree(gn, newRoot);
+			brakeGoalTree(gn, newRoot, maxEffort);
 			
 			plotOrganizationalGoalTree(newRoot);
 			
@@ -86,12 +94,12 @@ public class Organisation implements Estado, Antecessor {
 		}
 	}
 
-	private static void brakeGoalTree(GoalNode original, GoalNode parent) {
+	private static void brakeGoalTree(GoalNode original, GoalNode parent, double maxEffort) {
 		original.getDescendents().forEach(s -> {
 			if (!s.containsWorkload()) {
 				GoalNode g = s.cloneContent();
 				g.setParent(parent);
-				brakeGoalTree(s, g);
+				brakeGoalTree(s, g, maxEffort);
 			} else {
 				// get the biggest effort and divide all workloads by the limit
 				double sumEfforts = 0;
@@ -100,8 +108,8 @@ public class Organisation implements Estado, Antecessor {
 						sumEfforts += ((Workload) w).getEffort();
 					}
 				}
-				// TODO: get a limit as a parameter
-				int slices = (int) Math.ceil(sumEfforts / 8);
+
+				int slices = (int) Math.ceil(sumEfforts / maxEffort);
 				if (slices == 0)
 					slices = 1;
 				for (int i = 1; i <= slices; i++) {
@@ -116,7 +124,7 @@ public class Organisation implements Estado, Antecessor {
 						}
 					}
 					if (i == slices)
-						brakeGoalTree(s, g);
+						brakeGoalTree(s, g, maxEffort);
 				}
 
 			}

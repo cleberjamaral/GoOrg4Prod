@@ -10,6 +10,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import busca.BuscaLargura;
+import busca.BuscaProfundidade;
 import busca.Nodo;
 import properties.Workload;
 
@@ -54,13 +55,13 @@ public class OrganisationApp {
 			tree.add(g4);
 			GoalNode g5 = new GoalNode(g2, "PaintInt");
 			tree.add(g5);
-			Workload w5 = new Workload("Paint",8);
+			Workload w5 = new Workload("Paint",10);
 			g5.addRequirement(w5);
 			GoalNode g6 = new GoalNode(g2, "PaintExt");
 			tree.add(g6);
-			Workload w4 = new Workload("Paint",4);
+			Workload w4 = new Workload("Paint",9);
 			g6.addRequirement(w4);
-			Workload w5b = new Workload("Scaffold",2);
+			Workload w5b = new Workload("Scaffold",3);
 			g6.addRequirement(w5b);
 			
 			// Sample list of agents
@@ -89,7 +90,7 @@ public class OrganisationApp {
 //			agents.add(a6);
 			
 			List<Object> limits = new ArrayList<>();
-			Workload w = new Workload("s",8);
+			Workload w = new Workload("s",6);
 			limits.add(w);
 			
 			//GoalNode newRoot = g0;
@@ -98,9 +99,9 @@ public class OrganisationApp {
 
 			// if an argument to choose a cost function was given
 			if (args.length == 2) {
-				inicial = new Organisation(newRoot, Cost.valueOf(args[1]));
+				inicial = new Organisation(newRoot, Cost.valueOf(args[1]), limits);
 			} else {
-				inicial = new Organisation(newRoot, Cost.SPECIALIST);
+				inicial = new Organisation(newRoot, Cost.SPECIALIST, limits);
 			}
 
 		} else {
@@ -126,6 +127,7 @@ public class OrganisationApp {
 		Nodo n = null;
 
 		n = new BuscaLargura().busca(inicial);
+		//n = new BuscaProfundidade().busca(inicial);
 		
 		/**
 		 * To create the proof for the current gdt:
