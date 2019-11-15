@@ -65,6 +65,26 @@ public class RoleNode {
 		parent = p;
 	}
 
+	/**
+	 * Check if this role has a goal which is sibling of the given goal
+	 * @param g
+	 * @return
+	 */
+	public boolean hasSiblingGoal(GoalNode g) {
+		if (this.getParent() == null)
+			return false;
+		return this.getParent().getAssignedGoals().contains(g.getParent());
+	}
+
+	/**
+	 * Check if this role has a goal which is sibling of the given goal
+	 * @param g
+	 * @return
+	 */
+	public boolean hasParentGoal(GoalNode g) {
+		return this.getAssignedGoals().contains(g.getParent());
+	}
+	
 	public String toString() {
 		String r = "";
 

@@ -22,13 +22,13 @@ public class OrganisationTest {
 	public void setupTest() {
 		// Sample organization
 		t = new GoalTree("g1");
-		t.addGoalToTree("g11","g1","s1");
+		t.addGoalToTree("g11","g1","s1",2);
 		t.addGoalToTree("g12","g1",null);
-		t.addGoalToTree("g111","g11","s2");
-		t.addGoalToTree("g112","g11","s2");
+		t.addGoalToTree("g111","g11","s2",8);
+		t.addGoalToTree("g112","g11","s2",2);
 		t.addGoalToTree("g121","g12","s2");
 		t.addGoalToTree("g122","g12",null);
-		t.addGoalToTree("g1221","g122","s2");
+		t.addGoalToTree("g1221","g122","s2",3.4);
 	}
 	
 	@Test

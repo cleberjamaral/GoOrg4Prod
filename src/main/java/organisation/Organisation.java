@@ -23,6 +23,8 @@ public class Organisation implements Estado, Antecessor {
 	private static int generatedStates = 0;
 	// Number of generated states
 	private static int prunedStates = 0;
+	// max effort per role
+	private static double maxEffort = 8;
 	
 	/*** LOCAL ***/
 	// the chart that is being created, potentially a complete chart
@@ -47,7 +49,7 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public Organisation(GoalNode gn, Cost costFunction) {
-		createOrganisation(gn, 8);
+		createOrganisation(gn);
 
 		Organisation.costFunction = costFunction;
 	}
@@ -55,7 +57,8 @@ public class Organisation implements Estado, Antecessor {
 	public Organisation(GoalNode gn, Cost costFunction, List<Object> limits) {
 		for (Object w : limits) {
 			if (w instanceof Workload) {
-				createOrganisation(gn,((Workload)w).getEffort());
+				Organisation.maxEffort = ((Workload)w).getEffort();
+				createOrganisation(gn);
 			}
 		}
 
@@ -63,15 +66,15 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public Organisation(GoalNode gn) {
-		createOrganisation(gn, 8);
+		createOrganisation(gn);
 	}
 
-	private void createOrganisation(GoalNode gn, double maxEffort) {
+	private void createOrganisation(GoalNode gn) {
 		// If it is the first state that is going to be created
 		generatedStates++;
 		if (gn.getParent() == null) {
 			GoalTree t = new GoalTree(gn);
-			GoalNode newRoot = t.getBrokenGoalTree(maxEffort);
+			GoalNode newRoot = t.getBrokenGoalTree(Organisation.maxEffort);
 			addAllGoalsSuccessors(newRoot);
 			
 			OrganisationPlot p = new OrganisationPlot();
@@ -148,10 +151,9 @@ public class Organisation implements Estado, Antecessor {
 		Organisation newState = (Organisation) createState(goalToBeAssociatedToRole);
 
 		// the given role has goal's parent associated?
-		if (aGivenRole.getAssignedGoals().contains(goalToBeAssociatedToRole.getParent())) {
+		if (aGivenRole.hasParentGoal(goalToBeAssociatedToRole)) {
 			newState.cost = 1;
-		} else if ((aGivenRole.getParent() != null)
-				&& (aGivenRole.getParent().getAssignedGoals().contains(goalToBeAssociatedToRole.getParent()))) {
+		} else if (aGivenRole.hasSiblingGoal(goalToBeAssociatedToRole)) {
 			// a sibling has a little higher cost because by default aGivenROle will be parent
 			newState.cost = 2;
 		} else {
@@ -159,10 +161,15 @@ public class Organisation implements Estado, Antecessor {
 			newState.cost = Organisation.costPenalty;
 		}
 		
-		// Punish when for instance it is preferred more generalist and flatter structures
+		// High punishment when it is preferred more generalist and flatter structures
 		if ((costFunction == Cost.FLATTER) || (costFunction == Cost.GENERALIST)) {
 			newState.cost += Organisation.costPenalty * 2;
-		}
+		} else
+		// Low punishment when is preferred taller but is not child 
+		if ((costFunction == Cost.TALLER) && (!aGivenRole.hasParentGoal(goalToBeAssociatedToRole))) {
+				newState.cost += Organisation.costPenalty;
+		} 
+		
 		newState.accCost = this.accCost + newState.cost;
 
 		for (RoleNode or : newState.rolesTree) {
@@ -173,12 +180,26 @@ public class Organisation implements Estado, Antecessor {
 				for (Object requirement : goalToBeAssociatedToRole.getRequirements())
 					r.addRequirement(((Workload)requirement).clone());
 
+				// Prune states with effort equal to 0
+				double sumEfforts = 0;
+				for (Object requirement : r.getRequirements()) {
+					if (requirement instanceof Workload) {
+						sumEfforts += ((Workload) requirement).getEffort();
+					}
+				}
+				if (sumEfforts == 0) {
+					LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned: "
+							+ r.getAssignedGoals() + ", efforts: " + sumEfforts + " = 0");
+					newState = null;
+					return;
+				}
+
 				newState.rolesTree.add(r);
 
 				suc.add(newState);
 				
 				if (or != null)
-					LOG.warn("#(" + generatedStates + "/" + prunedStates + ") addRole  : " + r.getRoleName() + "^"
+					LOG.trace("#(" + generatedStates + "/" + prunedStates + ") addRole  : " + r.getRoleName() + "^"
 							+ r.getParent().getRoleName() + " " + newState.rolesTree + ", nSucc: "
 							+ newState.goalSuccessors + ", Hash: " + newState.hashCode() + ", Cost: " + newState.accCost
 							+ "/" + newState.cost);
@@ -193,10 +214,9 @@ public class Organisation implements Estado, Antecessor {
 		Organisation newState = (Organisation) createState(goalToBeAssociatedToRole);
 
 		// the given role has goal's parent associated?
-		if (hostRole.getAssignedGoals().contains(goalToBeAssociatedToRole.getParent())) {
+		if (hostRole.hasParentGoal(goalToBeAssociatedToRole)) {
 			newState.cost = 1;
-		} else if ((hostRole.getParent() != null)
-				&& (hostRole.getParent().getAssignedGoals().contains(goalToBeAssociatedToRole.getParent()))) {
+		} else if (hostRole.hasSiblingGoal(goalToBeAssociatedToRole)) {
 			//TODO: extra cost?
 			newState.cost = 2;
 		} else {
@@ -204,18 +224,41 @@ public class Organisation implements Estado, Antecessor {
 			newState.cost = Organisation.costPenalty;
 		}
 		
-		// Punish when for instance it is preferred more specialist and taller structures
-		if ((costFunction == Cost.TALLER) || (costFunction == Cost.SPECIALIST)) {
+		// High punishment when it is preferred taller and the role is not a child
+		if (((costFunction == Cost.TALLER) && (!hostRole.hasParentGoal(goalToBeAssociatedToRole)))
+				// Punish when it is preferred more specialist structures
+				|| (costFunction == Cost.SPECIALIST)) {
 			newState.cost += Organisation.costPenalty * 2;
+		} else
+		// Low punishment when is preferred taller but is child
+		if (costFunction == Cost.TALLER) {
+			newState.cost += Organisation.costPenalty;
 		}
 		newState.accCost = this.accCost + newState.cost;
 
 		for (RoleNode or : newState.rolesTree) {
 			if (or.equals(hostRole)) {
 				or.assignGoal(goalToBeAssociatedToRole);
+				
 				// Copy all requirements of the goal to this new role
-				for (Object requirement : goalToBeAssociatedToRole.getRequirements())
+				for (Object requirement : goalToBeAssociatedToRole.getRequirements()) {
 					or.addRequirement(((Workload) requirement).clone());
+				}
+
+				// Prune states with effort greater than max
+				double sumEfforts = 0;
+				for (Object requirement : or.getRequirements()) {
+					if (requirement instanceof Workload) {
+						sumEfforts += ((Workload) requirement).getEffort();
+					}
+				}
+				if (sumEfforts > Organisation.maxEffort) {
+					LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") joinRole pruned: " + sumEfforts + " > "
+							+ Organisation.maxEffort);
+					newState = null;
+					return;
+				}
+
 				suc.add(newState);
 				if (or.getParent() != null)
 					LOG.trace("#(" + generatedStates + "/" + prunedStates + ") joinRole : " + or.getRoleName() + "^"

@@ -32,7 +32,7 @@ public class OrganisationApp {
 	public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
 
 		// set verbose level
-		SimpleLogger.getInstance(3);
+		SimpleLogger.getInstance(4);
 
 		Organisation inicial;
 		// if a Moise XML file was not provided, use a sample organisation
@@ -40,11 +40,11 @@ public class OrganisationApp {
 			
 			// Sample goals tree
 			GoalTree t = new GoalTree("PaintHouse");
-			t.addGoalToTree("GetInputs", "PaintHouse", "Contract");
+			t.addGoalToTree("GetInputs", "PaintHouse", "Contract", 2);
 			t.addGoalToTree("Paint", "PaintHouse", null);
 			t.addGoalToTree("BuyInputs", "GetInputs", "Purchase", 4);
-			t.addGoalToTree("Inspect", "PaintHouse", null);
-			t.addGoalToTree("PaintInt", "Paint", "Paint", 10);
+			//t.addGoalToTree("Inspect", "PaintHouse", null);
+			//t.addGoalToTree("PaintInt", "Paint", "Paint", 10);
 			t.addGoalToTree("PaintExt", "Paint", "Paint", 9);
 			t.addWorkloadToGoal("PaintExt", "Scaffold", 3);
 			
@@ -106,8 +106,8 @@ public class OrganisationApp {
 
 		Nodo n = null;
 
-		//n = new BuscaLargura().busca(inicial);
-		n = new BuscaProfundidade().busca(inicial);
+		n = new BuscaLargura().busca(inicial);
+		//n = new BuscaProfundidade().busca(inicial);
 		
 		/**
 		 * To create the proof for the current gdt:
