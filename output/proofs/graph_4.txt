@@ -1,1 +1,1 @@
-[G{[g1, g11, g12, g122]}S{[s1]}, G{[g111, g112, g121, g1221]}S{[s2]}^[g111, g112, g121, g1221][s2], G{[g13, g14]}S{[s3]}^[g13, g14][s3]]
+[G{[g1, g11, g111, g112, g12, g121, g122]}S{[workload[id=s1,effort=0.0], workload[id=s2,effort=0.0]]}]

@@ -24,10 +24,10 @@ import simplelogger.SimpleLogger;
 
 public class OrganisationApp {
 
-	static List<GoalNode> tree = new ArrayList<GoalNode>();
 	static Stack<GoalNode> stack = new Stack<GoalNode>();
 	static GoalNode rootNode = null;
 	static GoalNode referenceGoalNode = null;
+	static double maxEffort = 8;
 
 	public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
 
@@ -39,30 +39,14 @@ public class OrganisationApp {
 		if ((args.length < 1) || (args[0].equals("0"))) {
 			
 			// Sample goals tree
-			GoalNode g0 = new GoalNode(null, "PaintHouse");
-			tree.add(g0);
-			GoalNode g1 = new GoalNode(g0, "GetInputs");
-			Workload w1 = new Workload("Contract",0);
-			g1.addRequirement(w1);
-			tree.add(g1);
-			GoalNode g2 = new GoalNode(g0, "Paint");
-			tree.add(g2);
-			GoalNode g3 = new GoalNode(g1, "BuyInputs");
-			tree.add(g3);
-			Workload w2 = new Workload("Purchase",4);
-			g3.addRequirement(w2);
-			GoalNode g4 = new GoalNode(g0, "Inspect");
-			tree.add(g4);
-			GoalNode g5 = new GoalNode(g2, "PaintInt");
-			tree.add(g5);
-			Workload w5 = new Workload("Paint",10);
-			g5.addRequirement(w5);
-			GoalNode g6 = new GoalNode(g2, "PaintExt");
-			tree.add(g6);
-			Workload w4 = new Workload("Paint",9);
-			g6.addRequirement(w4);
-			Workload w5b = new Workload("Scaffold",3);
-			g6.addRequirement(w5b);
+			GoalTree t = new GoalTree("PaintHouse");
+			t.addGoalToTree("GetInputs", "PaintHouse", "Contract");
+			t.addGoalToTree("Paint", "PaintHouse", null);
+			t.addGoalToTree("BuyInputs", "GetInputs", "Purchase", 4);
+			t.addGoalToTree("Inspect", "PaintHouse", null);
+			t.addGoalToTree("PaintInt", "Paint", "Paint", 10);
+			t.addGoalToTree("PaintExt", "Paint", "Paint", 9);
+			t.addWorkloadToGoal("PaintExt", "Scaffold", 3);
 			
 			// Sample list of agents
 //			List<Object> agents = new ArrayList<>();
@@ -90,18 +74,14 @@ public class OrganisationApp {
 //			agents.add(a6);
 			
 			List<Object> limits = new ArrayList<>();
-			Workload w = new Workload("s",6);
+			Workload w = new Workload("maxEffort",maxEffort);
 			limits.add(w);
-			
-			//GoalNode newRoot = g0;
-			GoalNode newRoot = g0.cloneContent();
-			brakeGoalTree(g0, newRoot);
 
 			// if an argument to choose a cost function was given
 			if (args.length == 2) {
-				inicial = new Organisation(newRoot, Cost.valueOf(args[1]), limits);
+				inicial = new Organisation(t.getBrokenGoalTree(maxEffort), Cost.valueOf(args[1]), limits);
 			} else {
-				inicial = new Organisation(newRoot, Cost.SPECIALIST, limits);
+				inicial = new Organisation(t.getBrokenGoalTree(maxEffort), Cost.SPECIALIST, limits);
 			}
 
 		} else {
@@ -126,8 +106,8 @@ public class OrganisationApp {
 
 		Nodo n = null;
 
-		n = new BuscaLargura().busca(inicial);
-		//n = new BuscaProfundidade().busca(inicial);
+		//n = new BuscaLargura().busca(inicial);
+		n = new BuscaProfundidade().busca(inicial);
 		
 		/**
 		 * To create the proof for the current gdt:
@@ -146,14 +126,6 @@ public class OrganisationApp {
 			System.out.println("\nThe resulting state is null. This behaviour is expected when Organisation.ehMeta() method is set to always return false.\nDid you set the algorithm to find all possible solutions?\n\n");
 		}
 	}
-	
-	private static void brakeGoalTree(GoalNode original, GoalNode parent) {
-		original.getDescendents().forEach(s -> {
-			GoalNode g = s.cloneContent();
-			g.setParent(parent);
-			brakeGoalTree(s, g);
-		});
-	}
 
 	private static void visitNodes(NodeList nList) {
 		for (int temp = 0; temp < nList.getLength(); temp++) {
@@ -168,11 +140,11 @@ public class OrganisationApp {
 
 					if (rootNode == null) {
 						rootNode = new GoalNode(null, eGoal.getAttribute("id"));
-						tree.add(rootNode);
+						//tree.add(rootNode);
 						referenceGoalNode = rootNode;
 					} else {
 						GoalNode gn = new GoalNode(stack.peek(), eGoal.getAttribute("id"));
-						tree.add(gn);
+						//tree.add(gn);
 						referenceGoalNode = gn;
 					}
 

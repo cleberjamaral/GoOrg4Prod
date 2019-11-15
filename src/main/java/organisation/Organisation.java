@@ -1,17 +1,10 @@
 package organisation;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.commons.io.FileUtils;
 
 import busca.Antecessor;
 import busca.Estado;
@@ -34,6 +27,7 @@ public class Organisation implements Estado, Antecessor {
 	/*** LOCAL ***/
 	// the chart that is being created, potentially a complete chart
 	private List<RoleNode> rolesTree = new ArrayList<RoleNode>();
+
 	// The goals that were not explored yet
 	private List<GoalNode> goalSuccessors = new ArrayList<GoalNode>();
 
@@ -48,8 +42,12 @@ public class Organisation implements Estado, Antecessor {
 		return "Empty\n";
 	}
 
+	public List<RoleNode> getRolesTree() {
+		return rolesTree;
+	}
+
 	public Organisation(GoalNode gn, Cost costFunction) {
-		this(gn);
+		createOrganisation(gn, 8);
 
 		Organisation.costFunction = costFunction;
 	}
@@ -72,12 +70,13 @@ public class Organisation implements Estado, Antecessor {
 		// If it is the first state that is going to be created
 		generatedStates++;
 		if (gn.getParent() == null) {
-			GoalNode newRoot = gn.cloneContent();
-			brakeGoalTree(gn, newRoot, maxEffort);
-			
-			plotOrganizationalGoalTree(newRoot);
-			
+			GoalTree t = new GoalTree(gn);
+			GoalNode newRoot = t.getBrokenGoalTree(maxEffort);
 			addAllGoalsSuccessors(newRoot);
+			
+			OrganisationPlot p = new OrganisationPlot();
+			p.deleteExistingDiagrams();
+			p.plotOrganizationalGoalTree(newRoot);
 
 			String roleName = "r" + this.rolesTree.size();
 			RoleNode r = new RoleNode(null, roleName);
@@ -92,43 +91,6 @@ public class Organisation implements Estado, Antecessor {
 			LOG.debug("#(" + generatedStates + "/" + prunedStates + ") FIRST STATE: " + this.toString() + " | "
 					+ this.hashCode() + " | Cost penalty: " + Organisation.costPenalty);
 		}
-	}
-
-	private static void brakeGoalTree(GoalNode original, GoalNode parent, double maxEffort) {
-		original.getDescendents().forEach(s -> {
-			if (!s.containsWorkload()) {
-				GoalNode g = s.cloneContent();
-				g.setParent(parent);
-				brakeGoalTree(s, g, maxEffort);
-			} else {
-				// get the biggest effort and divide all workloads by the limit
-				double sumEfforts = 0;
-				for (Object w : s.getRequirements()) {
-					if (w instanceof Workload) {
-						sumEfforts += ((Workload) w).getEffort();
-					}
-				}
-
-				int slices = (int) Math.ceil(sumEfforts / maxEffort);
-				if (slices == 0)
-					slices = 1;
-				for (int i = 1; i <= slices; i++) {
-					GoalNode g = s.cloneContent();
-					g.setParent(parent);
-					if (slices > 1)
-						g.setGoalName(g.getGoalName() + "$" + i);
-					for (Object w : g.getRequirements()) {
-
-						if ((w instanceof Workload) && (slices > 1)) {
-							((Workload) w).setEffort(((Workload) w).getEffort() / slices);
-						}
-					}
-					if (i == slices)
-						brakeGoalTree(s, g, maxEffort);
-				}
-
-			}
-		});
 	}
 
 	private void addAllGoalsSuccessors(GoalNode gn) {
@@ -147,7 +109,8 @@ public class Organisation implements Estado, Antecessor {
 						+ this.toString() + ", Hash: " + this.hashCode() + ", Cost: " + this.accCost + "/"
 						+ this.cost);
 
-				plotOrganisation(isGoalList.size(), false);
+				OrganisationPlot p = new OrganisationPlot();
+				p.plotOrganisation(this, isGoalList.size(), false);
 			} else {
 				LOG.debug("#(" + generatedStates + "/" + prunedStates + ") Duplicated solution!" + ", Hash: " + this.hashCode());
 			}
@@ -156,97 +119,6 @@ public class Organisation implements Estado, Antecessor {
 		return false;
 	}
 
-	public void plotOrganisation(int organisationId, boolean generateProof) {
-		List<String> links = new ArrayList<>();
-
-		File diagramFile = new File("output/diagrams/tmp");
-		diagramFile.getParentFile().mkdirs();
-
-		try (FileWriter fw = new FileWriter("output/diagrams/graph_" + organisationId + ".gv", false);
-				BufferedWriter bw = new BufferedWriter(fw);
-				PrintWriter out = new PrintWriter(bw)) {
-
-			out.println("digraph G {");
-			//TODO: build the roles tree as a nodes tree like in goals node?
-			for (RoleNode or : this.rolesTree) {
-				out.print("\t\"" + or.getRoleName()// headGoal.getGoalName()
-						+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
-						+ "shape = \"Mrecord\" label = <<table border=\"0\" cellborder=\"0\" bgcolor=\"white\">"
-						+ "<tr><td bgcolor=\"black\" align=\"center\"><font color=\"white\">" + or.getRoleName()
-						+ "</font></td></tr><tr><td align=\"center\">" + or.getAssignedGoals() + "</td></tr>");
-				for (Object s : or.getRequirements())
-					out.print("<tr><td align=\"left\">" + s.toString() + "</td></tr>");
-				out.println("</table>> ];");
-
-				if (or.getParent() != null)
-					links.add("\"" + or.getParent().getRoleName() + "\"->\"" + or.getRoleName() + "\"");
-			}
-
-			for (String l : links)
-				out.println("\t" + l + ";");
-			out.println("}");
-		} catch (IOException e) {
-		}
-
-		if (generateProof) {
-			File proofFile = new File("output/proofs/tmp");
-			proofFile.getParentFile().mkdirs();
-
-			try (FileWriter fw = new FileWriter("output/proofs/graph_" + organisationId + ".txt", false);
-					BufferedWriter bw = new BufferedWriter(fw);
-					PrintWriter out = new PrintWriter(bw)) {
-
-				out.println(this.toString());
-			} catch (IOException e) {
-			}
-		}
-	}
-
-	private static void plotOrganizationalGoalTree(GoalNode gn) {
-		try {
-			File filepath = new File("output/diagrams");
-			FileUtils.deleteDirectory(filepath);
-
-			File file = new File("output/diagrams/tmp");
-			file.getParentFile().mkdirs();
-		} catch (IOException e) {}
-
-		try (FileWriter fw = new FileWriter("output/diagrams/gdt.gv", false);
-				BufferedWriter bw = new BufferedWriter(fw);
-				PrintWriter out = new PrintWriter(bw)) {
-
-			out.println("digraph G {");
-			plotGoalNode(out, gn);
-
-			out.println("}");
-		} catch (IOException e) {
-		}
-	}
-
-	private static void plotGoalNode(PrintWriter out, GoalNode or) {
-		if (or.getOperator().equals("parallel")) {
-			out.print("\t\"" + or.getGoalName()
-					+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
-					+ "shape = \"diamond\" label = <<table border=\"0\" cellborder=\"0\">"
-					+ "<tr><td align=\"center\"><font color=\"black\"><b>" + or.getGoalName()
-					+ "</b></font></td></tr>");
-		} else {
-			out.print("\t\"" + or.getGoalName()
-					+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
-					+ "shape = \"ellipse\" label = <<table border=\"0\" cellborder=\"0\">"
-					+ "<tr><td align=\"center\"><b>" + or.getGoalName() + "</b></td></tr>");
-		}
-		for (Object s : or.getRequirements())
-			out.print("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
-		out.println("</table>> ];");
-		or.getDescendents().forEach(g -> {
-			plotGoalNode(out, g);
-			if (g.getParent() != null)
-				out.println("\t\"" + g.getParent().getGoalName() + "\"->\"" + g.getGoalName() + "\";");
-
-		});
-	}
-	
 	public int custo() {
 		return cost;
 	}
@@ -431,8 +303,7 @@ public class Organisation implements Estado, Antecessor {
 		for (RoleNode or : newState.rolesTree) {
 			if (or.getParent() != null) {
 				for (RoleNode pr : newState.rolesTree) {
-					// in case of a joining the parent may have more goals, so the list does not
-					// need to match exactly
+					// In a joining case the list of goals sometimes does not match
 					if (pr.equals(or.getParent())) {
 						or.setParent(pr);
 						break;
