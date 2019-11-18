@@ -1,48 +1,55 @@
 package organisation;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import properties.Throughput;
 import properties.Workload;
 
 public class GoalTree {
 
 	GoalNode rootNode;
-	
-	GoalTree(String rootNode) {
-		this.rootNode = new GoalNode(null, rootNode);
-	}
+	Set<GoalNode> tree = new HashSet<>();
 	
 	GoalTree(GoalNode rootNode) {
 		this.rootNode = rootNode;
+		tree.add(this.rootNode);
+	}
+
+	GoalTree(String rootNode) {
+		this.rootNode = new GoalNode(null, rootNode);
+		tree.add(this.rootNode);
 	}
 	
-	public void addGoalToTree(String name, GoalNode parent, String workload, double effort) {
+	public void addGoal(String name, GoalNode parent) {
 		GoalNode g = new GoalNode(parent, name);
-		if (workload != null) {
-			Workload w = new Workload(workload, effort);
-			g.addRequirement(w);
-		}
+		tree.add(g);
 	}
 	
-	public void addGoalToTree(String name, String parent, String workload) {
+	public void addGoal(String name, String parent) {
 		GoalNode parentGoal = findAGoalByName(this.rootNode, parent);
-		addGoalToTree(name,parentGoal,workload,0);
+		addGoal(name,parentGoal);
 	}
-	
-	public void addGoalToTree(String name, String parent, String workload, double effort) {
-		GoalNode parentGoal = findAGoalByName(this.rootNode, parent);
-		addGoalToTree(name,parentGoal,workload,effort);
-	}
-	
-	public void addWorkloadToGoal(String name, String workload, double effort) {
+
+	public void addWorkload(String name, String workload, double effort) {
 		GoalNode g = findAGoalByName(this.rootNode, name);
 		Workload w = new Workload(workload, effort);
 		g.addRequirement(w);
 	}
 	
+	public void addThroughput(String name, String thoughput, double amount) {
+		GoalNode g = findAGoalByName(this.rootNode, name);
+		Throughput t = new Throughput(thoughput, amount);
+		g.addRequirement(t);
+	}
 	
 	private GoalNode findAGoalByName(GoalNode root, String name) {
-		if (root.getGoalName().equals(name)) return root;
+		if (root.getGoalName().equals(name)) {
+			return root;
+		} 
 		for (GoalNode goal : root.getDescendents()) {
-			if (findAGoalByName(goal, name) != null) return goal;
+			GoalNode d = findAGoalByName(goal, name);
+			if (d != null) return d;
 		}
 		return null;
 	}

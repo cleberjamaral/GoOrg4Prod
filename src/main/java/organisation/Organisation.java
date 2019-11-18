@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import busca.Antecessor;
 import busca.Estado;
@@ -28,7 +29,8 @@ public class Organisation implements Estado, Antecessor {
 	
 	/*** LOCAL ***/
 	// the chart that is being created, potentially a complete chart
-	private List<RoleNode> rolesTree = new ArrayList<RoleNode>();
+	//private List<RoleNode> rolesTree = new ArrayList<RoleNode>();
+	RoleTree rolesTree = new RoleTree();
 
 	// The goals that were not explored yet
 	private List<GoalNode> goalSuccessors = new ArrayList<GoalNode>();
@@ -42,10 +44,6 @@ public class Organisation implements Estado, Antecessor {
 
 	public String getDescricao() {
 		return "Empty\n";
-	}
-
-	public List<RoleNode> getRolesTree() {
-		return rolesTree;
 	}
 
 	public Organisation(GoalNode gn, Cost costFunction) {
@@ -85,7 +83,7 @@ public class Organisation implements Estado, Antecessor {
 			RoleNode r = new RoleNode(null, roleName);
 			r.assignGoal(newRoot);
 			for (Object requirement : newRoot.getRequirements())
-				r.addRequirement(((Workload)requirement).clone());
+				r.addWorkload(((Workload)requirement).clone());
 			this.rolesTree.add(r);
 
 			// Used to infer a bad decision on the search
@@ -137,7 +135,7 @@ public class Organisation implements Estado, Antecessor {
 		// add all possible successors
 		for (GoalNode goalToBeAssociated : goalSuccessors) {
 			// add all children as possible successors
-			for (RoleNode role : rolesTree) {
+			for (RoleNode role : rolesTree.tree()) {
 				addRole(role, suc, goalToBeAssociated);
 				joinRole(role, suc, goalToBeAssociated);
 			}
@@ -172,13 +170,14 @@ public class Organisation implements Estado, Antecessor {
 		
 		newState.accCost = this.accCost + newState.cost;
 
-		for (RoleNode or : newState.rolesTree) {
+		//TODO: create and start using RoleTree facilities
+		for (RoleNode or : newState.rolesTree.tree()) {
 			if (or.equals(aGivenRole)) {
 				RoleNode r = new RoleNode(or, "r" + newState.rolesTree.size());
 				r.assignGoal(goalToBeAssociatedToRole);
 				// Copy all requirements of the goal to this new role
 				for (Object requirement : goalToBeAssociatedToRole.getRequirements())
-					r.addRequirement(((Workload)requirement).clone());
+					r.addWorkload(((Workload)requirement).clone());
 
 				// Prune states with effort equal to 0
 				double sumEfforts = 0;
@@ -236,13 +235,14 @@ public class Organisation implements Estado, Antecessor {
 		}
 		newState.accCost = this.accCost + newState.cost;
 
-		for (RoleNode or : newState.rolesTree) {
+		//TODO: create and start using RoleTree facilities
+		for (RoleNode or : newState.rolesTree.tree()) {
 			if (or.equals(hostRole)) {
 				or.assignGoal(goalToBeAssociatedToRole);
 				
 				// Copy all requirements of the goal to this new role
 				for (Object requirement : goalToBeAssociatedToRole.getRequirements()) {
-					or.addRequirement(((Workload) requirement).clone());
+					or.addWorkload(((Workload) requirement).clone());
 				}
 
 				// Prune states with effort greater than max
@@ -281,19 +281,7 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public String toString() {
-		List<String> signature = new ArrayList<>();
-
-		if ((this.rolesTree != null) && (!this.rolesTree.isEmpty())) {
-			Iterator<RoleNode> iterator = this.rolesTree.iterator();
-			while (iterator.hasNext()) {
-				RoleNode n = iterator.next();
-				signature.add(n.toString());
-			}
-		}
-
-		Collections.sort(signature);
-
-		return signature.toString();
+		return rolesTree.getSignature();
 	}
 
 	/**
@@ -335,17 +323,18 @@ public class Organisation implements Estado, Antecessor {
 
 	public Organisation createState(GoalNode gn) {
 
+		//TODO: make a RoleTree and clone it, it is too confusing making it by nodes
 		// new state
 		Organisation newState = new Organisation(gn);
 		// Copy all roles tree
-		for (RoleNode or : this.rolesTree) {
+		for (RoleNode or : this.rolesTree.tree()) {
 			RoleNode nnewS = (RoleNode) or.clone();
 			newState.rolesTree.add((RoleNode) nnewS);
 		}
 		// finding right parents of cloned roles in the new tree
-		for (RoleNode or : newState.rolesTree) {
+		for (RoleNode or : newState.rolesTree.tree()) {
 			if (or.getParent() != null) {
-				for (RoleNode pr : newState.rolesTree) {
+				for (RoleNode pr : newState.rolesTree.tree()) {
 					// In a joining case the list of goals sometimes does not match
 					if (pr.equals(or.getParent())) {
 						or.setParent(pr);
@@ -363,6 +352,10 @@ public class Organisation implements Estado, Antecessor {
 		}
 
 		return newState;
+	}
+
+	public Set<RoleNode> getRolesTree() {
+		return rolesTree.tree();
 	}
 
 }

@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import properties.Workload;
+
 public class RoleNode {
 	private Set<Object> requirements = new HashSet<Object>();
 	private Set<GoalNode> assignedGoals = new HashSet<GoalNode>();
@@ -22,8 +24,26 @@ public class RoleNode {
 		}
 	}
 
-	public void addRequirement(Object skill) {
-		requirements.add(skill);
+	public void addRequirement(Object requirement) {
+		if (!requirements.contains(requirement)) {
+			requirements.add(requirement);
+		} else {
+			
+		}
+	}
+
+	public void addWorkload(Workload workload) {
+		if (requirements.contains(workload)) {
+			for (Object requirement : requirements) {
+				// if this workload already exists, sum efforts
+				if ((requirement instanceof Workload) && ((Workload) requirement).equals(workload)) {
+					((Workload) requirement).setEffort(((Workload) requirement).getEffort() + workload.getEffort());
+				}
+				break;
+			}
+		} else {
+			requirements.add(workload);
+		}
 	}
 
 	public Set<Object> getRequirements() {
@@ -125,11 +145,13 @@ public class RoleNode {
 	public RoleNode clone() {
 		RoleNode clone = new RoleNode(this.parent, this.roleName);
 		
-		for (Object s : this.requirements) clone.requirements.add(s);
-		for (RoleNode gn : this.descendents) clone.descendents.add(gn);
-		for (GoalNode goal : this.assignedGoals) {
+		for (Object s : this.requirements) 
+			clone.requirements.add(((Workload)s).clone());
+		// Cannot clone, create state is already doing that 
+		for (RoleNode rn : this.descendents) 
+			clone.descendents.add(rn);
+		for (GoalNode goal : this.assignedGoals) 
 			if (!clone.assignedGoals.contains(goal)) clone.assignedGoals.add(goal);
-		}
 		
 	    return clone;
 	}
