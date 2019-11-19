@@ -148,7 +148,7 @@ public class OrganisationTest {
 			// BE CAREFULL! if generateproof is true, the assertion should be always true
 			// After generating proofs it must be checked manually and then turn this
 			// argument false for further right assertions
-			p.plotOrganisation((Organisation) n.getEstado(), c.ordinal(), false);
+			p.plotOrganisation((Organisation) n.getEstado(), c.ordinal(), true);
 
 			String proof = "";
 			BufferedReader fr;
