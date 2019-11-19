@@ -30,6 +30,13 @@ public class GoalTree {
 		addGoal(name,parentGoal);
 	}
 
+	public void addAllDescendants(GoalNode root) {
+		for (GoalNode g : root.getDescendents()) {
+			tree.add(g);
+			addAllDescendants(g);
+		}
+	}
+	
 	public void addWorkload(String name, String workload, double effort) {
 		GoalNode g = findAGoalByName(this.rootNode, name);
 		Workload w = new Workload(workload, effort);

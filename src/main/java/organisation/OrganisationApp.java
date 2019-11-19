@@ -11,6 +11,7 @@ import org.xml.sax.SAXException;
 
 import busca.BuscaLargura;
 import busca.Nodo;
+import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.search.Cost;
@@ -31,11 +32,12 @@ public class OrganisationApp {
 	static GoalNode rootNode = null;
 	static GoalNode referenceGoalNode = null;
 	static double maxEffort = 8;
+	static SimpleLogger LOG;
 
 	public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
 
 		// set verbose level
-		SimpleLogger.getInstance(4);
+		LOG = SimpleLogger.getInstance(3);
 
 		Organisation inicial;
 		// if a Moise XML file was not provided, use a sample organisation
@@ -131,7 +133,7 @@ public class OrganisationApp {
 			NodeList nList = document.getElementsByTagName("scheme");
 			visitNodes(nList);
 
-			inicial = new Organisation(rootNode, Cost.SPECIALIST);
+			inicial = new Organisation(rootNode, Cost.SPECIALIST, true);
 		}
 
 		Nodo n = null;
@@ -144,6 +146,14 @@ public class OrganisationApp {
 		 * ((Organisation) n.getEstado()).plotOrganisation(Cost.SPECIALIST.ordinal(),true);
 		 */
 		if (n != null) {
+			try {
+				((Organisation)n.getEstado()).validateOutput();
+			} catch (OutputDoesNotMatchWithInput e) {
+				e.printStackTrace();
+				LOG.fatal(e.getMessage());
+			}
+
+			
 			String expectedSolution = "[G{[g0]}S{[]}, G{[g1]}S{[s1]}^[g1][s1], G{[g2]}S{[]}^[g2][], G{[g3]}S{[s2]}^[g3][s2], G{[g4]}S{[]}^[g4][], G{[g5]}S{[s5]}^[g5][s5], G{[g6]}S{[s4, s5]}^[g6][s4, s5]]";
 			System.out.println("\n\nProduced output:" + n.getEstado().toString());
 			System.out.println("Given proof    :" + expectedSolution);

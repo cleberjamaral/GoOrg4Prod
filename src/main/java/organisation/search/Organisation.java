@@ -9,6 +9,7 @@ import busca.Antecessor;
 import busca.Estado;
 import organisation.OrganisationPlot;
 import organisation.exception.MoreThanOneRootRoleFound;
+import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
@@ -31,6 +32,8 @@ public class Organisation implements Estado, Antecessor {
 	private static int prunedStates = 0;
 	// max effort per role
 	private static double maxEffort = 8;
+	// a reference to the goals tree used by all states
+	private static GoalTree goalsTree;
 
 	/*** LOCAL ***/
 	// the chart that is being created, potentially a complete chart
@@ -51,8 +54,8 @@ public class Organisation implements Estado, Antecessor {
 		return "Empty\n";
 	}
 
-	public Organisation(GoalNode gn, Cost costFunction) {
-		createOrganisation(gn);
+	public Organisation(GoalNode gn, Cost costFunction, boolean removeOldDiagrams) {
+		createOrganisation(gn, removeOldDiagrams);
 
 		Organisation.costFunction = costFunction;
 	}
@@ -61,7 +64,7 @@ public class Organisation implements Estado, Antecessor {
 		for (Object w : limits) {
 			if (w instanceof Workload) {
 				Organisation.maxEffort = ((Workload) w).getEffort();
-				createOrganisation(gn);
+				createOrganisation(gn, true);
 			}
 		}
 
@@ -69,19 +72,21 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public Organisation(GoalNode gn) {
-		createOrganisation(gn);
+		createOrganisation(gn, true);
 	}
 
-	private void createOrganisation(GoalNode gn) {
+	private void createOrganisation(GoalNode gn, boolean removeOldDiagrams) {
 		// If it is the first state that is going to be created
 		generatedStates++;
 		if (gn.getParent() == null) {
-			GoalTree t = new GoalTree(gn);
-			GoalNode newRoot = t.getBrokenGoalTree(Organisation.maxEffort);
+			goalsTree = new GoalTree(gn);
+			goalsTree.addAllDescendants(gn);
+			
+			GoalNode newRoot = goalsTree.getBrokenGoalTree(Organisation.maxEffort);
 			addAllGoalsSuccessors(newRoot);
 
 			OrganisationPlot p = new OrganisationPlot();
-			p.deleteExistingDiagrams();
+			if (removeOldDiagrams) p.deleteExistingDiagrams();
 			p.plotOrganizationalGoalTree(newRoot);
 
 			String roleName = "r" + this.rolesTree.size();
@@ -107,7 +112,6 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public boolean ehMeta() {
-
 		if (this.goalSuccessors.size() <= 0) {
 			if (!isGoalList.contains(this)) {
 				isGoalList.add(this);
@@ -120,11 +124,21 @@ public class Organisation implements Estado, Antecessor {
 				LOG.debug("#(" + generatedStates + "/" + prunedStates + ") Duplicated solution!" + ", Hash: "
 						+ this.hashCode());
 			}
-			//return true; // true: if only one solution is needed
+			return true; // true: if only one solution is needed
 		}
 		return false;
 	}
 
+	public boolean validateOutput() throws OutputDoesNotMatchWithInput {
+		if (goalsTree.sumEfforts() != rolesTree.sumEfforts()) {
+			throw new OutputDoesNotMatchWithInput(
+					"The sum of efforts of the goals tree must match with the sum of efforts of the created roles tree! GoalsTree:"
+							+ goalsTree.sumEfforts() + " RolesTree:" + rolesTree.sumEfforts());
+		}
+		return true;
+	}
+
+	
 	public int custo() {
 		return cost;
 	}

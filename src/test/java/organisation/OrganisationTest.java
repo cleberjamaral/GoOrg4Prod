@@ -3,6 +3,7 @@ package organisation;
 import busca.BuscaLargura;
 import busca.Nodo;
 import organisation.exception.MoreThanOneRootRoleFound;
+import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
@@ -15,6 +16,8 @@ import properties.Workload;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -47,7 +50,10 @@ public class OrganisationTest {
 		RoleNode r0clone = r0.cloneContent();
 		RoleNode r1clone = r1.cloneContent();
 		r1clone.setParent(r0clone);
+		
 		assertEquals(r1.toString(), r1clone.toString());
+
+		System.out.println("\n\ntestCloneRoleContent");
 		System.out.println("r1     : " + r1);
 		System.out.println("r1clone: " + r1clone);
 	}
@@ -121,17 +127,27 @@ public class OrganisationTest {
 		t.addGoal("g122", "g12");
 		t.addGoal("g1221", "g122");
 		t.addWorkload("g1221", "s2", 3.4);
+		
+		List<String> proofs = new ArrayList<>();
+		List<String> outputs = new ArrayList<>();
+
+		OrganisationPlot p = new OrganisationPlot();
+		p.deleteExistingDiagrams();
 
 		Cost cost[] = Cost.values();
 		for (Cost c : cost) {
-			Organisation o = new Organisation(t.getBrokenGoalTree(maxEffort), c);
+			Organisation o = new Organisation(t.getBrokenGoalTree(maxEffort), c, false);
 			Nodo n = new BuscaLargura().busca(o);
-			System.out.println("Tree : " + n.getEstado());
+			outputs.add(n.getEstado().toString());
+			try {
+				assertTrue(((Organisation)n.getEstado()).validateOutput());
+			} catch (OutputDoesNotMatchWithInput e1) {
+				e1.printStackTrace();
+			}
 
 			// BE CAREFULL! if generateproof is true, the assertion should be always true
 			// After generating proofs it must be checked manually and then turn this
 			// argument false for further right assertions
-			OrganisationPlot p = new OrganisationPlot();
 			p.plotOrganisation((Organisation) n.getEstado(), c.ordinal(), false);
 
 			String proof = "";
@@ -139,16 +155,18 @@ public class OrganisationTest {
 			try {
 				fr = new BufferedReader(new FileReader("output/proofs/graph_" + c.ordinal() + ".txt"));
 				proof = fr.readLine();
-				System.out.println("Proof: " + n.getEstado());
+				proofs.add(proof);
 
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-			System.out.println("\n\n\nGENER: " + n.getEstado().toString());
-			System.out.println("PROOF: " + proof);
-
-			assertEquals(proof, n.getEstado().toString());
+		}
+		// Test all outputs against their proofs
+		for (int i = 0; i < outputs.size(); i++) {
+			System.out.println("\n\ntestOrg");
+			System.out.println("proof : " + proofs.get(i));
+			System.out.println("output: " + outputs.get(i));
+			assertEquals(proofs.get(i), outputs.get(i));
 		}
 	}
 }
