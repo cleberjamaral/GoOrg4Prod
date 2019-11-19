@@ -1,10 +1,10 @@
 package organisation.exception;
 
-public class MoreThanOneRootRoleFound extends Exception {
+public class DuplicatedRootRole extends Exception {
 
 	private static final long serialVersionUID = 1L;
 	
-	public MoreThanOneRootRoleFound(String message) {
+	public DuplicatedRootRole(String message) {
 		super(message);
 	}
 

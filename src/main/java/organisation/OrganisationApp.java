@@ -9,7 +9,8 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import busca.BuscaLargura;
+//import busca.BuscaLargura;
+import busca.BuscaProfundidade;
 import busca.Nodo;
 import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.goal.GoalNode;
@@ -44,14 +45,14 @@ public class OrganisationApp {
 		if ((args.length < 1) || (args[0].equals("0"))) {
 			// Sample organization
 			GoalTree gTree = new GoalTree("PaintHouse");
-			//t.addGoalToTree("GetInputs", "PaintHouse");
-			//t.addWorkloadToGoal("GetInputs", "Contract", 2);
+			gTree.addGoal("GetInputs", "PaintHouse");
+			gTree.addWorkload("GetInputs", "Contract", 2);
 			gTree.addGoal("Paint", "PaintHouse");
 			gTree.addWorkload("Paint", "Paint1", 2);
-			//t.addGoalToTree("BuyInputs", "GetInputs");
-			//t.addWorkloadToGoal("BuyInputs", "Purchase", 4);
-			//t.addThroughputToGoal("BuyInputs","messages",100);
-			//t.addThroughputToGoal("BuyInputs","reports",100);
+			gTree.addGoal("BuyInputs", "GetInputs");
+			gTree.addWorkload("BuyInputs", "Purchase", 4);
+			gTree.addWorkload("BuyInputs","messages",100);
+			gTree.addWorkload("BuyInputs","reports",100);
 			gTree.addGoal("Inspect", "PaintHouse");
 			gTree.addGoal("Report", "Inspect");
 			gTree.addWorkload("Report", "Paint", 0);
@@ -62,7 +63,7 @@ public class OrganisationApp {
 			gTree.addWorkload("PaintInt", "Paint", 8);
 			gTree.addGoal("PaintExt", "Paint");
 			gTree.addWorkload("PaintExt", "Paint", 2);
-			//t.addWorkloadToGoal("PaintExt", "Scaffold", 3);
+			gTree.addWorkload("PaintExt", "Scaffold", 3);
 			
 			// Sample list of agents
 //			List<Object> agents = new ArrayList<>();
@@ -122,8 +123,8 @@ public class OrganisationApp {
 
 		Nodo n = null;
 
-		n = new BuscaLargura().busca(inicial);
-		//n = new BuscaProfundidade().busca(inicial);
+		//n = new BuscaLargura().busca(inicial);
+		n = new BuscaProfundidade().busca(inicial);
 		
 		/**
 		 * To create the proof for the current gdt:

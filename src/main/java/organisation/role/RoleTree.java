@@ -3,7 +3,7 @@ package organisation.role;
 import java.util.HashSet;
 import java.util.Set;
 
-import organisation.exception.MoreThanOneRootRoleFound;
+import organisation.exception.DuplicatedRootRole;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
 import properties.Workload;
@@ -34,7 +34,7 @@ public class RoleTree {
 		throw new RoleNotFound("There is no role with signature = '" + roleSignature + "'! Tree signature: " + this.tree.toString());
 	}
 	
-	public RoleTree cloneContent() throws MoreThanOneRootRoleFound, RoleNotFound {
+	public RoleTree cloneContent() throws DuplicatedRootRole, RoleNotFound {
 		RoleTree clonedTree = new RoleTree();
 		
 		// first clone all roles
@@ -44,7 +44,7 @@ public class RoleTree {
 		}
 		
 		int rootNodesFound = 0;
-		// finding fixing signatures since it depends on the right parent
+		// finding right parents in the new tree
 		for (RoleNode or : clonedTree.getTree()) {
 			
 			// it is not the root role
@@ -54,7 +54,7 @@ public class RoleTree {
 				rootNodesFound++;
 			}
 			if (rootNodesFound > 1) 
-				throw new MoreThanOneRootRoleFound("More than one root role found in this tree! Tree signature: " + clonedTree.getTree());
+				throw new DuplicatedRootRole("More than one root role found in this tree! Tree signature: " + clonedTree.getTree());
 		}
 		return clonedTree;
 	}

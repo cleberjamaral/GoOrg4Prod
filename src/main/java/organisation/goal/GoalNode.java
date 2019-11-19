@@ -96,4 +96,29 @@ public class GoalNode {
 		
 	    return clone;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((goalName == null) ? 0 : goalName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GoalNode other = (GoalNode) obj;
+		if (goalName == null) {
+			if (other.goalName != null)
+				return false;
+		} else if (!goalName.equals(other.goalName))
+			return false;
+		return true;
+	}
 }

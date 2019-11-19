@@ -2,7 +2,7 @@ package organisation;
 
 import busca.BuscaLargura;
 import busca.Nodo;
-import organisation.exception.MoreThanOneRootRoleFound;
+import organisation.exception.DuplicatedRootRole;
 import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
@@ -17,13 +17,89 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
 public class OrganisationTest {
+
+	
+	@Test
+	public void testSimilarGoals() {
+		// a goal named g0
+		GoalNode g00 = new GoalNode(null, "g0");
+		// a goal name g1 which parent is g00 (but it must be ignored)
+		GoalNode g10 = new GoalNode(g00, "g1");
+		// a goal name g0 which parent is g00 (but it must be ignored)
+		GoalNode g01 = new GoalNode(g00, "g0");
+		// a goal name g1 with workload (but it must be ignored)
+		GoalNode g11 = new GoalNode(g00, "g1");
+		g11.addWorkload(new Workload("s1", 1));
+		
+		assertEquals(g00, g01);
+		assertNotEquals(g00, g10);
+		assertEquals(g10, g11);
+	}
+	
+	@Test
+	public void testSimilarRoles() {
+		// a root role named r0 with g0 assigned and s0 workload
+		RoleNode r00 = new RoleNode(null, "r0");
+		GoalNode g00 = new GoalNode(null, "g0");
+		r00.addWorkload(new Workload("s0", 8));
+		r00.assignGoal(g00);
+
+		// a role name r1 with g0 assigned and s0 workload
+		// it has r00 as parent which must be ignored
+		RoleNode r01 = new RoleNode(r00, "r0");
+		GoalNode g01 = new GoalNode(null, "g0");
+		r01.addWorkload(new Workload("s0", 8));
+		r01.assignGoal(g01);
+
+		System.out.println("\n\ntestSimilarRoles");
+		System.out.println("r00: " + r00.signature());
+		System.out.println("r01: " + r01.signature());
+		assertEquals(r00, r01);
+		
+		//adding another workload to r01 to make than different
+		r01.addWorkload(new Workload("s1", 2));
+		System.out.println("must be different");
+		System.out.println("r00: " + r00.signature());
+		System.out.println("r01: " + r01.signature());
+		assertNotEquals(r00, r01);
+		
+		//adding another workload to r00 to be added up 
+		r00.addWorkload(new Workload("s1", 1.5));
+		r00.addWorkload(new Workload("s1", 0.5));
+		System.out.println("must be equal");
+		System.out.println("r00: " + r00.signature());
+		System.out.println("r01: " + r01.signature());
+		assertEquals(r00, r01);
+		
+		//adding new goals to r00
+		GoalNode g10 = new GoalNode(g00, "a");
+		GoalNode g11 = new GoalNode(g00, "z");
+		r00.assignGoal(g10);
+		r00.assignGoal(g11);
+		System.out.println("must be different");
+		System.out.println("r00: " + r00.signature());
+		System.out.println("r01: " + r01.signature());
+		assertNotEquals(r00, r01);
+		
+		//adding new goals to r01 in a different order
+		GoalNode g20 = new GoalNode(g01, "a");
+		GoalNode g21 = new GoalNode(g01, "z");
+		r01.assignGoal(g21);
+		r01.assignGoal(g20);
+		System.out.println("must be equal");
+		System.out.println("r00: " + r00.signature());
+		System.out.println("r01: " + r01.signature());
+		assertEquals(r00, r01);
+	}
 
 	@Test
 	public void testCloneRoleContent() {
@@ -43,14 +119,14 @@ public class OrganisationTest {
 
 		// parent's signature
 		System.out.println("\n\ntestCloneRoleContent");
-		System.out.println("r0    : " + r0.toString());
+		System.out.println("r0    : " + r0.signature());
 		System.out.println("parent: " + r1.getParentSignature());
 		assertEquals(r0.toString(), r1.getParentSignature());
 
 		RoleNode r0clone = r0.cloneContent();
 		RoleNode r1clone = r1.cloneContent();
 		r1clone.setParent(r0clone);
-		
+
 		assertEquals(r1.toString(), r1clone.toString());
 
 		System.out.println("\n\ntestCloneRoleContent");
@@ -104,11 +180,11 @@ public class OrganisationTest {
 			System.out.println("rolesTree : " + rolesTree);
 			System.out.println("clonedTree: " + clonedTree);
 			assertEquals(rolesTree.toString(), clonedTree.toString());
-		} catch (MoreThanOneRootRoleFound | RoleNotFound e) {
+		} catch (DuplicatedRootRole | RoleNotFound e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Test
 	public void testOrg() {
 
@@ -127,7 +203,7 @@ public class OrganisationTest {
 		t.addGoal("g122", "g12");
 		t.addGoal("g1221", "g122");
 		t.addWorkload("g1221", "s2", 3.4);
-		
+
 		List<String> proofs = new ArrayList<>();
 		List<String> outputs = new ArrayList<>();
 
@@ -138,7 +214,8 @@ public class OrganisationTest {
 		// After generating proofs it must be checked manually and then turn this
 		// argument false for further right assertions
 		boolean generatingProofsInCheckingMode = false;
-		if (generatingProofsInCheckingMode) p.deleteExistingProofs();
+		if (generatingProofsInCheckingMode)
+			p.deleteExistingProofs();
 
 		Cost cost[] = Cost.values();
 		for (Cost c : cost) {
@@ -146,7 +223,7 @@ public class OrganisationTest {
 			Nodo n = new BuscaLargura().busca(o);
 			outputs.add(n.getEstado().toString());
 			try {
-				assertTrue(((Organisation)n.getEstado()).validateOutput());
+				assertTrue(((Organisation) n.getEstado()).validateOutput());
 			} catch (OutputDoesNotMatchWithInput e1) {
 				e1.printStackTrace();
 			}
@@ -172,4 +249,5 @@ public class OrganisationTest {
 			assertEquals(proofs.get(i), outputs.get(i));
 		}
 	}
+	
 }

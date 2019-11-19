@@ -126,7 +126,7 @@ public class RoleNode {
 			Iterator<GoalNode> iterator = this.getAssignedGoals().iterator(); 
 			while (iterator.hasNext()) {
 				GoalNode n = iterator.next(); 
-				assignedGoals.add(n.toString());
+				assignedGoals.add(n.getGoalName());
 			}
 		}
 		Collections.sort(assignedGoals);
@@ -138,21 +138,8 @@ public class RoleNode {
 	}
 	
 	public String toString() {
-		String r = "";
+		String r = signature();
 
-		List<String> assignedGoals = new ArrayList<>();
-		if ((this.getAssignedGoals() != null) && (!this.getAssignedGoals().isEmpty())) {
-			Iterator<GoalNode> iterator = this.getAssignedGoals().iterator(); 
-			while (iterator.hasNext()) {
-				GoalNode n = iterator.next(); 
-				assignedGoals.add(n.toString());
-			}
-		}
-		Collections.sort(assignedGoals);
-		r += "G{" + assignedGoals + "}";
-
-		r += "S{" + this.getWorkloads() + "}";
-		
 		if (this.getParent() != null) {
 			r += "^";
 			r += this.getParent().toString();
@@ -198,7 +185,7 @@ public class RoleNode {
 		if (assignedGoals == null) {
 			if (other.assignedGoals != null)
 				return false;
-		} else if (!assignedGoals.equals(other.assignedGoals))
+		} else if (!signature().equals(other.signature()))
 			return false;
 		return true;
 	}

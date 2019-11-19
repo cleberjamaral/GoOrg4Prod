@@ -8,7 +8,7 @@ import java.util.Set;
 import busca.Antecessor;
 import busca.Estado;
 import organisation.OrganisationPlot;
-import organisation.exception.MoreThanOneRootRoleFound;
+import organisation.exception.DuplicatedRootRole;
 import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
@@ -330,7 +330,7 @@ public class Organisation implements Estado, Antecessor {
 				if (goal != gn)
 					newState.goalSuccessors.add(goal);
 			}
-		} catch (MoreThanOneRootRoleFound | RoleNotFound e) {
+		} catch (DuplicatedRootRole | RoleNotFound e) {
 			e.printStackTrace();
 		}
 
