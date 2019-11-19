@@ -1,4 +1,4 @@
-package organisation;
+package organisation.search;
 
 /**
  * Cost refers to different cost functions that can be used in order to find a more suitable

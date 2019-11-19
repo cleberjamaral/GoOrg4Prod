@@ -10,8 +10,11 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import busca.BuscaLargura;
-import busca.BuscaProfundidade;
 import busca.Nodo;
+import organisation.goal.GoalNode;
+import organisation.goal.GoalTree;
+import organisation.search.Cost;
+import organisation.search.Organisation;
 import properties.Workload;
 
 import java.io.File;
@@ -32,7 +35,7 @@ public class OrganisationApp {
 	public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
 
 		// set verbose level
-		SimpleLogger.getInstance(1);
+		SimpleLogger.getInstance(4);
 
 		Organisation inicial;
 		// if a Moise XML file was not provided, use a sample organisation
@@ -182,9 +185,9 @@ public class OrganisationApp {
 					SimpleLogger.getInstance().debug(
 							"Push = " + referenceGoalNode.toString() + " - Op: " + referenceGoalNode.getOperator());
 				} else if (node.getNodeName().equals("skill")) {
-					referenceGoalNode.addRequirement(eGoal.getAttribute("id"));
+					referenceGoalNode.addWorkload(new Workload(eGoal.getAttribute("id"), 0));
 					SimpleLogger.getInstance()
-							.debug("Skill = " + referenceGoalNode.toString() + " : " + referenceGoalNode.getRequirements());
+							.debug("Skill = " + referenceGoalNode.toString() + " : " + referenceGoalNode.getWorkloads());
 				} else if (node.getNodeName().equals("mission")) {
 					return; // end of scheme goals
 				}

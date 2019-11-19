@@ -1,9 +1,8 @@
-package organisation;
+package organisation.goal;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import properties.Throughput;
 import properties.Workload;
 
 public class GoalTree {
@@ -11,12 +10,12 @@ public class GoalTree {
 	GoalNode rootNode;
 	Set<GoalNode> tree = new HashSet<>();
 	
-	GoalTree(GoalNode rootNode) {
+	public GoalTree(GoalNode rootNode) {
 		this.rootNode = rootNode;
 		tree.add(this.rootNode);
 	}
 
-	GoalTree(String rootNode) {
+	public GoalTree(String rootNode) {
 		this.rootNode = new GoalNode(null, rootNode);
 		tree.add(this.rootNode);
 	}
@@ -34,13 +33,13 @@ public class GoalTree {
 	public void addWorkload(String name, String workload, double effort) {
 		GoalNode g = findAGoalByName(this.rootNode, name);
 		Workload w = new Workload(workload, effort);
-		g.addRequirement(w);
+		g.addWorkload(w);
 	}
 	
 	public void addThroughput(String name, String thoughput, double amount) {
-		GoalNode g = findAGoalByName(this.rootNode, name);
-		Throughput t = new Throughput(thoughput, amount);
-		g.addRequirement(t);
+		//GoalNode g = findAGoalByName(this.rootNode, name);
+		//Throughput t = new Throughput(thoughput, amount);
+		//g.addWorkload(t);
 	}
 	
 	private GoalNode findAGoalByName(GoalNode root, String name) {
@@ -69,7 +68,7 @@ public class GoalTree {
 			} else {
 				// get the biggest effort and divide all workloads by the limit
 				double sumEfforts = 0;
-				for (Object w : s.getRequirements()) {
+				for (Object w : s.getWorkloads()) {
 					if (w instanceof Workload) {
 						sumEfforts += ((Workload) w).getEffort();
 					}
@@ -83,7 +82,7 @@ public class GoalTree {
 					g.setParent(parent);
 					if (slices > 1)
 						g.setGoalName(g.getGoalName() + "$" + i);
-					for (Object w : g.getRequirements()) {
+					for (Object w : g.getWorkloads()) {
 
 						if ((w instanceof Workload) && (slices > 1)) {
 							((Workload) w).setEffort(((Workload) w).getEffort() / slices);
@@ -97,4 +96,18 @@ public class GoalTree {
 		});
 	}
 
+	/**
+	 * Give the sum of efforts of the whole tree
+	 * 
+	 * @return a double
+	 */
+	public double sumEfforts() {
+		double sumEfforts = 0;
+		for (GoalNode g : this.tree) {
+			for (Workload w : g.getWorkloads()) {
+				sumEfforts += w.getEffort();
+			}
+		}
+		return sumEfforts;
+	}
 }

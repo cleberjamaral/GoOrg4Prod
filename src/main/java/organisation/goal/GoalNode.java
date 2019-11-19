@@ -1,4 +1,4 @@
-package organisation;
+package organisation.goal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.List;
 import properties.Workload;
 
 public class GoalNode {
-	private List<Object> requirements = new ArrayList<Object>();
-	private List<GoalNode> descendents = new ArrayList<GoalNode>();
+	private List<Workload> workloads = new ArrayList<>();
+	private List<GoalNode> descendents = new ArrayList<>();
 	private String goalName;
 	private GoalNode parent;
 	private String operator;
@@ -21,12 +21,12 @@ public class GoalNode {
 		}
 	}
 
-	public void addRequirement(Object newRequirement) {
-		requirements.add(newRequirement);
+	public void addWorkload(Workload newWorkload) {
+		workloads.add(newWorkload);
 	}
 
-	public List<Object> getRequirements() {
-		return requirements;
+	public List<Workload> getWorkloads() {
+		return workloads;
 	}
 
 	public void addDescendent(GoalNode newDescendent) {
@@ -65,9 +65,7 @@ public class GoalNode {
 	}
 	
 	public boolean containsWorkload() {
-		for (Object s : this.requirements) 
-			if (s instanceof Workload) return true;
-		return false;
+		return (this.getWorkloads().size() > 0);
 	}
 	
 	public String toString() {
@@ -77,7 +75,9 @@ public class GoalNode {
 	public GoalNode cloneContent() {
 		GoalNode clone = new GoalNode(null, this.goalName);
 		
-		for (Object s : this.requirements) clone.requirements.add(((Workload)s).clone());
+		for (Workload s : this.workloads) 
+			clone.workloads.add(s.clone());
+		
 		clone.operator = this.operator;
 		
 	    return clone;
@@ -86,8 +86,12 @@ public class GoalNode {
 	public GoalNode clone() {
 		GoalNode clone = new GoalNode(this.parent, this.goalName);
 		
-		for (Object s : this.requirements) clone.requirements.add(((Workload)s).clone());
-		for (GoalNode gn : this.descendents) clone.descendents.add(gn);
+		for (Workload s : this.workloads) 
+			clone.workloads.add(s.clone());
+		
+		for (GoalNode gn : this.descendents) 
+			clone.descendents.add(gn);
+		
 		clone.operator = this.operator;
 		
 	    return clone;

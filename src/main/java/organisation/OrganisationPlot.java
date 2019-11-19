@@ -10,6 +10,10 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
+import organisation.goal.GoalNode;
+import organisation.role.RoleNode;
+import organisation.search.Organisation;
+
 public class OrganisationPlot {
 
 	public OrganisationPlot() {
@@ -34,7 +38,7 @@ public class OrganisationPlot {
 						+ "shape = \"Mrecord\" label = <<table border=\"0\" cellborder=\"0\" bgcolor=\"white\">"
 						+ "<tr><td bgcolor=\"black\" align=\"center\"><font color=\"white\">" + or.getRoleName()
 						+ "</font></td></tr><tr><td align=\"center\">" + or.getAssignedGoals() + "</td></tr>");
-				for (Object s : or.getRequirements())
+				for (Object s : or.getWorkloads())
 					out.print("<tr><td align=\"left\">" + s.toString() + "</td></tr>");
 				out.println("</table>> ];");
 
@@ -104,7 +108,7 @@ public class OrganisationPlot {
 					+ "shape = \"ellipse\" label = <<table border=\"0\" cellborder=\"0\">"
 					+ "<tr><td align=\"center\"><b>" + or.getGoalName() + "</b></td></tr>");
 		}
-		for (Object s : or.getRequirements())
+		for (Object s : or.getWorkloads())
 			out.print("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
 		out.println("</table>> ];");
 		or.getDescendents().forEach(g -> {
