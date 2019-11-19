@@ -42,44 +42,28 @@ public class OrganisationApp {
 		Organisation inicial;
 		// if a Moise XML file was not provided, use a sample organisation
 		if ((args.length < 1) || (args[0].equals("0"))) {
-			GoalTree gTree;
 			// Sample organization
-			gTree = new GoalTree("g1");
-			gTree.addGoal("g11","g1");
-			gTree.addWorkload("g11", "s1", 2);
-			gTree.addGoal("g12","g1");
-			gTree.addGoal("g111","g11");
-			gTree.addWorkload("g111", "s2", 8);
-			gTree.addGoal("g112","g11");
-			gTree.addWorkload("g112", "s2", 2);
-			gTree.addGoal("g121","g12");
-			gTree.addWorkload("g121", "s2", 0);
-			gTree.addGoal("g122","g12");
-			gTree.addWorkload("g122", "s2", 3.4);
-			gTree.addGoal("g1221","g122");
-			gTree.addWorkload("g1221", "s2", 3.4);
-			/*
-			GoalTree t = new GoalTree("PaintHouse");
+			GoalTree gTree = new GoalTree("PaintHouse");
 			//t.addGoalToTree("GetInputs", "PaintHouse");
 			//t.addWorkloadToGoal("GetInputs", "Contract", 2);
-			t.addGoalToTree("Paint", "PaintHouse");
-			t.addWorkloadToGoal("Paint", "Paint1", 2);
+			gTree.addGoal("Paint", "PaintHouse");
+			gTree.addWorkload("Paint", "Paint1", 2);
 			//t.addGoalToTree("BuyInputs", "GetInputs");
 			//t.addWorkloadToGoal("BuyInputs", "Purchase", 4);
 			//t.addThroughputToGoal("BuyInputs","messages",100);
 			//t.addThroughputToGoal("BuyInputs","reports",100);
-			t.addGoalToTree("Inspect", "PaintHouse");
-			t.addGoalToTree("Report", "Inspect");
-			t.addWorkloadToGoal("Report", "Paint", 0);
-			t.addGoalToTree("CheckInt", "Inspect");
-			t.addGoalToTree("CheckExt", "CheckInt");
-			t.addWorkloadToGoal("CheckExt", "Paint", 3.4);
-			t.addGoalToTree("PaintInt", "Paint");
-			t.addWorkloadToGoal("PaintInt", "Paint", 8);
-			t.addGoalToTree("PaintExt", "Paint");
-			t.addWorkloadToGoal("PaintExt", "Paint", 2);
+			gTree.addGoal("Inspect", "PaintHouse");
+			gTree.addGoal("Report", "Inspect");
+			gTree.addWorkload("Report", "Paint", 0);
+			gTree.addGoal("CheckInt", "Inspect");
+			gTree.addGoal("CheckExt", "CheckInt");
+			gTree.addWorkload("CheckExt", "Paint", 3.4);
+			gTree.addGoal("PaintInt", "Paint");
+			gTree.addWorkload("PaintInt", "Paint", 8);
+			gTree.addGoal("PaintExt", "Paint");
+			gTree.addWorkload("PaintExt", "Paint", 2);
 			//t.addWorkloadToGoal("PaintExt", "Scaffold", 3);
-			*/
+			
 			// Sample list of agents
 //			List<Object> agents = new ArrayList<>();
 //			Agent a0 = new Agent();

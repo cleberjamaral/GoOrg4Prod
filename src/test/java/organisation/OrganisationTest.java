@@ -134,9 +134,15 @@ public class OrganisationTest {
 		OrganisationPlot p = new OrganisationPlot();
 		p.deleteExistingDiagrams();
 
+		// BE CAREFULL! if generateproof is true, the assertion should be always true
+		// After generating proofs it must be checked manually and then turn this
+		// argument false for further right assertions
+		boolean generatingProofsInCheckingMode = false;
+		if (generatingProofsInCheckingMode) p.deleteExistingProofs();
+
 		Cost cost[] = Cost.values();
 		for (Cost c : cost) {
-			Organisation o = new Organisation(t.getBrokenGoalTree(maxEffort), c, false);
+			Organisation o = new Organisation(t.getBrokenGoalTree(maxEffort), c, !generatingProofsInCheckingMode);
 			Nodo n = new BuscaLargura().busca(o);
 			outputs.add(n.getEstado().toString());
 			try {
@@ -145,15 +151,12 @@ public class OrganisationTest {
 				e1.printStackTrace();
 			}
 
-			// BE CAREFULL! if generateproof is true, the assertion should be always true
-			// After generating proofs it must be checked manually and then turn this
-			// argument false for further right assertions
-			p.plotOrganisation((Organisation) n.getEstado(), c.ordinal(), true);
+			p.plotOrganisation((Organisation) n.getEstado(), c.name(), generatingProofsInCheckingMode);
 
 			String proof = "";
 			BufferedReader fr;
 			try {
-				fr = new BufferedReader(new FileReader("output/proofs/graph_" + c.ordinal() + ".txt"));
+				fr = new BufferedReader(new FileReader("output/proofs/graph_" + c.name() + ".txt"));
 				proof = fr.readLine();
 				proofs.add(proof);
 

@@ -20,7 +20,7 @@ public class OrganisationPlot {
 
 	}
 	
-	public void plotOrganisation(Organisation o, int organisationId, boolean generateProof) {
+	public void plotOrganisation(Organisation o, String organisationId, boolean generateProof) {
 		List<String> links = new ArrayList<>();
 
 		File diagramFile = new File("output/diagrams/tmp");
@@ -88,6 +88,16 @@ public class OrganisationPlot {
 	public void deleteExistingDiagrams() {
 		try {
 			File filepath = new File("output/diagrams");
+			FileUtils.deleteDirectory(filepath);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void deleteExistingProofs() {
+		try {
+			File filepath = new File("output/proofs");
 			FileUtils.deleteDirectory(filepath);
 
 		} catch (IOException e) {

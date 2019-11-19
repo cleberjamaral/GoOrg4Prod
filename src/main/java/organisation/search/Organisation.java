@@ -119,7 +119,7 @@ public class Organisation implements Estado, Antecessor {
 						+ this.toString() + ", Hash: " + this.hashCode() + ", Cost: " + this.accCost + "/" + this.cost);
 
 				OrganisationPlot p = new OrganisationPlot();
-				p.plotOrganisation(this, isGoalList.size(), false);
+				p.plotOrganisation(this, Integer.toString(isGoalList.size()), false);
 			} else {
 				LOG.debug("#(" + generatedStates + "/" + prunedStates + ") Duplicated solution!" + ", Hash: "
 						+ this.hashCode());
