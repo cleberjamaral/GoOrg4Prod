@@ -17,9 +17,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -219,7 +217,7 @@ public class OrganisationTest {
 
 		Cost cost[] = Cost.values();
 		for (Cost c : cost) {
-			Organisation o = new Organisation(t.getBrokenGoalTree(maxEffort), c, !generatingProofsInCheckingMode);
+			Organisation o = new Organisation(t, c, !generatingProofsInCheckingMode);
 			Nodo n = new BuscaLargura().busca(o);
 			outputs.add(n.getEstado().toString());
 			try {

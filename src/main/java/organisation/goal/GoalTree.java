@@ -12,17 +12,29 @@ public class GoalTree {
 	
 	public GoalTree(GoalNode rootNode) {
 		this.rootNode = rootNode;
-		tree.add(this.rootNode);
+		if (!treeContains(this.rootNode)) tree.add(this.rootNode);
 	}
 
 	public GoalTree(String rootNode) {
 		this.rootNode = new GoalNode(null, rootNode);
-		tree.add(this.rootNode);
+		if (!treeContains(this.rootNode)) tree.add(this.rootNode);
+	}
+	
+	public GoalNode getRootNode() {
+		return this.rootNode;
 	}
 	
 	public void addGoal(String name, GoalNode parent) {
 		GoalNode g = new GoalNode(parent, name);
-		tree.add(g);
+		if (!treeContains(g)) tree.add(g);
+	}
+	
+	private boolean treeContains(GoalNode g) {
+		for (GoalNode gn : tree) 
+			if (gn.getGoalName().equals(g.getGoalName())) 
+				return true;
+			
+		return false;
 	}
 	
 	public void addGoal(String name, String parent) {
@@ -32,7 +44,7 @@ public class GoalTree {
 
 	public void addAllDescendants(GoalNode root) {
 		for (GoalNode g : root.getDescendents()) {
-			tree.add(g);
+			if (!treeContains(g)) tree.add(g);
 			addAllDescendants(g);
 		}
 	}
@@ -60,10 +72,10 @@ public class GoalTree {
 		return null;
 	}
 	
-	public GoalNode getBrokenGoalTree(double maxEffort) {
+	public void getBrokenGoalTree(double maxEffort) {
 		GoalNode newRoot = this.rootNode.cloneContent();
 		brakeGoalTree(this.rootNode, newRoot, maxEffort);
-		return newRoot;
+		this.rootNode = newRoot;
 	}
 	
 	private void brakeGoalTree(GoalNode original, GoalNode parent, double maxEffort) {

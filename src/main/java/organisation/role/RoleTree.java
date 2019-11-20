@@ -80,9 +80,7 @@ public class RoleTree {
 			child.setParentSignature(role.signature());
 		}
 	}
-
 	
-	//TODO: check if output matches with input (goals)
 	/**
 	 * Give the sum of efforts of the whole tree
 	 * 

@@ -91,14 +91,14 @@ public class OrganisationApp {
 //			agents.add(a6);
 			
 			List<Object> limits = new ArrayList<>();
-			Workload w = new Workload("maxEffort",maxEffort);
+			Workload w = new Workload("maxEffort", maxEffort);
 			limits.add(w);
 
 			// if an argument to choose a cost function was given
 			if (args.length == 2) {
-				inicial = new Organisation(gTree.getBrokenGoalTree(maxEffort), Cost.valueOf(args[1]), limits);
+				inicial = new Organisation(gTree, Cost.valueOf(args[1]), limits);
 			} else {
-				inicial = new Organisation(gTree.getBrokenGoalTree(maxEffort), Cost.UNITARY, limits);
+				inicial = new Organisation(gTree, Cost.UNITARY, limits);
 			}
 
 		} else {
@@ -118,7 +118,7 @@ public class OrganisationApp {
 			NodeList nList = document.getElementsByTagName("scheme");
 			visitNodes(nList);
 
-			inicial = new Organisation(rootNode, Cost.SPECIALIST, true);
+			inicial = new Organisation(new GoalTree(rootNode), Cost.SPECIALIST, true);
 		}
 
 		Nodo n = null;

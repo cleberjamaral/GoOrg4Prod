@@ -32,20 +32,17 @@ public class Organisation implements Estado, Antecessor {
 	private static int prunedStates = 0;
 	// max effort per role
 	private static double maxEffort = 8;
-	// a reference to the goals tree used by all states
+	// a reference to the goals tree used by all states (static to save memory)
 	private static GoalTree goalsTree;
+	// static Cost costFunction = Cost.SPECIALIST;
+	static Cost costFunction = Cost.SPECIALIST;
 
 	/*** LOCAL ***/
 	// the chart that is being created, potentially a complete chart
 	// private List<RoleNode> rolesTree = new ArrayList<RoleNode>();
 	RoleTree rolesTree = new RoleTree();
-
 	// The goals that were not explored yet
 	private List<GoalNode> goalSuccessors = new ArrayList<GoalNode>();
-
-	// static Cost costFunction = Cost.SPECIALIST;
-	static Cost costFunction = Cost.SPECIALIST;
-
 	// Cost supporting variables
 	private int cost = 0;
 	private int accCost = 0;
@@ -54,54 +51,55 @@ public class Organisation implements Estado, Antecessor {
 		return "Empty\n";
 	}
 
-	public Organisation(GoalNode gn, Cost costFunction, boolean removeOldDiagrams) {
-		createOrganisation(gn, removeOldDiagrams);
+	private Organisation() {
+		generatedStates++;
+	}
+	
+	public Organisation(GoalTree gt, Cost costFunction, boolean removeOldDiagrams) {
+		createOrganisation(gt, removeOldDiagrams);
 
 		Organisation.costFunction = costFunction;
 	}
 
-	public Organisation(GoalNode gn, Cost costFunction, List<Object> limits) {
+	public Organisation(GoalTree gt, Cost costFunction, List<Object> limits) {
 		for (Object w : limits) {
 			if (w instanceof Workload) {
 				Organisation.maxEffort = ((Workload) w).getEffort();
-				createOrganisation(gn, true);
+				createOrganisation(gt, true);
 			}
 		}
 
 		Organisation.costFunction = costFunction;
 	}
 
-	public Organisation(GoalNode gn) {
-		createOrganisation(gn, true);
-	}
-
-	private void createOrganisation(GoalNode gn, boolean removeOldDiagrams) {
+	private void createOrganisation(GoalTree gt, boolean removeOldDiagrams) {
 		// If it is the first state that is going to be created
 		generatedStates++;
-		if (gn.getParent() == null) {
-			goalsTree = new GoalTree(gn);
-			goalsTree.addAllDescendants(gn);
-			
-			GoalNode newRoot = goalsTree.getBrokenGoalTree(Organisation.maxEffort);
-			addAllGoalsSuccessors(newRoot);
+		
+		goalsTree = gt;
+		goalsTree.addAllDescendants(goalsTree.getRootNode());
 
-			OrganisationPlot p = new OrganisationPlot();
-			if (removeOldDiagrams) p.deleteExistingDiagrams();
-			p.plotOrganizationalGoalTree(newRoot);
+		goalsTree.getBrokenGoalTree(Organisation.maxEffort);
+		addAllGoalsSuccessors(goalsTree.getRootNode());
 
-			String roleName = "r" + this.rolesTree.size();
-			RoleNode r = new RoleNode(null, roleName);
-			r.assignGoal(newRoot);
-			for (Object requirement : newRoot.getWorkloads())
-				r.addWorkload(((Workload) requirement).clone());
-			this.rolesTree.add(r);
+		OrganisationPlot p = new OrganisationPlot();
+		if (removeOldDiagrams)
+			p.deleteExistingDiagrams();
+		p.plotOrganizationalGoalTree(goalsTree.getRootNode());
 
-			// Used to infer a bad decision on the search
-			Organisation.costPenalty = this.goalSuccessors.size() + 1;
+		String roleName = "r" + this.rolesTree.size();
+		RoleNode r = new RoleNode(null, roleName);
+		r.assignGoal(goalsTree.getRootNode());
+		for (Object requirement : goalsTree.getRootNode().getWorkloads())
+			r.addWorkload(((Workload) requirement).clone());
+		this.rolesTree.add(r);
 
-			LOG.debug("#(" + generatedStates + "/" + prunedStates + ") FIRST STATE: " + this.toString() + " | "
-					+ this.hashCode() + " | Cost penalty: " + Organisation.costPenalty);
-		}
+		// Used to infer a bad decision on the search
+		Organisation.costPenalty = this.goalSuccessors.size() + 1;
+
+		LOG.debug("#(" + generatedStates + "/" + prunedStates + ") FIRST STATE: " + this.toString() + " | "
+				+ this.hashCode() + " | Cost penalty: " + Organisation.costPenalty);
+
 	}
 
 	private void addAllGoalsSuccessors(GoalNode gn) {
@@ -130,14 +128,13 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public boolean validateOutput() throws OutputDoesNotMatchWithInput {
-		if (goalsTree.sumEfforts() != rolesTree.sumEfforts()) {
+		if (Math.round(goalsTree.sumEfforts()) != Math.round(rolesTree.sumEfforts())) {
 			throw new OutputDoesNotMatchWithInput(
 					"The sum of efforts of the goals tree must match with the sum of efforts of the created roles tree! GoalsTree:"
 							+ goalsTree.sumEfforts() + " RolesTree:" + rolesTree.sumEfforts());
 		}
 		return true;
 	}
-
 	
 	public int custo() {
 		return cost;
@@ -320,7 +317,7 @@ public class Organisation implements Estado, Antecessor {
 
 	public Organisation createState(GoalNode gn) {
 
-		Organisation newState = new Organisation(gn);
+		Organisation newState = new Organisation();
 		try {
 			newState.rolesTree = this.rolesTree.cloneContent();
 
