@@ -1,6 +1,7 @@
 package organisation.goal;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import properties.Throughput;
@@ -71,6 +72,13 @@ public class GoalTree {
 			if (d != null) return d;
 		}
 		return null;
+	}
+	
+	public void addSuccessorsToList(List<GoalNode> successors, GoalNode gn) {
+		for (GoalNode goal : gn.getDescendents()) {
+			successors.add(goal);
+			addSuccessorsToList(successors, goal);
+		}
 	}
 	
 	public void getBrokenGoalTree(double maxEffort) {

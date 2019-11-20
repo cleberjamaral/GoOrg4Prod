@@ -28,6 +28,15 @@ public class RoleTree {
 		tree.add(role);
 	}
 	
+	public RoleNode createRole(RoleNode parent, String name, GoalNode g) {
+		RoleNode nr = new RoleNode(parent, name);
+		
+		this.assignGoalToRole(nr, g);
+		this.add(nr);
+		
+		return nr;
+	}
+	
 	public RoleNode findRoleBySignature(String roleSignature) throws RoleNotFound {
 		for (RoleNode or : this.tree) {
 			if (or.signature().equals(roleSignature)) return or;

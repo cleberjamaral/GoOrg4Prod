@@ -80,33 +80,20 @@ public class Organisation implements Estado, Antecessor {
 		goalsTree.addAllDescendants(goalsTree.getRootNode());
 
 		goalsTree.getBrokenGoalTree(Organisation.maxEffort);
-		addAllGoalsSuccessors(goalsTree.getRootNode());
+		goalsTree.addSuccessorsToList(goalSuccessors, goalsTree.getRootNode());
 
 		OrganisationPlot p = new OrganisationPlot();
 		if (removeOldDiagrams)
 			p.deleteExistingDiagrams();
 		p.plotOrganizationalGoalTree(goalsTree.getRootNode());
 
-		String roleName = "r" + this.rolesTree.size();
-		RoleNode r = new RoleNode(null, roleName);
-		r.assignGoal(goalsTree.getRootNode());
-		for (Object requirement : goalsTree.getRootNode().getWorkloads())
-			r.addWorkload(((Workload) requirement).clone());
-		this.rolesTree.add(r);
+		this.rolesTree.createRole(null, "r" + this.rolesTree.size(), goalsTree.getRootNode());
 
 		// Used to infer a bad decision on the search
 		Organisation.costPenalty = this.goalSuccessors.size() + 1;
 
 		LOG.debug("#(" + generatedStates + "/" + prunedStates + ") FIRST STATE: " + this.toString() + " | "
 				+ this.hashCode() + " | Cost penalty: " + Organisation.costPenalty);
-
-	}
-
-	private void addAllGoalsSuccessors(GoalNode gn) {
-		for (GoalNode goal : gn.getDescendents()) {
-			this.goalSuccessors.add(goal);
-			addAllGoalsSuccessors(goal);
-		}
 	}
 
 	public boolean ehMeta() {
@@ -188,10 +175,8 @@ public class Organisation implements Estado, Antecessor {
 
 			newState.accCost = this.accCost + newState.cost;
 
-			RoleNode nr = new RoleNode(newState.rolesTree.findRoleBySignature(aGivenRole.signature()),
-					"r" + newState.rolesTree.size());
-			
-			newState.rolesTree.assignGoalToRole(nr, goalToAssign);
+			RoleNode nr = newState.rolesTree.createRole(newState.rolesTree.findRoleBySignature(aGivenRole.signature()),
+					"r" + newState.rolesTree.size(), goalToAssign);
 
 			// Prune states with effort equal to 0
 			if (nr.getSumWorkload() == 0) {
@@ -200,8 +185,6 @@ public class Organisation implements Estado, Antecessor {
 				newState = null;
 				return;
 			}
-
-			newState.rolesTree.add(nr);
 
 			suc.add(newState);
 
