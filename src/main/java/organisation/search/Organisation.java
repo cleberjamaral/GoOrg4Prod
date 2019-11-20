@@ -77,9 +77,7 @@ public class Organisation implements Estado, Antecessor {
 		generatedStates++;
 		
 		goalsTree = gt;
-		goalsTree.addAllDescendants(goalsTree.getRootNode());
-
-		goalsTree.getBrokenGoalTree(Organisation.maxEffort);
+		goalsTree.brakeGoalTree(Organisation.maxEffort);
 		goalsTree.addSuccessorsToList(goalSuccessors, goalsTree.getRootNode());
 
 		OrganisationPlot p = new OrganisationPlot();

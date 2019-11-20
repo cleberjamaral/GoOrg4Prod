@@ -118,8 +118,9 @@ public class OrganisationApp {
 			// Visit all possible schemes from Moise 'functional-specification'
 			NodeList nList = document.getElementsByTagName("scheme");
 			visitNodes(nList);
-
-			inicial = new Organisation(new GoalTree(rootNode), Cost.SPECIALIST, true);
+			GoalTree t = new GoalTree(rootNode);
+			t.addAllDescendants(rootNode);
+			inicial = new Organisation(t, Cost.SPECIALIST, true);
 		}
 
 		Nodo n = null;

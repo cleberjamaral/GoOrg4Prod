@@ -81,18 +81,18 @@ public class GoalTree {
 		}
 	}
 	
-	public void getBrokenGoalTree(double maxEffort) {
+	public void brakeGoalTree(double maxEffort) {
 		GoalNode newRoot = this.rootNode.cloneContent();
-		brakeGoalTree(this.rootNode, newRoot, maxEffort);
+		brakeGoalNode(this.rootNode, newRoot, maxEffort);
 		this.rootNode = newRoot;
 	}
 	
-	private void brakeGoalTree(GoalNode original, GoalNode parent, double maxEffort) {
+	private void brakeGoalNode(GoalNode original, GoalNode parent, double maxEffort) {
 		original.getDescendents().forEach(s -> {
 			if (!s.containsWorkload()) {
 				GoalNode g = s.cloneContent();
 				g.setParent(parent);
-				brakeGoalTree(s, g, maxEffort);
+				brakeGoalNode(s, g, maxEffort);
 			} else {
 				// get the biggest effort and divide all workloads by the limit
 				double sumEfforts = 0;
@@ -117,7 +117,7 @@ public class GoalTree {
 						}
 					}
 					if (i == slices)
-						brakeGoalTree(s, g, maxEffort);
+						brakeGoalNode(s, g, maxEffort);
 				}
 
 			}
