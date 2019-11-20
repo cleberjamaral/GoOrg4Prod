@@ -45,7 +45,7 @@ public class GoalTree {
 	}
 
 	public void addAllDescendants(GoalNode root) {
-		for (GoalNode g : root.getDescendents()) {
+		for (GoalNode g : root.getDescendants()) {
 			if (!treeContains(g)) tree.add(g);
 			addAllDescendants(g);
 		}
@@ -67,7 +67,7 @@ public class GoalTree {
 		if (root.getGoalName().equals(name)) {
 			return root;
 		} 
-		for (GoalNode goal : root.getDescendents()) {
+		for (GoalNode goal : root.getDescendants()) {
 			GoalNode d = findAGoalByName(goal, name);
 			if (d != null) return d;
 		}
@@ -75,7 +75,7 @@ public class GoalTree {
 	}
 	
 	public void addSuccessorsToList(List<GoalNode> successors, GoalNode gn) {
-		for (GoalNode goal : gn.getDescendents()) {
+		for (GoalNode goal : gn.getDescendants()) {
 			successors.add(goal);
 			addSuccessorsToList(successors, goal);
 		}
@@ -88,7 +88,7 @@ public class GoalTree {
 	}
 	
 	private void brakeGoalNode(GoalNode original, GoalNode parent, double maxEffort) {
-		original.getDescendents().forEach(s -> {
+		original.getDescendants().forEach(s -> {
 			if (!s.containsWorkload()) {
 				GoalNode g = s.cloneContent();
 				g.setParent(parent);

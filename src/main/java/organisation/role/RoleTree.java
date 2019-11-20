@@ -13,86 +13,90 @@ public class RoleTree {
 
 	RoleNode rootNode;
 	Set<RoleNode> tree = new HashSet<>();
-	
-	public RoleTree() {}
-	
+
+	public RoleTree() {
+	}
+
 	public int size() {
 		return tree.size();
 	}
 
 	public Set<RoleNode> getTree() {
-		return tree;	
+		return tree;
 	}
-	
+
 	public void add(RoleNode role) {
 		tree.add(role);
 	}
-	
+
 	public RoleNode createRole(RoleNode parent, String name, GoalNode g) {
 		RoleNode nr = new RoleNode(parent, name);
-		
-		this.assignGoalToRole(nr, g);
-		this.add(nr);
-		
+
+		assignGoalToRole(nr, g);
+		add(nr);
+
 		return nr;
 	}
-	
+
 	public RoleNode findRoleBySignature(String roleSignature) throws RoleNotFound {
 		for (RoleNode or : this.tree) {
-			if (or.signature().equals(roleSignature)) return or;
+			if (or.signature().equals(roleSignature))
+				return or;
 		}
-		throw new RoleNotFound("There is no role with signature = '" + roleSignature + "'! Tree signature: " + this.tree.toString());
+		throw new RoleNotFound(
+				"There is no role with signature = '" + roleSignature + "'! Tree signature: " + this.tree.toString());
 	}
-	
+
 	public RoleTree cloneContent() throws DuplicatedRootRole, RoleNotFound {
 		RoleTree clonedTree = new RoleTree();
-		
+
 		// first clone all roles
 		for (RoleNode or : this.tree) {
 			RoleNode nnewS = or.cloneContent();
 			clonedTree.add(nnewS);
 		}
-		
+
 		int rootNodesFound = 0;
 		// finding right parents in the new tree
 		for (RoleNode or : clonedTree.getTree()) {
-			
+
 			// it is not the root role
 			if (!or.getParentSignature().equals("")) {
 				or.setParent(clonedTree.findRoleBySignature(or.getParentSignature()));
 			} else {
 				rootNodesFound++;
 			}
-			if (rootNodesFound > 1) 
-				throw new DuplicatedRootRole("More than one root role found in this tree! Tree signature: " + clonedTree.getTree());
+			if (rootNodesFound > 1)
+				throw new DuplicatedRootRole(
+						"More than one root role found in this tree! Tree signature: " + clonedTree.getTree());
 		}
 		return clonedTree;
 	}
-	
+
 	public RoleNode assignGoalToRoleBySignature(String signature, GoalNode newGoal) throws RoleNotFound {
 		RoleNode role = this.findRoleBySignature(signature);
 
 		assignGoalToRole(role, newGoal);
-		
+
 		return role;
 	}
-	
+
 	public void assignGoalToRole(RoleNode role, GoalNode newGoal) {
 		role.assignGoal(newGoal);
 
 		// Copy all workloads of the goal to this new role
-		for (Workload w : newGoal.getWorkloads()) 
+		for (Workload w : newGoal.getWorkloads())
 			role.addWorkload(w.clone());
-		
+
 		// Copy all throughput of the goal to this new role
-		for (Throughput t : newGoal.getThroughputs()) 
+		for (Throughput t : newGoal.getThroughputs())
 			role.addThroughput(t.clone());
 
-		//changes on content may change role signature, its children must be updated
-		for (RoleNode child : role.getDescendants()) 
+		// changes on content may change role signature, its children must be updated
+		for (RoleNode child : role.getDescendants())
 			child.setParentSignature(role.signature());
 	}
-	
+
 	/**
 	 * Give the sum of efforts of the whole tree
 	 * 
@@ -107,12 +111,12 @@ public class RoleTree {
 		}
 		return sumEfforts;
 	}
-	
+
 	@Override
 	public String toString() {
 		return tree.toString();
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return this.toString().hashCode();

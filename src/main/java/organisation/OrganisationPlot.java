@@ -131,7 +131,7 @@ public class OrganisationPlot {
 			out.print("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
 
 		out.println("</table>> ];");
-		or.getDescendents().forEach(g -> {
+		or.getDescendants().forEach(g -> {
 			plotGoalNode(out, g);
 			if (g.getParent() != null)
 				out.println("\t\"" + g.getParent().getGoalName() + "\"->\"" + g.getGoalName() + "\";");

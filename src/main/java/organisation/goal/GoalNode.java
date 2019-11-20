@@ -9,7 +9,7 @@ import properties.Workload;
 public class GoalNode {
 	private List<Workload> workloads = new ArrayList<>();
 	private List<Throughput> throughputs = new ArrayList<>();
-	private List<GoalNode> descendents = new ArrayList<>();
+	private List<GoalNode> descendants = new ArrayList<>();
 	private String goalName;
 	private GoalNode parent;
 	private String operator;
@@ -19,7 +19,7 @@ public class GoalNode {
 		parent = p;
 		operator = "sequence";
 		if (parent != null) {
-			parent.addDescendent(this);
+			parent.addDescendant(this);
 		}
 	}
 
@@ -39,12 +39,12 @@ public class GoalNode {
 		return throughputs;
 	}
 	
-	public void addDescendent(GoalNode newDescendent) {
-		descendents.add(newDescendent);
+	public void addDescendant(GoalNode newDescendent) {
+		descendants.add(newDescendent);
 	}
 
-	public List<GoalNode> getDescendents() {
-		return descendents;
+	public List<GoalNode> getDescendants() {
+		return descendants;
 	}
 
 	public String getGoalName() {
@@ -62,7 +62,7 @@ public class GoalNode {
 	public void setParent(GoalNode parent) {
 		this.parent = parent;
 		if (this.parent != null) {
-			this.parent.addDescendent(this);
+			this.parent.addDescendant(this);
 		}
 	}
 

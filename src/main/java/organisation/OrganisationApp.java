@@ -17,6 +17,7 @@ import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.search.Cost;
 import organisation.search.Organisation;
+import properties.Throughput;
 import properties.Workload;
 
 import java.io.File;
@@ -33,12 +34,13 @@ public class OrganisationApp {
 	static GoalNode rootNode = null;
 	static GoalNode referenceGoalNode = null;
 	static double maxEffort = 8;
+	static double maxThroughput = 8;
 	static SimpleLogger LOG;
 
 	public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
 
 		// set verbose level
-		LOG = SimpleLogger.getInstance(3);
+		LOG = SimpleLogger.getInstance(2);
 
 		Organisation inicial;
 		// if a Moise XML file was not provided, use a sample organisation
@@ -48,23 +50,23 @@ public class OrganisationApp {
 			gTree.addGoal("GetInputs", "PaintHouse");
 			gTree.addWorkload("GetInputs", "Contract", 2);
 			gTree.addGoal("Paint", "PaintHouse");
-			gTree.addWorkload("Paint", "Paint", 2);
+			gTree.addWorkload("Paint", "paint", 2);
 			gTree.addGoal("BuyInputs", "GetInputs");
-			gTree.addWorkload("BuyInputs", "Purchase", 4);
+			gTree.addWorkload("BuyInputs", "purchase", 7);
 			gTree.addWorkload("BuyInputs","messages",1);
 			gTree.addThroughput("BuyInputs", "reports", 10);
 			gTree.addThroughput("BuyInputs", "registerSuppliers", 2);
 			gTree.addGoal("Inspect", "PaintHouse");
 			gTree.addGoal("Report", "Inspect");
-			gTree.addWorkload("Report", "Paint", 0);
+			gTree.addWorkload("Report", "paint", 0);
 			gTree.addGoal("CheckInt", "Inspect");
 			gTree.addGoal("CheckExt", "CheckInt");
-			gTree.addWorkload("CheckExt", "Paint", 3.4);
+			gTree.addWorkload("CheckExt", "paint", 3.4);
 			gTree.addGoal("PaintInt", "Paint");
-			gTree.addWorkload("PaintInt", "Paint", 8);
+			gTree.addWorkload("PaintInt", "paint", 8);
 			gTree.addGoal("PaintExt", "Paint");
-			gTree.addWorkload("PaintExt", "Paint", 2);
-			gTree.addWorkload("PaintExt", "Scaffold", 3);
+			gTree.addWorkload("PaintExt", "paint", 2);
+			gTree.addWorkload("PaintExt", "scaffold", 3);
 			
 			// Sample list of agents
 //			List<Object> agents = new ArrayList<>();
@@ -93,7 +95,9 @@ public class OrganisationApp {
 			
 			List<Object> limits = new ArrayList<>();
 			Workload w = new Workload("maxEffort", maxEffort);
+			Throughput t = new Throughput("maxThroughput", maxThroughput);
 			limits.add(w);
+			limits.add(t);
 
 			// if an argument to choose a cost function was given
 			if (args.length == 2) {
