@@ -48,11 +48,12 @@ public class OrganisationApp {
 			gTree.addGoal("GetInputs", "PaintHouse");
 			gTree.addWorkload("GetInputs", "Contract", 2);
 			gTree.addGoal("Paint", "PaintHouse");
-			gTree.addWorkload("Paint", "Paint1", 2);
+			gTree.addWorkload("Paint", "Paint", 2);
 			gTree.addGoal("BuyInputs", "GetInputs");
 			gTree.addWorkload("BuyInputs", "Purchase", 4);
-			gTree.addWorkload("BuyInputs","messages",100);
-			gTree.addWorkload("BuyInputs","reports",100);
+			gTree.addWorkload("BuyInputs","messages",1);
+			gTree.addThroughput("BuyInputs", "reports", 10);
+			gTree.addThroughput("BuyInputs", "registerSuppliers", 2);
 			gTree.addGoal("Inspect", "PaintHouse");
 			gTree.addGoal("Report", "Inspect");
 			gTree.addWorkload("Report", "Paint", 0);

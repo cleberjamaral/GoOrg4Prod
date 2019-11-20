@@ -3,6 +3,7 @@ package organisation.goal;
 import java.util.HashSet;
 import java.util.Set;
 
+import properties.Throughput;
 import properties.Workload;
 
 public class GoalTree {
@@ -56,9 +57,9 @@ public class GoalTree {
 	}
 	
 	public void addThroughput(String name, String thoughput, double amount) {
-		//GoalNode g = findAGoalByName(this.rootNode, name);
-		//Throughput t = new Throughput(thoughput, amount);
-		//g.addWorkload(t);
+		GoalNode g = findAGoalByName(this.rootNode, name);
+		Throughput t = new Throughput(thoughput, amount);
+		g.addThroughput(t);
 	}
 	
 	private GoalNode findAGoalByName(GoalNode root, String name) {
@@ -123,9 +124,9 @@ public class GoalTree {
 	public double sumEfforts() {
 		double sumEfforts = 0;
 		for (GoalNode g : this.tree) {
-			for (Workload w : g.getWorkloads()) {
+			for (Workload w : g.getWorkloads()) 
 				sumEfforts += w.getEffort();
-			}
+			
 		}
 		return sumEfforts;
 	}

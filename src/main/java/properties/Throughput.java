@@ -28,7 +28,7 @@ public class Throughput {
 	
 	@Override
 	public String toString() {
-		return "workload[id=" + id + ",amount=" + String.format("%.1f", amount) + "]";
+		return "throughput[id=" + id + ",amount=" + String.format("%.1f", amount) + "]";
 	}
 	
 	@Override

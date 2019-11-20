@@ -6,6 +6,7 @@ import java.util.Set;
 import organisation.exception.DuplicatedRootRole;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
+import properties.Throughput;
 import properties.Workload;
 
 public class RoleTree {
@@ -70,15 +71,17 @@ public class RoleTree {
 	public void assignGoalToRole(RoleNode role, GoalNode newGoal) {
 		role.assignGoal(newGoal);
 
-		// Copy all requirements of the goal to this new role
-		for (Workload w : newGoal.getWorkloads()) {
+		// Copy all workloads of the goal to this new role
+		for (Workload w : newGoal.getWorkloads()) 
 			role.addWorkload(w.clone());
-		}
 		
+		// Copy all throughput of the goal to this new role
+		for (Throughput t : newGoal.getThroughputs()) 
+			role.addThroughput(t.clone());
+
 		//changes on content may change role signature, its children must be updated
-		for (RoleNode child : role.getDescendants()) {
+		for (RoleNode child : role.getDescendants()) 
 			child.setParentSignature(role.signature());
-		}
 	}
 	
 	/**

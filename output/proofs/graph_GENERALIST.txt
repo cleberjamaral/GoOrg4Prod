@@ -1,1 +1,1 @@
-[G{[g111]}S{[workload[id=s2,effort=8.0]]}^G{[g1, g11, g112, g12, g121, g122, g1221]}S{[workload[id=s1,effort=2.0], workload[id=s2,effort=5.4]]}, G{[g1, g11, g112, g12, g121, g122, g1221]}S{[workload[id=s1,effort=2.0], workload[id=s2,effort=5.4]]}]
+[G{[g111]}W{[workload[id=s2,effort=8.0]]}T{[]}^G{[g1, g11, g112, g12, g121, g122, g1221]}W{[workload[id=s1,effort=2.0], workload[id=s2,effort=5.4]]}T{[]}, G{[g1, g11, g112, g12, g121, g122, g1221]}W{[workload[id=s1,effort=2.0], workload[id=s2,effort=5.4]]}T{[]}]

@@ -186,7 +186,6 @@ public class OrganisationTest {
 	@Test
 	public void testOrg() {
 
-		double maxEffort = 8;
 		// Sample organization
 		GoalTree t = new GoalTree("g1");
 		t.addGoal("g11", "g1");

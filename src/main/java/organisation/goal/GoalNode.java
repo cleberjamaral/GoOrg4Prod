@@ -3,10 +3,12 @@ package organisation.goal;
 import java.util.ArrayList;
 import java.util.List;
 
+import properties.Throughput;
 import properties.Workload;
 
 public class GoalNode {
 	private List<Workload> workloads = new ArrayList<>();
+	private List<Throughput> throughputs = new ArrayList<>();
 	private List<GoalNode> descendents = new ArrayList<>();
 	private String goalName;
 	private GoalNode parent;
@@ -28,7 +30,15 @@ public class GoalNode {
 	public List<Workload> getWorkloads() {
 		return workloads;
 	}
+	
+	public void addThroughput(Throughput t) {
+		throughputs.add(t);
+	}
 
+	public List<Throughput> getThroughputs() {
+		return throughputs;
+	}
+	
 	public void addDescendent(GoalNode newDescendent) {
 		descendents.add(newDescendent);
 	}
@@ -78,20 +88,9 @@ public class GoalNode {
 		for (Workload s : this.workloads) 
 			clone.workloads.add(s.clone());
 		
-		clone.operator = this.operator;
-		
-	    return clone;
-	}
-	
-	public GoalNode clone() {
-		GoalNode clone = new GoalNode(this.parent, this.goalName);
-		
-		for (Workload s : this.workloads) 
-			clone.workloads.add(s.clone());
-		
-		for (GoalNode gn : this.descendents) 
-			clone.descendents.add(gn);
-		
+		for (Throughput t : this.throughputs) 
+			clone.throughputs.add(t.clone());
+
 		clone.operator = this.operator;
 		
 	    return clone;

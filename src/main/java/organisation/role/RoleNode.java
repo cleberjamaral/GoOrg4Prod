@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Set;
 
 import organisation.goal.GoalNode;
+import properties.Throughput;
 import properties.Workload;
 
 public class RoleNode {
 	private Set<Workload> workloads = new HashSet<>();
+	private Set<Throughput> throughputs = new HashSet<>();
 	private Set<GoalNode> assignedGoals = new HashSet<>();
 	private List<RoleNode> descendants = new ArrayList<>();
 	private String roleName;
@@ -32,9 +34,9 @@ public class RoleNode {
 		}
 	}
 	
-	public Workload getWorkload(String workload) {
+	public Workload getWorkload(String id) {
 		for (Workload w : this.workloads) 
-			if (w.getId().equals(workload)) return w;
+			if (w.getId().equals(id)) return w;
 		
 		return null;
 	}
@@ -42,14 +44,34 @@ public class RoleNode {
 	public Set<Workload> getWorkloads() {
 		return workloads;
 	}
-	
+
 	public double getSumWorkload() {
 		double sumEfforts = 0;
 		for (Workload w : this.getWorkloads())
 			sumEfforts += w.getEffort();
 		return sumEfforts;
 	}
+
+	public void addThroughput(Throughput throughput) {
+		Throughput t = getThroughput(throughput.getId());
+		if (t != null) {
+			t.setAmount(t.getAmount() + throughput.getAmount());
+		} else {
+			this.throughputs.add(throughput);
+		}
+	}
+
+	private Throughput getThroughput(String id) {
+		for (Throughput w : this.throughputs) 
+			if (w.getId().equals(id)) return w;
+		
+		return null;
+	}
 	
+	public Set<Throughput> getThroughputs() {
+		return this.throughputs;
+	}
+
 	public void assignGoal(GoalNode g) {
 		assignedGoals.add(g);
 	}
@@ -132,8 +154,10 @@ public class RoleNode {
 		Collections.sort(assignedGoals);
 		r += "G{" + assignedGoals + "}";
 
-		r += "S{" + this.getWorkloads() + "}";
+		r += "W{" + this.getWorkloads() + "}";
 		
+		r += "T{" + this.getThroughputs() + "}";
+
 		return r;
 	}
 	
@@ -158,6 +182,9 @@ public class RoleNode {
 		
 		for (Workload s : this.workloads) 
 			clone.workloads.add(s.clone());
+
+		for (Throughput t : this.throughputs) 
+			clone.throughputs.add(t.clone());
 
 		for (GoalNode goal : this.assignedGoals) 
 			if (!clone.assignedGoals.contains(goal)) clone.assignedGoals.add(goal);
