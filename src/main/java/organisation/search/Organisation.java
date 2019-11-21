@@ -3,7 +3,6 @@ package organisation.search;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import busca.Antecessor;
 import busca.Estado;
@@ -143,11 +142,6 @@ public class Organisation implements Estado, Antecessor {
 		try {
 			Organisation newState = (Organisation) createState(goalToAssign);
 
-			newState.cost = penalty.getNonKindshipPenalty(aGivenRole, goalToAssign);
-			newState.cost += penalty.getAddRolePenalty(aGivenRole, goalToAssign);
-
-			newState.accCost = this.accCost + newState.cost;
-
 			RoleNode nr = newState.rolesTree.createRole(newState.rolesTree.findRoleBySignature(aGivenRole.signature()),
 					"r" + newState.rolesTree.size(), goalToAssign);
 			
@@ -165,6 +159,10 @@ public class Organisation implements Estado, Antecessor {
 				return;
 			}
 
+			newState.cost = penalty.getNonKindshipPenalty(aGivenRole, goalToAssign);
+			newState.cost += penalty.getAddRolePenalty(aGivenRole, goalToAssign, this.getRolesTree(), newState.getRolesTree());
+			newState.accCost = this.accCost + newState.cost;
+
 			suc.add(newState);
 
 			logTransformation("addRole", newState, nr);
@@ -178,11 +176,6 @@ public class Organisation implements Estado, Antecessor {
 
 		try {
 			Organisation newState = (Organisation) createState(goalToAssign);
-
-			newState.cost = penalty.getNonKindshipPenalty(hostRole, goalToAssign);
-			newState.cost += penalty.getJoinRolePenalty(hostRole, goalToAssign);
-
-			newState.accCost = this.accCost + newState.cost;
 
 			RoleNode jr = newState.rolesTree.assignGoalToRoleBySignature(hostRole.signature(), goalToAssign);
 
@@ -199,6 +192,10 @@ public class Organisation implements Estado, Antecessor {
 						+ ", amount: " + jr.getParentSumThroughput() + " > " + Organisation.maxThroughput);
 				return;
 			}
+
+			newState.cost = penalty.getNonKindshipPenalty(hostRole, goalToAssign);
+			newState.cost += penalty.getJoinRolePenalty(hostRole, goalToAssign);
+			newState.accCost = this.accCost + newState.cost;
 
 			logTransformation("joinRole", newState, jr);
 
@@ -274,8 +271,8 @@ public class Organisation implements Estado, Antecessor {
 		return newState;
 	}
 
-	public Set<RoleNode> getRolesTree() {
-		return rolesTree.getTree();
+	public RoleTree getRolesTree() {
+		return rolesTree;
 	}
 
 	private void logTransformation(String transformation, Organisation state, RoleNode role) {

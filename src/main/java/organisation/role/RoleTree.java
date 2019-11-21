@@ -11,10 +11,18 @@ import properties.Workload;
 
 public class RoleTree {
 
-	RoleNode rootNode;
-	Set<RoleNode> tree = new HashSet<>();
+	private int numberOfLevels;
+	private Set<RoleNode> tree = new HashSet<>();
 
 	public RoleTree() {
+	}
+
+	public int getNumberOfLevels() {
+		return numberOfLevels;
+	}
+
+	public void setNumberOfLevels(int numberOfLevels) {
+		this.numberOfLevels = numberOfLevels;
 	}
 
 	public int size() {
@@ -26,9 +34,17 @@ public class RoleTree {
 	}
 
 	public void add(RoleNode role) {
+		numberOfLevels = countLevels(role, 1);
 		tree.add(role);
 	}
 
+	private int countLevels(RoleNode role, int levels) {
+		if (role.getParent() != null)
+			countLevels(role.getParent(), ++levels);
+		
+		return levels;
+	}
+	
 	public RoleNode createRole(RoleNode parent, String name, GoalNode g) {
 		RoleNode nr = new RoleNode(parent, name);
 

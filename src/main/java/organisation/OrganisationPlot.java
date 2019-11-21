@@ -32,7 +32,7 @@ public class OrganisationPlot {
 
 			out.println("digraph G {");
 			//TODO: build the roles tree as a nodes tree like in goals node?
-			for (RoleNode or : o.getRolesTree()) {
+			for (RoleNode or : o.getRolesTree().getTree()) {
 				out.print("\t\"" + or.getRoleName()// headGoal.getGoalName()
 						+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
 						+ "shape = \"Mrecord\" label = <<table border=\"0\" cellborder=\"0\" bgcolor=\"white\">"

@@ -2,6 +2,7 @@ package organisation.search;
 
 import organisation.goal.GoalNode;
 import organisation.role.RoleNode;
+import organisation.role.RoleTree;
 
 public class CostResolver {
 
@@ -45,11 +46,17 @@ public class CostResolver {
 		}
 	}
 
-	public int getAddRolePenalty(RoleNode role, GoalNode goal) {
-		// High punishment when it is preferred more generalist and flatter structures
-		if ((costFunction == Cost.FLATTER) || (costFunction == Cost.GENERALIST)) {
+	public int getAddRolePenalty(RoleNode role, GoalNode goal, RoleTree oldTree, RoleTree newTree) {
+		// High punishment when it is preferred more generalist structures
+		if (costFunction == Cost.GENERALIST) {
 			return CostResolver.getCostPenalty() * 2;
-		} 
+		}
+		
+		// High punishment when it is creating more levels in a preferable flatter structure
+		if ((costFunction == Cost.FLATTER) && (newTree.getNumberOfLevels() > oldTree.getNumberOfLevels())){
+			return CostResolver.getCostPenalty() * 2;
+		}
+		
 		// Low punishment when is preferred taller but is not child
 		if ((costFunction == Cost.TALLER) && (!role.hasParentGoal(goal))) {
 			return CostResolver.getCostPenalty();
@@ -59,15 +66,20 @@ public class CostResolver {
 	
 	public int getJoinRolePenalty(RoleNode role, GoalNode goal) {
 		// High punishment when it is preferred taller and the role is not a child
-		if (((costFunction == Cost.TALLER) && (!role.hasParentGoal(goal)))
-				// Punish when it is preferred more specialist structures
-				|| (costFunction == Cost.SPECIALIST)) {
+		if ((costFunction == Cost.TALLER) && (!role.hasParentGoal(goal))) {
 			return CostResolver.getCostPenalty() * 2;
 		}
+		
 		// Low punishment when is preferred taller but is child
 		if (costFunction == Cost.TALLER) {
 			return CostResolver.getCostPenalty();
 		}
+		
+		// Punish when it is preferred more specialist structures
+		if (costFunction == Cost.SPECIALIST) {
+			return CostResolver.getCostPenalty() * 2;
+		}
+		
 		return 0;
 	}
 	
