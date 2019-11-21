@@ -9,60 +9,103 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import busca.BuscaLargura;
+//import busca.BuscaLargura;
+import busca.BuscaProfundidade;
 import busca.Nodo;
+import organisation.exception.OutputDoesNotMatchWithInput;
+import organisation.goal.GoalNode;
+import organisation.goal.GoalTree;
+import organisation.search.Cost;
+import organisation.search.Organisation;
+import properties.Throughput;
+import properties.Workload;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import org.apache.commons.io.FileUtils;
 
 import simplelogger.SimpleLogger;
 
 public class OrganisationApp {
 
-	static List<GoalNode> tree = new ArrayList<GoalNode>();
 	static Stack<GoalNode> stack = new Stack<GoalNode>();
 	static GoalNode rootNode = null;
 	static GoalNode referenceGoalNode = null;
+	static double maxEffort = 8;
+	static double maxThroughput = 8;
+	static SimpleLogger LOG;
 
 	public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
 
 		// set verbose level
-		SimpleLogger.getInstance(1);
+		LOG = SimpleLogger.getInstance(2);
 
 		Organisation inicial;
+		// if a Moise XML file was not provided, use a sample organisation
 		if ((args.length < 1) || (args[0].equals("0"))) {
 			// Sample organization
-			GoalNode g0 = new GoalNode(null, "g0");
-			tree.add(g0);
-			GoalNode g1 = new GoalNode(g0, "g1");
-			g1.addSkill("s1");
-			tree.add(g1);
-			GoalNode g2 = new GoalNode(g0, "g2");
-			tree.add(g2);
-			GoalNode g3 = new GoalNode(g1, "g3");
-			tree.add(g3);
-			g3.addSkill("s2");
-			GoalNode g4 = new GoalNode(g0, "g4");
-			tree.add(g4);
-			GoalNode g5 = new GoalNode(g4, "g5");
-			tree.add(g5);
-			g5.addSkill("s5");
-			GoalNode g6 = new GoalNode(g4, "g6");
-			tree.add(g6);
-			g6.addSkill("s4");
-			g6.addSkill("s5");
+			GoalTree gTree = new GoalTree("PaintHouse");
+			gTree.addGoal("GetInputs", "PaintHouse");
+			gTree.addWorkload("GetInputs", "Contract", 2);
+			gTree.addGoal("Paint", "PaintHouse");
+			gTree.addWorkload("Paint", "paint", 2);
+			gTree.addGoal("BuyInputs", "GetInputs");
+			gTree.addWorkload("BuyInputs", "purchase", 7);
+			gTree.addWorkload("BuyInputs","messages",1);
+			gTree.addThroughput("BuyInputs", "reports", 10);
+			gTree.addThroughput("BuyInputs", "registerSuppliers", 2);
+			gTree.addGoal("Inspect", "PaintHouse");
+			gTree.addGoal("Report", "Inspect");
+			gTree.addWorkload("Report", "paint", 0);
+			gTree.addGoal("CheckInt", "Inspect");
+			gTree.addGoal("CheckExt", "CheckInt");
+			gTree.addWorkload("CheckExt", "paint", 3.4);
+			gTree.addGoal("PaintInt", "Paint");
+			gTree.addWorkload("PaintInt", "paint", 8);
+			gTree.addGoal("PaintExt", "Paint");
+			gTree.addWorkload("PaintExt", "paint", 2);
+			gTree.addWorkload("PaintExt", "scaffold", 3);
+			
+			// Sample list of agents
+//			List<Object> agents = new ArrayList<>();
+//			Agent a0 = new Agent();
+//			agents.add(a0);
+//			Agent a1 = new Agent();
+//			agents.add(a1);
+//			Workload wa1 = new Workload("s1",0);
+//			a1.addProperty(wa1);
+//			Agent a2 = new Agent();
+//			Workload wa2 = new Workload("s2",0);
+//			a1.addProperty(wa2);
+//			agents.add(a2);
+//			Agent a3 = new Agent();
+//			agents.add(a3);
+//			Agent a4 = new Agent();
+//			Workload wa4 = new Workload("s4",0);
+//			a4.addProperty(wa4);
+//			agents.add(a4);
+//			Agent a5 = new Agent();
+//			Workload wa5 = new Workload("s5",0);
+//			a5.addProperty(wa5);
+//			agents.add(a5);
+//			Agent a6 = new Agent();
+//			agents.add(a6);
+			
+			List<Object> limits = new ArrayList<>();
+			Workload w = new Workload("maxEffort", maxEffort);
+			Throughput t = new Throughput("maxThroughput", maxThroughput);
+			limits.add(w);
+			limits.add(t);
+
+			// if an argument to choose a cost function was given
 			if (args.length == 2) {
-				inicial = new Organisation(g0, Cost.valueOf(args[1]));
+				inicial = new Organisation(gTree, Cost.valueOf(args[1]), limits);
 			} else {
-				inicial = new Organisation(g0, Cost.SPECIALIST);
+				inicial = new Organisation(gTree, Cost.UNITARY, limits);
 			}
+
 		} else {
 			String file = args[0];
 
@@ -79,21 +122,28 @@ public class OrganisationApp {
 			// Visit all possible schemes from Moise 'functional-specification'
 			NodeList nList = document.getElementsByTagName("scheme");
 			visitNodes(nList);
-
-			inicial = new Organisation(rootNode, Cost.SPECIALIST);
+			GoalTree t = new GoalTree(rootNode);
+			t.addAllDescendants(rootNode);
+			inicial = new Organisation(t, Cost.SPECIALIST, true);
 		}
-
-		plotOrganizationalGoalTree();
 
 		Nodo n = null;
 
-		n = new BuscaLargura().busca(inicial);
+		//n = new BuscaLargura().busca(inicial);
+		n = new BuscaProfundidade().busca(inicial);
 		
 		/**
 		 * To create the proof for the current gdt:
 		 * ((Organisation) n.getEstado()).plotOrganisation(Cost.SPECIALIST.ordinal(),true);
 		 */
 		if (n != null) {
+			try {
+				((Organisation)n.getEstado()).validateOutput();
+			} catch (OutputDoesNotMatchWithInput e) {
+				e.printStackTrace();
+				LOG.fatal(e.getMessage());
+			}
+
 			String expectedSolution = "[G{[g0]}S{[]}, G{[g1]}S{[s1]}^[g1][s1], G{[g2]}S{[]}^[g2][], G{[g3]}S{[s2]}^[g3][s2], G{[g4]}S{[]}^[g4][], G{[g5]}S{[s5]}^[g5][s5], G{[g6]}S{[s4, s5]}^[g6][s4, s5]]";
 			System.out.println("\n\nProduced output:" + n.getEstado().toString());
 			System.out.println("Given proof    :" + expectedSolution);
@@ -120,11 +170,11 @@ public class OrganisationApp {
 
 					if (rootNode == null) {
 						rootNode = new GoalNode(null, eGoal.getAttribute("id"));
-						tree.add(rootNode);
+						//tree.add(rootNode);
 						referenceGoalNode = rootNode;
 					} else {
 						GoalNode gn = new GoalNode(stack.peek(), eGoal.getAttribute("id"));
-						tree.add(gn);
+						//tree.add(gn);
 						referenceGoalNode = gn;
 					}
 
@@ -135,9 +185,9 @@ public class OrganisationApp {
 					SimpleLogger.getInstance().debug(
 							"Push = " + referenceGoalNode.toString() + " - Op: " + referenceGoalNode.getOperator());
 				} else if (node.getNodeName().equals("skill")) {
-					referenceGoalNode.addSkill(eGoal.getAttribute("id"));
+					referenceGoalNode.addWorkload(new Workload(eGoal.getAttribute("id"), 0));
 					SimpleLogger.getInstance()
-							.debug("Skill = " + referenceGoalNode.toString() + " : " + referenceGoalNode.getSkills());
+							.debug("Skill = " + referenceGoalNode.toString() + " : " + referenceGoalNode.getWorkloads());
 				} else if (node.getNodeName().equals("mission")) {
 					return; // end of scheme goals
 				}
@@ -153,42 +203,5 @@ public class OrganisationApp {
 		}
 	}
 
-	private static void plotOrganizationalGoalTree() {
-		try {
-			File filepath = new File("output/diagrams");
-			FileUtils.deleteDirectory(filepath);
 
-			File file = new File("output/diagrams/tmp");
-			file.getParentFile().mkdirs();
-		} catch (IOException e) {}
-
-		try (FileWriter fw = new FileWriter("output/diagrams/gdt.gv", false);
-				BufferedWriter bw = new BufferedWriter(fw);
-				PrintWriter out = new PrintWriter(bw)) {
-
-			out.println("digraph G {");
-			for (GoalNode or : tree) {
-				if (or.getOperator().equals("parallel")) {
-					out.print("\t\"" + or.getGoalName()
-							+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
-							+ "shape = \"diamond\" label = <<table border=\"0\" cellborder=\"0\">"
-							+ "<tr><td align=\"center\"><font color=\"black\"><b>" + or.getGoalName()
-							+ "</b></font></td></tr>");
-				} else {
-					out.print("\t\"" + or.getGoalName()
-							+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
-							+ "shape = \"ellipse\" label = <<table border=\"0\" cellborder=\"0\">"
-							+ "<tr><td align=\"center\"><b>" + or.getGoalName() + "</b></td></tr>");
-				}
-				for (String s : or.getSkills())
-					out.print("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
-				out.println("</table>> ];");
-				if (or.getParent() != null)
-					out.println("\t\"" + or.getParent().getGoalName() + "\"->\"" + or.getGoalName() + "\";");
-			}
-
-			out.println("}");
-		} catch (IOException e) {
-		}
-	}
 }
