@@ -20,13 +20,13 @@ public class OrganisationPlot {
 
 	}
 	
-	public void plotOrganisation(Organisation o, String organisationId, boolean generateProof) {
+	public void plotOrganisation(Organisation o, String plotName, boolean generateProof) {
 		List<String> links = new ArrayList<>();
 
 		File diagramFile = new File("output/diagrams/tmp");
 		diagramFile.getParentFile().mkdirs();
 
-		try (FileWriter fw = new FileWriter("output/diagrams/graph_" + organisationId + ".gv", false);
+		try (FileWriter fw = new FileWriter("output/diagrams/" + plotName + ".gv", false);
 				BufferedWriter bw = new BufferedWriter(fw);
 				PrintWriter out = new PrintWriter(bw)) {
 
@@ -65,7 +65,7 @@ public class OrganisationPlot {
 			File proofFile = new File("output/proofs/tmp");
 			proofFile.getParentFile().mkdirs();
 
-			try (FileWriter fw = new FileWriter("output/proofs/graph_" + organisationId + ".txt", false);
+			try (FileWriter fw = new FileWriter("output/proofs/" + plotName + ".txt", false);
 					BufferedWriter bw = new BufferedWriter(fw);
 					PrintWriter out = new PrintWriter(bw)) {
 
@@ -76,11 +76,11 @@ public class OrganisationPlot {
 		}
 	}
 
-	public void plotOrganizationalGoalTree(GoalNode gn) {
+	public void plotOrganizationalGoalTree(String plotName, GoalNode gn) {
 		File file = new File("output/diagrams/tmp");
 		file.getParentFile().mkdirs();
 
-		try (FileWriter fw = new FileWriter("output/diagrams/gdt.gv", false);
+		try (FileWriter fw = new FileWriter("output/diagrams/" + plotName + ".gv", false);
 				BufferedWriter bw = new BufferedWriter(fw);
 				PrintWriter out = new PrintWriter(bw)) {
 

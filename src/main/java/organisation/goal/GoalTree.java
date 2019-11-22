@@ -7,6 +7,7 @@ import java.util.Set;
 import annotations.AccountableFor;
 import annotations.Throughput;
 import annotations.Workload;
+import organisation.search.Parameters;
 
 public class GoalTree {
 
@@ -86,13 +87,13 @@ public class GoalTree {
 		}
 	}
 	
-	public void brakeGoalTree(double maxEffort, double maxThroughput) {
+	public void brakeGoalTree() {
 		GoalNode newRoot = this.rootNode.cloneContent();
-		brakeGoalNode(this.rootNode, newRoot, maxEffort, maxThroughput);
+		brakeGoalNode(this.rootNode, newRoot);
 		this.rootNode = newRoot;
 	}
 	
-	private void brakeGoalNode(GoalNode original, GoalNode parent, double maxEffort, double maxThroughput) {
+	private void brakeGoalNode(GoalNode original, GoalNode parent) {
 		original.getDescendants().forEach(s -> {
 			double sumEfforts = 0;
 			double sumThroughput = 0;
@@ -102,7 +103,8 @@ public class GoalTree {
 				sumThroughput += t.getAmount();
 
 			// the number of slices is at least 1 being more according to properties
-			int slices = (int) Math.max(Math.max(Math.ceil(sumEfforts / maxEffort), Math.ceil(sumThroughput / maxThroughput)), 1.0);
+			int slices = (int) Math.max(Math.max(Math.ceil(sumEfforts / Parameters.getMaxWorkload()),
+					Math.ceil(sumThroughput / Parameters.getMaxThroughput())), 1.0);
 			
 			GoalNode g = null;
 			for (int i = 0; i < slices; i++) {
@@ -118,7 +120,7 @@ public class GoalTree {
 				}
 			}
 			// when reaching the last slice, go to the next node
-			brakeGoalNode(s, g, maxEffort, maxThroughput);
+			brakeGoalNode(s, g);
 		});
 	}
 

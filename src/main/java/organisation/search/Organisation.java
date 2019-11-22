@@ -30,13 +30,11 @@ public class Organisation implements Estado, Antecessor {
 	private static int generatedStates = 0;
 	// Number of generated states
 	private static int prunedStates = 0;
-	// max effort per role
-	private static double maxEffort = 8;
 	// a reference to the goals tree used by all states (static to save memory)
 	private static GoalTree goalsTree;
-	// max throughput that a superior can handle
-	private static double maxThroughput = 1;
-
+	// any name for an organisation
+	private static String orgName;
+	
 	/*** LOCAL ***/
 	// the chart that is being created, potentially a complete chart
 	// private List<RoleNode> rolesTree = new ArrayList<RoleNode>();
@@ -55,17 +53,19 @@ public class Organisation implements Estado, Antecessor {
 		generatedStates++;
 	}
 
-	public Organisation(GoalTree gt, Cost costFunction, boolean removeOldDiagrams) {
+	public Organisation(String orgName, GoalTree gt, Cost costFunction, boolean removeOldDiagrams) {
+		Organisation.orgName = orgName;
 		createOrganisation(gt, costFunction, removeOldDiagrams);
 	}
 
-	public Organisation(GoalTree gt, Cost costFunction, List<Object> limits) {
+	public Organisation(String orgName, GoalTree gt, Cost costFunction, List<Object> limits) {
 		for (Object l : limits) {
 			if (l instanceof Workload)
-				Organisation.maxEffort = ((Workload) l).getEffort();
+				Parameters.setMaxWorkload(((Workload) l).getEffort());
 			if (l instanceof Throughput)
-				Organisation.maxThroughput = ((Throughput) l).getAmount();
+				Parameters.setMaxThroughput(((Throughput) l).getAmount());
 		}
+		Organisation.orgName = orgName;
 		createOrganisation(gt, costFunction, true);
 	}
 
@@ -74,18 +74,19 @@ public class Organisation implements Estado, Antecessor {
 		generatedStates++;
 
 		goalsTree = gt;
-		goalsTree.brakeGoalTree(Organisation.maxEffort, Organisation.maxThroughput);
+		goalsTree.brakeGoalTree();
 		goalsTree.addSuccessorsToList(goalSuccessors, goalsTree.getRootNode());
 
 		OrganisationPlot p = new OrganisationPlot();
 		if (removeOldDiagrams)
 			p.deleteExistingDiagrams();
-		p.plotOrganizationalGoalTree(goalsTree.getRootNode());
+		p.plotOrganizationalGoalTree(Organisation.orgName, goalsTree.getRootNode());
 
 		RoleNode root = this.rolesTree.createRole(null, "r" + this.rolesTree.size(), goalsTree.getRootNode());
 
 		// Used to infer a bad decision on the search
-		penalty = new CostResolver(this.goalSuccessors.size() + 1, costFunction);
+		Parameters.setDefaultPenalty(this.goalSuccessors.size() + 1);
+		penalty = new CostResolver(costFunction);
 
 		logTransformation("rootRole", this, root);
 	}
@@ -98,7 +99,7 @@ public class Organisation implements Estado, Antecessor {
 						+ this.toString() + ", Hash: " + this.hashCode() + ", Cost: " + this.accCost + "/" + this.cost);
 
 				OrganisationPlot p = new OrganisationPlot();
-				p.plotOrganisation(this, Integer.toString(isGoalList.size()), false);
+				p.plotOrganisation(this, Organisation.orgName + "_" + Integer.toString(isGoalList.size()), false);
 			} else {
 				LOG.debug("#(" + generatedStates + "/" + prunedStates + ") Duplicated solution!" + ", Hash: "
 						+ this.hashCode());
@@ -153,9 +154,9 @@ public class Organisation implements Estado, Antecessor {
 			}
 
 			// Prune states which parent cannot afford throughput 
-			if (nr.getParentSumThroughput() > Organisation.maxThroughput) {
+			if (nr.getParentSumThroughput() > Parameters.getMaxThroughput()) {
 				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned: " + nr.getAssignedGoals()
-						+ ", amount: " + nr.getParentSumThroughput() + " > " + Organisation.maxThroughput);
+						+ ", amount: " + nr.getParentSumThroughput() + " > " + Parameters.getMaxThroughput());
 				return;
 			}
 
@@ -179,16 +180,16 @@ public class Organisation implements Estado, Antecessor {
 			RoleNode jr = newState.rolesTree.assignGoalToRoleBySignature(hostRole.signature(), goalToAssign);
 
 			// Prune states with effort greater than max
-			if (jr.getSumWorkload() > Organisation.maxEffort) {
+			if (jr.getSumWorkload() > Parameters.getMaxWorkload()) {
 				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") joinRole pruned: " + jr.getSumWorkload()
-						+ " > " + Organisation.maxEffort);
+						+ " > " + Parameters.getMaxWorkload());
 				return;
 			}
 
 			// Prune states which parent cannot afford throughput 
-			if (jr.getParentSumThroughput() > Organisation.maxThroughput) {
+			if (jr.getParentSumThroughput() > Parameters.getMaxThroughput()) {
 				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned: " + jr.getAssignedGoals()
-						+ ", amount: " + jr.getParentSumThroughput() + " > " + Organisation.maxThroughput);
+						+ ", amount: " + jr.getParentSumThroughput() + " > " + Parameters.getMaxThroughput());
 				return;
 			}
 

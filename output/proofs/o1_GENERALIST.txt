@@ -1,0 +1,1 @@
+[G{[g1, g11, g12]}W{[workload[id=s1,effort=2.0], workload[id=s2,effort=4.0]]}T{[]}]

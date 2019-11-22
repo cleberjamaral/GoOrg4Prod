@@ -102,9 +102,9 @@ public class OrganisationApp {
 
 			// if an argument to choose a cost function was given
 			if (args.length == 2) {
-				inicial = new Organisation(gTree, Cost.valueOf(args[1]), limits);
+				inicial = new Organisation("orgApp", gTree, Cost.valueOf(args[1]), limits);
 			} else {
-				inicial = new Organisation(gTree, Cost.SPECIALIST, limits);
+				inicial = new Organisation("orgApp", gTree, Cost.SPECIALIST, limits);
 			}
 
 		} else {
@@ -125,7 +125,7 @@ public class OrganisationApp {
 			visitNodes(nList);
 			GoalTree t = new GoalTree(rootNode);
 			t.addAllDescendants(rootNode);
-			inicial = new Organisation(t, Cost.SPECIALIST, true);
+			inicial = new Organisation("orgApp", t, Cost.SPECIALIST, true);
 		}
 
 		Nodo n = null;
