@@ -11,7 +11,6 @@ import organisation.role.RoleNode;
 import organisation.role.RoleTree;
 import organisation.search.Cost;
 import organisation.search.Organisation;
-import properties.Workload;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -22,6 +21,8 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import annotations.Workload;
 
 public class OrganisationTest {
 
@@ -41,6 +42,46 @@ public class OrganisationTest {
 		assertEquals(g00, g01);
 		assertNotEquals(g00, g10);
 		assertEquals(g10, g11);
+	}
+	
+	@Test
+	public void testSimilarCollections() {
+		// a goal named g0
+		GoalNode g00 = new GoalNode(null, "g0");
+		// adding a workload s1 with value 1
+		g00.addWorkload(new Workload("s1", 1));
+		// a goal name g1 which parent is g00 (but it must be ignored)
+		GoalNode g10 = new GoalNode(g00, "g0");
+		// adding a workload s1 with value 3 (name is same, so it is equal)
+		g10.addWorkload(new Workload("s1", 3));
+
+
+		System.out.println("\n\ntestSimilarCollections");
+		System.out.println("r00: " + g00.getWorkloads());
+		System.out.println("r01: " + g10.getWorkloads());
+		assertEquals(g00.getWorkloads(), g10.getWorkloads());
+
+		// adding a same s1 with value 1, sum should be 4 (name is same, so it is equal)
+		g10.addWorkload(new Workload("s1", 1));
+		System.out.println("r00: " + g00.getWorkloads());
+		System.out.println("r01: " + g10.getWorkloads());
+		assertEquals(g00.getWorkloads(), g10.getWorkloads());
+		assertTrue(g00.getWorkloads().containsAll(g10.getWorkloads()));
+		assertTrue(g10.getWorkloads().containsAll(g00.getWorkloads()));
+
+		double sumS1 = 0;
+		for (Workload w : g10.getWorkloads()) sumS1 += w.getEffort();
+		System.out.println("sumS1: " + (int)sumS1);
+		assertEquals((int)sumS1, 4);
+
+		// adding a different element
+		g10.addWorkload(new Workload("s2", 0));
+		System.out.println("r00: " + g00.getWorkloads());
+		System.out.println("r01: " + g10.getWorkloads());
+
+		assertNotEquals(g00.getWorkloads(), g10.getWorkloads());
+		assertFalse(g00.getWorkloads().containsAll(g10.getWorkloads()));
+		assertTrue(g10.getWorkloads().containsAll(g00.getWorkloads()));	
 	}
 	
 	@Test
@@ -192,14 +233,14 @@ public class OrganisationTest {
 		t.addWorkload("g11", "s1", 2);
 		t.addGoal("g12", "g1");
 		t.addGoal("g111", "g11");
-		t.addWorkload("g111", "s2", 8);
+		t.addWorkload("g111", "s2", 4);
 		t.addGoal("g112", "g11");
-		t.addWorkload("g112", "s2", 2);
+		t.addWorkload("g112", "s1", 2);
 		t.addGoal("g121", "g12");
 		t.addWorkload("g121", "s2", 0);
 		t.addGoal("g122", "g12");
 		t.addGoal("g1221", "g122");
-		t.addWorkload("g1221", "s2", 3.4);
+		t.addWorkload("g1221", "s2", 8.1);
 
 		List<String> proofs = new ArrayList<>();
 		List<String> outputs = new ArrayList<>();
@@ -210,7 +251,7 @@ public class OrganisationTest {
 		// BE CAREFULL! if generateproof is true, the assertion should be always true
 		// After generating proofs it must be checked manually and then turn this
 		// argument false for further right assertions
-		boolean generatingProofsInCheckingMode = true;
+		boolean generatingProofsInCheckingMode = false;
 		if (generatingProofsInCheckingMode)
 			p.deleteExistingProofs();
 
@@ -246,5 +287,4 @@ public class OrganisationTest {
 			assertEquals(proofs.get(i), outputs.get(i));
 		}
 	}
-	
 }

@@ -7,22 +7,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import annotations.AccountableFor;
+import annotations.Throughput;
+import annotations.Workload;
 import organisation.goal.GoalNode;
-import properties.Throughput;
-import properties.Workload;
 
 /**
  * @author cleber
  *
  */
 public class RoleNode {
-	private Set<Workload> workloads = new HashSet<>();
-	private Set<Throughput> throughputs = new HashSet<>();
-	private Set<GoalNode> assignedGoals = new HashSet<>();
-	private List<RoleNode> descendants = new ArrayList<>();
 	private String roleName;
 	private RoleNode parent;
 	private String parentSignature; // used to find the original parent after cloning
+	private List<RoleNode> descendants = new ArrayList<>();
+	private Set<Workload> workloads = new HashSet<>();
+	private Set<Throughput> throughputs = new HashSet<>();
+	private Set<GoalNode> assignedGoals = new HashSet<>();
+	private Set<AccountableFor> accountabilities = new HashSet<>();
 
 	public RoleNode(RoleNode parent, String name) {
 		setParent(parent);
@@ -74,6 +76,10 @@ public class RoleNode {
 	
 	public Set<Throughput> getThroughputs() {
 		return throughputs;
+	}
+	
+	public Set<AccountableFor> getAccountabilities() {
+		return accountabilities;
 	}
 	
 	/**

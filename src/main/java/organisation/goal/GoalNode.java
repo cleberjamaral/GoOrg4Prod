@@ -1,18 +1,22 @@
 package organisation.goal;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import properties.Throughput;
-import properties.Workload;
+import annotations.AccountableFor;
+import annotations.Throughput;
+import annotations.Workload;
 
 public class GoalNode {
-	private List<Workload> workloads = new ArrayList<>();
-	private List<Throughput> throughputs = new ArrayList<>();
-	private List<GoalNode> descendants = new ArrayList<>();
 	private String goalName;
 	private GoalNode parent;
 	private String operator;
+	private List<GoalNode> descendants = new ArrayList<>();
+	private List<Workload> workloads = new ArrayList<>();
+	private List<Throughput> throughputs = new ArrayList<>();
+	private Set<AccountableFor> accountabilities = new HashSet<>();
 
 	public GoalNode(GoalNode p, String name) {
 		goalName = name;
@@ -23,14 +27,33 @@ public class GoalNode {
 		}
 	}
 
-	public void addWorkload(Workload newWorkload) {
-		workloads.add(newWorkload);
+	public void addWorkload(Workload workload) {
+		Workload w = getWorkload(workload.getId());
+		if (w != null) {
+			w.setEffort(w.getEffort() + workload.getEffort());
+		} else {
+			workloads.add(workload);
+		}
 	}
-
+	
+	public Workload getWorkload(String id) {
+		for (Workload w : workloads) 
+			if (w.getId().equals(id)) return w;
+		
+		return null;
+	}
+	
 	public List<Workload> getWorkloads() {
 		return workloads;
 	}
 	
+	public double getSumWorkload() {
+		double sumEfforts = 0;
+		for (Workload w : getWorkloads())
+			sumEfforts += w.getEffort();
+		return sumEfforts;
+	}
+
 	public void addThroughput(Throughput t) {
 		throughputs.add(t);
 	}
@@ -39,6 +62,14 @@ public class GoalNode {
 		return throughputs;
 	}
 	
+	public void addAccountableFor(AccountableFor a) {
+		accountabilities.add(a);
+	}
+
+	public Set<AccountableFor> getAccountabilities() {
+		return accountabilities;
+	}
+
 	public void addDescendant(GoalNode newDescendent) {
 		descendants.add(newDescendent);
 	}
@@ -85,11 +116,14 @@ public class GoalNode {
 	public GoalNode cloneContent() {
 		GoalNode clone = new GoalNode(null, this.goalName);
 		
-		for (Workload s : this.workloads) 
-			clone.workloads.add(s.clone());
+		for (Workload w : getWorkloads()) 
+			clone.addWorkload(w.clone());
 		
-		for (Throughput t : this.throughputs) 
-			clone.throughputs.add(t.clone());
+		for (Throughput t : getThroughputs()) 
+			clone.addThroughput(t.clone());
+
+		for (AccountableFor a : getAccountabilities()) 
+			clone.addAccountableFor(a.clone());
 
 		clone.operator = this.operator;
 		

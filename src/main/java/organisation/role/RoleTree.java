@@ -3,11 +3,11 @@ package organisation.role;
 import java.util.HashSet;
 import java.util.Set;
 
+import annotations.Throughput;
+import annotations.Workload;
 import organisation.exception.DuplicatedRootRole;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
-import properties.Throughput;
-import properties.Workload;
 
 public class RoleTree {
 

@@ -1,13 +1,13 @@
-package properties;
+package annotations;
 
-public class Performer {
+public class Throughput {
 	private String id;
-	private int number;
+	private double amount;
 
-	public Performer(String id, int number) {
+	public Throughput(String id, double amount) {
 		super();
 		this.id = id;
-		this.number = number;
+		this.amount = amount;
 	}
 	
 	public String getId() {
@@ -18,17 +18,17 @@ public class Performer {
 		this.id = id;
 	}
 	
-	public int getNumber() {
-		return number;
+	public double getAmount() {
+		return amount;
 	}
-
-	public void setNumber(int number) {
-		this.number = number;
+	
+	public void setAmount(double d) {
+		this.amount = d;
 	}
-
+	
 	@Override
 	public String toString() {
-		return "performer[id=" + id + ", number=" + number + "]";
+		return "throughput[id=" + id + ",amount=" + String.format("%.1f", amount) + "]";
 	}
 	
 	@Override
@@ -47,7 +47,7 @@ public class Performer {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Performer other = (Performer) obj;
+		Throughput other = (Throughput) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -56,8 +56,8 @@ public class Performer {
 		return true;
 	}
 	
-	public Performer clone() {
-		Performer clone = new Performer(this.id, this.number);
+	public Throughput clone() {
+		Throughput clone = new Throughput(this.id, this.amount);
 	
 	    return clone;
 	}

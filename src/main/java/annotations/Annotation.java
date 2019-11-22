@@ -1,36 +1,35 @@
-package properties;
+package annotations;
 
-public class Workload {
-	private String id;
-	private double effort;
+public abstract class Annotation {
 
-	public Workload(String id, double effort) {
-		super();
-		this.id = id;
-		this.effort = effort;
-	}
+	protected String id;
+	protected Object value;
 	
+	public Annotation(String id, Object value) {
+		this.id = id;
+		this.value = value;
+	}
+
 	public String getId() {
 		return id;
 	}
-	
+
 	public void setId(String id) {
 		this.id = id;
 	}
+
+	public abstract Object getValue();
 	
-	public double getEffort() {
-		return effort;
-	}
-	
-	public void setEffort(double d) {
-		this.effort = d;
-	}
+	public abstract void setValue(Object value);
 	
 	@Override
 	public String toString() {
-		return "workload[id=" + id + ",effort=" + String.format("%.1f", effort) + "]";
+		if (value instanceof Double)
+			return this.getClass() + "[id=" + id + ",value=" + String.format("%.1f", value) + "]";
+		else 
+			return this.getClass().getSimpleName() + "[id=" + id + ",value=" + value.toString() + "]";
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -49,16 +48,13 @@ public class Workload {
 			return false;
 		Workload other = (Workload) obj;
 		if (id == null) {
-			if (other.id != null)
+			if (other.getId() != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!id.equals(other.getId()))
 			return false;
 		return true;
 	}
-	
-	public Workload clone() {
-		Workload clone = new Workload(this.id, this.effort);
-	
-	    return clone;
-	}
+
+	public abstract Annotation clone();
+
 }

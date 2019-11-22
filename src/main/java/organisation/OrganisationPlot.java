@@ -45,6 +45,9 @@ public class OrganisationPlot {
 				for (Object s : or.getThroughputs())
 					out.print("<tr><td align=\"left\">" + s.toString() + "</td></tr>");
 
+				for (Object s : or.getAccountabilities())
+					out.print("<tr><td align=\"left\">" + s.toString() + "</td></tr>");
+
 				out.println("</table>> ];");
 
 				if (or.getParent() != null)
@@ -129,6 +132,9 @@ public class OrganisationPlot {
 		
 		for (Object s : or.getThroughputs())
 			out.print("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
+
+		for (Object s : or.getAccountabilities())
+			out.print("<tr><td align=\"left\">" + s.toString() + "</td></tr>");
 
 		out.println("</table>> ];");
 		or.getDescendants().forEach(g -> {

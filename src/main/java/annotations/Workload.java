@@ -1,13 +1,13 @@
-package properties;
+package annotations;
 
-public class Throughput {
+public class Workload {
 	private String id;
-	private double amount;
+	private double effort;
 
-	public Throughput(String id, double amount) {
+	public Workload(String id, double effort) {
 		super();
 		this.id = id;
-		this.amount = amount;
+		this.effort = effort;
 	}
 	
 	public String getId() {
@@ -18,17 +18,17 @@ public class Throughput {
 		this.id = id;
 	}
 	
-	public double getAmount() {
-		return amount;
+	public double getEffort() {
+		return effort;
 	}
 	
-	public void setAmount(double d) {
-		this.amount = d;
+	public void setEffort(double d) {
+		this.effort = d;
 	}
 	
 	@Override
 	public String toString() {
-		return "throughput[id=" + id + ",amount=" + String.format("%.1f", amount) + "]";
+		return "workload[id=" + id + ",effort=" + String.format("%.1f", effort) + "]";
 	}
 	
 	@Override
@@ -47,7 +47,7 @@ public class Throughput {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Throughput other = (Throughput) obj;
+		Workload other = (Workload) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -56,8 +56,8 @@ public class Throughput {
 		return true;
 	}
 	
-	public Throughput clone() {
-		Throughput clone = new Throughput(this.id, this.amount);
+	public Workload clone() {
+		Workload clone = new Workload(this.id, this.effort);
 	
 	    return clone;
 	}

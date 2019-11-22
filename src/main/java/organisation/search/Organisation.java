@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import annotations.Throughput;
+import annotations.Workload;
 import busca.Antecessor;
 import busca.Estado;
 import organisation.OrganisationPlot;
@@ -14,8 +16,6 @@ import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.role.RoleNode;
 import organisation.role.RoleTree;
-import properties.Throughput;
-import properties.Workload;
 import simplelogger.SimpleLogger;
 
 public class Organisation implements Estado, Antecessor {
@@ -74,7 +74,7 @@ public class Organisation implements Estado, Antecessor {
 		generatedStates++;
 
 		goalsTree = gt;
-		goalsTree.brakeGoalTree(Organisation.maxEffort);
+		goalsTree.brakeGoalTree(Organisation.maxEffort, Organisation.maxThroughput);
 		goalsTree.addSuccessorsToList(goalSuccessors, goalsTree.getRootNode());
 
 		OrganisationPlot p = new OrganisationPlot();
@@ -159,8 +159,7 @@ public class Organisation implements Estado, Antecessor {
 				return;
 			}
 
-			newState.cost = penalty.getNonKindshipPenalty(aGivenRole, goalToAssign);
-			newState.cost += penalty.getAddRolePenalty(aGivenRole, goalToAssign, this.getRolesTree(), newState.getRolesTree());
+			newState.cost = penalty.getAddRolePenalty(aGivenRole, goalToAssign, this.getRolesTree(), newState.getRolesTree());
 			newState.accCost = this.accCost + newState.cost;
 
 			suc.add(newState);
@@ -193,8 +192,7 @@ public class Organisation implements Estado, Antecessor {
 				return;
 			}
 
-			newState.cost = penalty.getNonKindshipPenalty(hostRole, goalToAssign);
-			newState.cost += penalty.getJoinRolePenalty(hostRole, goalToAssign);
+			newState.cost = penalty.getJoinRolePenalty(hostRole, goalToAssign, this.getRolesTree(), newState.getRolesTree());
 			newState.accCost = this.accCost + newState.cost;
 
 			logTransformation("joinRole", newState, jr);

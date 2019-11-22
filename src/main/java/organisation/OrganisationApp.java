@@ -9,6 +9,8 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import annotations.Throughput;
+import annotations.Workload;
 //import busca.BuscaLargura;
 import busca.BuscaProfundidade;
 import busca.Nodo;
@@ -17,8 +19,6 @@ import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.search.Cost;
 import organisation.search.Organisation;
-import properties.Throughput;
-import properties.Workload;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,9 +53,10 @@ public class OrganisationApp {
 			gTree.addWorkload("Paint", "paint", 2);
 			gTree.addGoal("BuyInputs", "GetInputs");
 			gTree.addWorkload("BuyInputs", "purchase", 7);
-			gTree.addWorkload("BuyInputs","messages",1);
-			gTree.addThroughput("BuyInputs", "reports", 10);
+			gTree.addWorkload("BuyInputs","messages",10);
+			gTree.addThroughput("BuyInputs", "reports", 2);
 			gTree.addThroughput("BuyInputs", "registerSuppliers", 2);
+			gTree.addAccountableFor("GetInputs", "BuyInputs");
 			gTree.addGoal("Inspect", "PaintHouse");
 			gTree.addGoal("Report", "Inspect");
 			gTree.addWorkload("Report", "paint", 0);
@@ -103,7 +104,7 @@ public class OrganisationApp {
 			if (args.length == 2) {
 				inicial = new Organisation(gTree, Cost.valueOf(args[1]), limits);
 			} else {
-				inicial = new Organisation(gTree, Cost.UNITARY, limits);
+				inicial = new Organisation(gTree, Cost.SPECIALIST, limits);
 			}
 
 		} else {
@@ -170,11 +171,9 @@ public class OrganisationApp {
 
 					if (rootNode == null) {
 						rootNode = new GoalNode(null, eGoal.getAttribute("id"));
-						//tree.add(rootNode);
 						referenceGoalNode = rootNode;
 					} else {
 						GoalNode gn = new GoalNode(stack.peek(), eGoal.getAttribute("id"));
-						//tree.add(gn);
 						referenceGoalNode = gn;
 					}
 
