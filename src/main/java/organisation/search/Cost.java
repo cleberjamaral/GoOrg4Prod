@@ -7,10 +7,10 @@ package organisation.search;
  * 
  * Currently, the available cost functions are:
  * 0 UNITARY   : unitary cost (no function)
- * 1 TALLER    : Taller hierarchies are preferrable 
- * 2 FLATTER   : Flatter hierarchies are preferrable 
- * 3 SPECIALIST: More specilist roles are preferrable
- * 4 GENERALIST: More generalist roles are preferrable 
+ * 1 TALLER    : Taller hierarchies are preferable 
+ * 2 FLATTER   : Flatter hierarchies are preferable 
+ * 3 SPECIALIST: More specialist roles are preferable
+ * 4 GENERALIST: More generalist roles are preferable 
  */
 public enum Cost {
 	UNITARY, TALLER, FLATTER, SPECIALIST, GENERALIST;

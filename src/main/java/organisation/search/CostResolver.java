@@ -45,9 +45,10 @@ public class CostResolver {
 
 		// High punishment when it is creating more levels in a preferable flatter
 		// structure
-		if ((costFunction == Cost.FLATTER) && (newTree.getNumberOfLevels() > oldTree.getNumberOfLevels()))
+		if ((costFunction == Cost.FLATTER) && (newTree.getNumberOfLevels() > oldTree.getNumberOfLevels())) {
 			return cost + Parameters.getExtraPenalty();
-
+		}
+		
 		// Low punishment when is preferred taller but is not child
 		if ((costFunction == Cost.TALLER) && (!role.hasParentGoal(goal)))
 			return cost + Parameters.getDefaultPenalty();

@@ -21,7 +21,7 @@ public class RoleTree {
 		return numberOfLevels;
 	}
 
-	public void setNumberOfLevels(int numberOfLevels) {
+	private void setNumberOfLevels(int numberOfLevels) {
 		this.numberOfLevels = numberOfLevels;
 	}
 
@@ -34,13 +34,19 @@ public class RoleTree {
 	}
 
 	public void add(RoleNode role) {
-		numberOfLevels = countLevels(role, 1);
+		int countLevels = countLevels(role);
+		if (countLevels > getNumberOfLevels())
+			setNumberOfLevels(countLevels);
+		
 		tree.add(role);
 	}
 
-	private int countLevels(RoleNode role, int levels) {
-		if (role.getParent() != null)
-			countLevels(role.getParent(), ++levels);
+	private int countLevels(RoleNode role) {
+		int levels = 1;
+		while (role.getParent() != null) {
+			role = role.getParent();
+			levels++;
+		}
 		
 		return levels;
 	}

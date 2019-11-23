@@ -91,19 +91,27 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public boolean ehMeta() {
+		boolean oneSolutionNeeded = true;
+		
 		if (this.goalSuccessors.size() <= 0) {
+			
 			if (!isGoalList.contains(this)) {
 				isGoalList.add(this);
 				LOG.info("#(" + generatedStates + "/" + prunedStates + ") Solution #" + isGoalList.size() + ", "
 						+ this.toString() + ", Hash: " + this.hashCode() + ", Cost: " + this.accCost + "/" + this.cost);
-
+		
 				OrganisationPlot p = new OrganisationPlot();
-				p.plotOrganisation(this, Integer.toString(isGoalList.size()));
+				if (oneSolutionNeeded) {
+					p.plotOrganisation(this, "");
+					isGoalList.clear();
+				} else {
+					p.plotOrganisation(this, Integer.toString(isGoalList.size()));
+				}
 			} else {
 				LOG.debug("#(" + generatedStates + "/" + prunedStates + ") Duplicated solution!" + ", Hash: "
 						+ this.hashCode());
 			}
-			return true; // true: if only one solution is needed
+			return oneSolutionNeeded;
 		}
 		return false;
 	}
@@ -209,7 +217,7 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public String toString() {
-		return rolesTree.toString();
+		return getOrgName() + rolesTree.toString();
 	}
 
 	/**
@@ -235,7 +243,6 @@ public class Organisation implements Estado, Antecessor {
 	/**
 	 * retorna o hashCode desse estado (usado para poda, conjunto de fechados)
 	 */
-
 	public int hashCode() {
 		if (rolesTree != null)
 			return toString().hashCode();

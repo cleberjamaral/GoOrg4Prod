@@ -26,8 +26,11 @@ public class OrganisationPlot {
 
 		File diagramFile = new File("output/diagrams/tmp");
 		diagramFile.getParentFile().mkdirs();
+		
+		String index = "";
+		if (!plotIndex.equals("")) index = "_" + plotIndex;
 
-		try (FileWriter fw = new FileWriter("output/diagrams/" + o.getOrgName() + "_" + plotIndex + ".gv",
+		try (FileWriter fw = new FileWriter("output/diagrams/" + o.getOrgName() + index + ".gv",
 				false); 
 				BufferedWriter bw = new BufferedWriter(fw); PrintWriter out = new PrintWriter(bw)) 
 		{

@@ -1,1 +1,1 @@
-[G{[g1, g11, g12]}W{[workload[id=s1,effort=2.0], workload[id=s2,effort=4.0]]}T{[]}]
+o1_FLATTER[G{[BuyInputs, GetInputs, Report]}W{[workload[id=purchase,effort=2.0], workload[id=paint,effort=1.0], workload[id=Contract,effort=2.0], workload[id=messages,effort=3.0]]}T{[]}^G{[Inspect, Paint$0, PaintHouse]}W{[workload[id=paint,effort=8.0]]}T{[]}, G{[Paint$1]}W{[workload[id=paint,effort=8.0]]}T{[]}^G{[Inspect, Paint$0, PaintHouse]}W{[workload[id=paint,effort=8.0]]}T{[]}, G{[Inspect, Paint$0, PaintHouse]}W{[workload[id=paint,effort=8.0]]}T{[]}]

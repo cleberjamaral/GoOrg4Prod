@@ -10,8 +10,6 @@ import organisation.search.Organisation;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -23,117 +21,75 @@ public class OrganisationTest {
 	// BE CAREFULL! if generateproof is true, the assertion should be always true
 	// After generating proofs it must be checked manually and then turn this
 	// argument false for further right assertions
-	static boolean generatingProofsInCheckingMode = false;
-	static OrganisationPlot p;
-	
+	private static boolean generatingProofsInCheckingMode = false;
+	private static OrganisationPlot p;
+	private BufferedReader fr;
+
 	@BeforeClass
 	public static void beforeTests() {
 		p = new OrganisationPlot();
 		p.deleteExistingDiagrams();
-		
+
 		if (generatingProofsInCheckingMode)
 			p.deleteExistingProofs();
 	}
-	
+
 	@Test
 	public void testOrgSingleGoals() {
 
 		// Sample organization
 		GoalTree t = new GoalTree("g1");
 		t.addGoal("g11", "g1");
+		t.addGoal("g111", "g11");
+		t.addGoal("g112", "g11");
 		t.addGoal("g12", "g1");
+		t.addGoal("g121", "g12");
+		t.addGoal("g1211", "g121");
 
-		List<String> proofs = new ArrayList<>();
-		List<String> outputs = new ArrayList<>();
-
-		Cost cost[] = Cost.values();
-		for (Cost c : cost) {
-			String orgName = "o0_" + c.name();
-			Organisation o = new Organisation(orgName, t, c, !generatingProofsInCheckingMode);
-			Nodo n = new BuscaLargura().busca(o);
-			outputs.add(n.getEstado().toString());
-			try {
-				assertTrue(((Organisation) n.getEstado()).validateOutput());
-			} catch (OutputDoesNotMatchWithInput e1) {
-				e1.printStackTrace();
-			}
-
-			p.plotOrganisation((Organisation) n.getEstado(), orgName, generatingProofsInCheckingMode);
-
-			String proof = "";
-			BufferedReader fr;
-			try {
-				fr = new BufferedReader(new FileReader("output/proofs/" + orgName + ".txt"));
-				proof = fr.readLine();
-				proofs.add(proof);
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		// Test all outputs against their proofs
-		for (int i = 0; i < outputs.size(); i++) {
-			System.out.println("\n\ntestOrg");
-			System.out.println("proof : " + proofs.get(i));
-			System.out.println("output: " + outputs.get(i));
-			assertEquals(proofs.get(i), outputs.get(i));
-		}
+		generateOrgForAllCosts("o0", t);
 	}
-	
+
 	@Test
 	public void testOrgGoalsWithWorkload() {
 
 		// Sample organization
-		GoalTree t = new GoalTree("g1");
-		t.addGoal("g11", "g1");
-		t.addWorkload("g11", "s1", 2);
-		t.addGoal("g12", "g1");
-		t.addWorkload("g12", "s2", 4);
+		GoalTree gTree = new GoalTree("PaintHouse");
+		gTree.addGoal("GetInputs", "PaintHouse");
+		gTree.addWorkload("GetInputs", "Contract", 2);
+		gTree.addGoal("Paint", "PaintHouse");
+		gTree.addWorkload("Paint", "paint", 16);
+		gTree.addGoal("BuyInputs", "GetInputs");
+		gTree.addWorkload("BuyInputs", "purchase", 2);
+		gTree.addWorkload("BuyInputs","messages",3);
+		gTree.addGoal("Inspect", "PaintHouse");
+		gTree.addGoal("Report", "Inspect");
+		gTree.addWorkload("Report", "paint", 1);
 
-		//t.addGoal("g111", "g11");
-		//t.addWorkload("g111", "s1", 4);
-		//t.addGoal("g112", "g11");
-		//t.addWorkload("g112", "s1", 2);
-		//t.addGoal("g121", "g12");
-		//t.addWorkload("g121", "s2", 0);
-		//t.addGoal("g122", "g12");
-		//t.addGoal("g1221", "g122");
-		//t.addWorkload("g1221", "s2", 2);
+		generateOrgForAllCosts("o1", gTree);
+	}
 
-		List<String> proofs = new ArrayList<>();
-		List<String> outputs = new ArrayList<>();
+	private void generateOrgForAllCosts(String orgName, GoalTree t) {
+		p.plotGoalTree(orgName, t);
 
 		Cost cost[] = Cost.values();
 		for (Cost c : cost) {
-			String orgName = "o1_" + c.name();
-			Organisation o = new Organisation(orgName, t, c, !generatingProofsInCheckingMode);
+			String org = orgName + "_" + c.name();
+
+			Organisation o = new Organisation(org, t, c);
 			Nodo n = new BuscaLargura().busca(o);
-			outputs.add(n.getEstado().toString());
+
+			if (generatingProofsInCheckingMode)
+				p.generateProof((Organisation) n.getEstado(), org);
+			
 			try {
 				assertTrue(((Organisation) n.getEstado()).validateOutput());
-			} catch (OutputDoesNotMatchWithInput e1) {
-				e1.printStackTrace();
-			}
+				fr = new BufferedReader(new FileReader("output/proofs/" + org + ".txt"));
+				String proof = fr.readLine();
 
-			p.plotOrganisation((Organisation) n.getEstado(), orgName, generatingProofsInCheckingMode);
-
-			String proof = "";
-			BufferedReader fr;
-			try {
-				fr = new BufferedReader(new FileReader("output/proofs/" + orgName + ".txt"));
-				proof = fr.readLine();
-				proofs.add(proof);
-
-			} catch (IOException e) {
+				assertEquals(n.getEstado().toString(), proof);
+			} catch (IOException | OutputDoesNotMatchWithInput e) {
 				e.printStackTrace();
 			}
-		}
-		// Test all outputs against their proofs
-		for (int i = 0; i < outputs.size(); i++) {
-			System.out.println("\n\ntestOrg");
-			System.out.println("proof : " + proofs.get(i));
-			System.out.println("output: " + outputs.get(i));
-			assertEquals(proofs.get(i), outputs.get(i));
 		}
 	}
 }
