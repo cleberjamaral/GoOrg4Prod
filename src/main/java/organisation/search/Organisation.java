@@ -32,8 +32,6 @@ public class Organisation implements Estado, Antecessor {
 	private static int prunedStates = 0;
 	// a reference to the goals tree used by all states (static to save memory)
 	private static GoalTree goalsTree;
-	// any name for an organisation
-	private static String orgName;
 	
 	/*** LOCAL ***/
 	// the chart that is being created, potentially a complete chart
@@ -44,18 +42,24 @@ public class Organisation implements Estado, Antecessor {
 	// Cost supporting variables
 	private int cost = 0;
 	private int accCost = 0;
+	// any name for an organisation
+	private String orgName;
 
 	public String getDescricao() {
 		return "Empty\n";
+	}
+
+	public String getOrgName() {
+		return this.orgName;
 	}
 
 	private Organisation() {
 		generatedStates++;
 	}
 
-	public Organisation(String orgName, GoalTree gt, Cost costFunction, boolean removeOldDiagrams) {
-		Organisation.orgName = orgName;
-		createOrganisation(gt, costFunction, removeOldDiagrams);
+	public Organisation(String orgName, GoalTree gt, Cost costFunction) {
+		this.orgName = orgName;
+		createOrganisation(gt, costFunction);
 	}
 
 	public Organisation(String orgName, GoalTree gt, Cost costFunction, List<Object> limits) {
@@ -65,22 +69,17 @@ public class Organisation implements Estado, Antecessor {
 			if (l instanceof Throughput)
 				Parameters.setMaxThroughput(((Throughput) l).getAmount());
 		}
-		Organisation.orgName = orgName;
-		createOrganisation(gt, costFunction, true);
+		this.orgName = orgName;
+		createOrganisation(gt, costFunction);
 	}
 
-	private void createOrganisation(GoalTree gt, Cost costFunction, boolean removeOldDiagrams) {
+	private void createOrganisation(GoalTree gt, Cost costFunction) {
 		// If it is the first state that is going to be created
 		generatedStates++;
 
 		goalsTree = gt;
 		goalsTree.brakeGoalTree();
 		goalsTree.addSuccessorsToList(goalSuccessors, goalsTree.getRootNode());
-
-		OrganisationPlot p = new OrganisationPlot();
-		if (removeOldDiagrams)
-			p.deleteExistingDiagrams();
-		p.plotOrganizationalGoalTree(Organisation.orgName, goalsTree.getRootNode());
 
 		RoleNode root = this.rolesTree.createRole(null, "r" + this.rolesTree.size(), goalsTree.getRootNode());
 
@@ -99,7 +98,7 @@ public class Organisation implements Estado, Antecessor {
 						+ this.toString() + ", Hash: " + this.hashCode() + ", Cost: " + this.accCost + "/" + this.cost);
 
 				OrganisationPlot p = new OrganisationPlot();
-				p.plotOrganisation(this, Organisation.orgName + "_" + Integer.toString(isGoalList.size()), false);
+				p.plotOrganisation(this, Integer.toString(isGoalList.size()));
 			} else {
 				LOG.debug("#(" + generatedStates + "/" + prunedStates + ") Duplicated solution!" + ", Hash: "
 						+ this.hashCode());
@@ -254,6 +253,7 @@ public class Organisation implements Estado, Antecessor {
 	public Organisation createState(GoalNode gn) {
 
 		Organisation newState = new Organisation();
+		newState.orgName = getOrgName();
 		try {
 			newState.rolesTree = rolesTree.cloneContent();
 

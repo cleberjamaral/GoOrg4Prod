@@ -100,6 +100,10 @@ public class OrganisationApp {
 			limits.add(w);
 			limits.add(t);
 
+			OrganisationPlot p = new OrganisationPlot();
+			p.deleteExistingDiagrams();
+			p.plotGoalTree("orgApp", gTree);
+			
 			// if an argument to choose a cost function was given
 			if (args.length == 2) {
 				inicial = new Organisation("orgApp", gTree, Cost.valueOf(args[1]), limits);
@@ -123,9 +127,15 @@ public class OrganisationApp {
 			// Visit all possible schemes from Moise 'functional-specification'
 			NodeList nList = document.getElementsByTagName("scheme");
 			visitNodes(nList);
+			
 			GoalTree t = new GoalTree(rootNode);
+
+			OrganisationPlot p = new OrganisationPlot();
+			p.deleteExistingDiagrams();
+			p.plotGoalTree("orgApp", t);
+
 			t.addAllDescendants(rootNode);
-			inicial = new Organisation("orgApp", t, Cost.SPECIALIST, true);
+			inicial = new Organisation("orgApp", t, Cost.SPECIALIST);
 		}
 
 		Nodo n = null;
