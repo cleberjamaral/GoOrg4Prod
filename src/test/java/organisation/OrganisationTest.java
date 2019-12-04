@@ -21,7 +21,7 @@ public class OrganisationTest {
 	// BE CAREFULL! if generateproof is true, the assertion should be always true
 	// After generating proofs it must be checked manually and then turn this
 	// argument false for further right assertions
-	private static boolean generatingProofsInCheckingMode = false;
+	private static boolean generatingProofsInCheckingMode = true;
 	private static OrganisationPlot p;
 	private BufferedReader fr;
 
@@ -56,14 +56,15 @@ public class OrganisationTest {
 		GoalTree gTree = new GoalTree("PaintHouse");
 		gTree.addGoal("GetInputs", "PaintHouse");
 		gTree.addWorkload("GetInputs", "Contract", 2);
-		gTree.addGoal("Paint", "PaintHouse");
-		gTree.addWorkload("Paint", "paint", 16);
+		gTree.addGoal("HireScaffold", "GetInputs");
+		gTree.addWorkload("HireScaffold", "Contract", 1);
 		gTree.addGoal("BuyInputs", "GetInputs");
 		gTree.addWorkload("BuyInputs", "purchase", 2);
-		gTree.addWorkload("BuyInputs","messages",3);
+		gTree.addWorkload("BuyInputs","report",3);
+		gTree.addGoal("Paint", "PaintHouse");
+		gTree.addWorkload("Paint", "paint", 13);
 		gTree.addGoal("Inspect", "PaintHouse");
-		gTree.addGoal("Report", "Inspect");
-		gTree.addWorkload("Report", "paint", 1);
+		gTree.addWorkload("Inspect", "report", 1);
 
 		generateOrgForAllCosts("o1", gTree);
 	}

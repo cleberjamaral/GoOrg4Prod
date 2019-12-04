@@ -11,7 +11,7 @@ import org.xml.sax.SAXException;
 
 import annotations.Throughput;
 import annotations.Workload;
-//import busca.BuscaLargura;
+import busca.BuscaLargura;
 import busca.BuscaProfundidade;
 import busca.Nodo;
 import organisation.exception.OutputDoesNotMatchWithInput;
@@ -50,19 +50,23 @@ public class OrganisationApp {
 			gTree.addGoal("GetInputs", "PaintHouse");
 			gTree.addWorkload("GetInputs", "Contract", 2);
 			gTree.addGoal("Paint", "PaintHouse");
-			gTree.addWorkload("Paint", "paint", 2);
 			gTree.addGoal("BuyInputs", "GetInputs");
 			gTree.addWorkload("BuyInputs", "purchase", 7);
 			gTree.addWorkload("BuyInputs","messages",10);
 			gTree.addThroughput("BuyInputs", "reports", 2);
 			gTree.addThroughput("BuyInputs", "registerSuppliers", 2);
+			gTree.addGoal("GetScaffold", "GetInputs");
+			gTree.addWorkload("GetScaffold", "purchase", 7);
+			gTree.addWorkload("GetScaffold","messages",10);
+			gTree.addThroughput("GetScaffold", "reports", 2);
 			gTree.addAccountableFor("GetInputs", "BuyInputs");
 			gTree.addGoal("Inspect", "PaintHouse");
-			gTree.addGoal("Report", "Inspect");
-			gTree.addWorkload("Report", "paint", 0);
-			gTree.addGoal("CheckInt", "Inspect");
-			gTree.addGoal("CheckExt", "CheckInt");
-			gTree.addWorkload("CheckExt", "paint", 3.4);
+			gTree.addWorkload("Inspect", "inspection", 8);
+			gTree.addGoal("Financial", "PaintHouse");
+			gTree.addGoal("GetPayment", "Financial");
+			gTree.addWorkload("GetPayment", "billing", 8);
+			gTree.addGoal("Report", "Financial");
+			gTree.addWorkload("Report", "calculus", 8);
 			gTree.addGoal("PaintInt", "Paint");
 			gTree.addWorkload("PaintInt", "paint", 8);
 			gTree.addGoal("PaintExt", "Paint");
@@ -108,7 +112,7 @@ public class OrganisationApp {
 			if (args.length == 2) {
 				inicial = new Organisation("orgApp", gTree, Cost.valueOf(args[1]), limits);
 			} else {
-				inicial = new Organisation("orgApp", gTree, Cost.SPECIALIST, limits);
+				inicial = new Organisation("orgApp", gTree, Cost.GENERALIST, limits);
 			}
 
 		} else {
@@ -140,8 +144,8 @@ public class OrganisationApp {
 
 		Nodo n = null;
 
-		//n = new BuscaLargura().busca(inicial);
-		n = new BuscaProfundidade().busca(inicial);
+		n = new BuscaLargura().busca(inicial);
+		//n = new BuscaProfundidade().busca(inicial);
 		
 		/**
 		 * To create the proof for the current gdt:
