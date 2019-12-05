@@ -21,7 +21,7 @@ public class OrganisationTest {
 	// BE CAREFULL! if generateproof is true, the assertion should be always true
 	// After generating proofs it must be checked manually and then turn this
 	// argument false for further right assertions
-	private static boolean generatingProofsInCheckingMode = true;
+	private static boolean generatingProofsInCheckingMode = false;
 	private static OrganisationPlot p;
 	private BufferedReader fr;
 
