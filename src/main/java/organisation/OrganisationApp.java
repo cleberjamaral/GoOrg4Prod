@@ -46,74 +46,8 @@ public class OrganisationApp {
 		// if a Moise XML file was not provided, use a sample organisation
 		if ((args.length < 1) || (args[0].equals("0"))) {
 			// Sample organization
-			GoalTree gTree = new GoalTree("RetrieveInformation");
-			gTree.addGoal("RetrieveInformation", "mediate_communication");
-			gTree.addGoal("SplitIntoSubtopics", "RetrieveInformation");
-			gTree.addWorkload("SplitIntoSubtopics", "split_search", 7);
-			gTree.addGoal("Search", "RetrieveInformation");
-			gTree.addWorkload("Search", "store_partial_result", 7);
-			gTree.addWorkload("Search", "forward_unknown_subtopic", 7);
-			gTree.addGoal("StorePartialResult", "Search");
-			gTree.addGoal("ForwardUnknownSubtopic", "Search");
-			gTree.addGoal("AggregateAnswer", "RetrieveInformation");
-			gTree.addGoal("JoinPartialResults", "AggregateAnswer");
-			gTree.addGoal("CheckConsistency", "AggregateAnswer");
-			gTree.addGoal("CompileResult", "AggregateAnswer");
-			gTree.addGoal("ReplyUser", "RetrieveInformation");
-			
-			
-			
-//			GoalTree gTree = new GoalTree("PaintHouse");
-//			gTree.addGoal("GetInputs", "PaintHouse");
-//			gTree.addWorkload("GetInputs", "Contract", 2);
-//			gTree.addGoal("Paint", "PaintHouse");
-//			gTree.addGoal("BuyInputs", "GetInputs");
-//			gTree.addWorkload("BuyInputs", "purchase", 7);
-//			gTree.addWorkload("BuyInputs","messages",10);
-//			gTree.addThroughput("BuyInputs", "reports", 2);
-//			gTree.addThroughput("BuyInputs", "registerSuppliers", 2);
-//			gTree.addGoal("GetScaffold", "GetInputs");
-//			gTree.addWorkload("GetScaffold", "purchase", 7);
-//			gTree.addWorkload("GetScaffold","messages",10);
-//			gTree.addThroughput("GetScaffold", "reports", 2);
-//			gTree.addAccountableFor("GetInputs", "BuyInputs");
-//			gTree.addGoal("Inspect", "PaintHouse");
-//			gTree.addWorkload("Inspect", "inspection", 8);
-//			gTree.addGoal("Financial", "PaintHouse");
-//			gTree.addGoal("GetPayment", "Financial");
-//			gTree.addWorkload("GetPayment", "billing", 8);
-//			gTree.addGoal("Report", "Financial");
-//			gTree.addWorkload("Report", "calculus", 8);
-//			gTree.addGoal("PaintInt", "Paint");
-//			gTree.addWorkload("PaintInt", "paint", 8);
-//			gTree.addGoal("PaintExt", "Paint");
-//			gTree.addWorkload("PaintExt", "paint", 2);
-//			gTree.addWorkload("PaintExt", "scaffold", 3);
-			
-			// Sample list of agents
-//			List<Object> agents = new ArrayList<>();
-//			Agent a0 = new Agent();
-//			agents.add(a0);
-//			Agent a1 = new Agent();
-//			agents.add(a1);
-//			Workload wa1 = new Workload("s1",0);
-//			a1.addProperty(wa1);
-//			Agent a2 = new Agent();
-//			Workload wa2 = new Workload("s2",0);
-//			a1.addProperty(wa2);
-//			agents.add(a2);
-//			Agent a3 = new Agent();
-//			agents.add(a3);
-//			Agent a4 = new Agent();
-//			Workload wa4 = new Workload("s4",0);
-//			a4.addProperty(wa4);
-//			agents.add(a4);
-//			Agent a5 = new Agent();
-//			Workload wa5 = new Workload("s5",0);
-//			a5.addProperty(wa5);
-//			agents.add(a5);
-//			Agent a6 = new Agent();
-//			agents.add(a6);
+			//GoalTree gTree = createRetrieveInfoGDT();
+			GoalTree gTree = createPaintHouseGDT();
 			
 			List<Object> limits = new ArrayList<>();
 			Workload w = new Workload("maxEffort", maxEffort);
@@ -187,6 +121,53 @@ public class OrganisationApp {
 		} else {
 			System.out.println("\nThe resulting state is null. This behaviour is expected when Organisation.ehMeta() method is set to always return false.\nDid you set the algorithm to find all possible solutions?\n\n");
 		}
+	}
+
+	private static GoalTree createPaintHouseGDT() {
+		GoalTree gTree = new GoalTree("PaintHouse");
+		gTree.addGoal("GetInputs", "PaintHouse");
+		gTree.addWorkload("GetInputs", "Contract", 2);
+		gTree.addGoal("Paint", "PaintHouse");
+		gTree.addGoal("BuyInputs", "GetInputs");
+		gTree.addWorkload("BuyInputs", "purchase", 7);
+		gTree.addWorkload("BuyInputs","messages",10);
+		gTree.addThroughput("BuyInputs", "reports", 2);
+		gTree.addThroughput("BuyInputs", "registerSuppliers", 2);
+		gTree.addGoal("GetScaffold", "GetInputs");
+		gTree.addWorkload("GetScaffold", "purchase", 7);
+		gTree.addWorkload("GetScaffold","messages",10);
+		gTree.addThroughput("GetScaffold", "reports", 2);
+		gTree.addAccountableFor("GetInputs", "BuyInputs");
+		gTree.addGoal("Inspect", "PaintHouse");
+		gTree.addWorkload("Inspect", "inspection", 8);
+		gTree.addGoal("Financial", "PaintHouse");
+		gTree.addGoal("GetPayment", "Financial");
+		gTree.addWorkload("GetPayment", "billing", 8);
+		gTree.addGoal("Report", "Financial");
+		gTree.addWorkload("Report", "calculus", 8);
+		gTree.addGoal("PaintInt", "Paint");
+		gTree.addWorkload("PaintInt", "paint", 8);
+		gTree.addGoal("PaintExt", "Paint");
+		gTree.addWorkload("PaintExt", "paint", 2);
+		gTree.addWorkload("PaintExt", "scaffold", 3);
+		return gTree;
+	}
+
+	private static GoalTree createRetrieveInfoGDT() {
+		GoalTree gTree = new GoalTree("RetrieveInformation");
+		gTree.addGoal("RetrieveInformation", "mediate_communication");
+		gTree.addGoal("SplitIntoSubtopics", "RetrieveInformation");
+		gTree.addWorkload("SplitIntoSubtopics", "split_search", 1);
+		gTree.addGoal("SearchSubtopic", "RetrieveInformation");
+		gTree.addWorkload("SearchSubtopic", "store_partial_result", 1);
+		gTree.addWorkload("SearchSubtopic", "forward_unknown_subtopic", 1);
+		gTree.addGoal("CompileAnswer", "RetrieveInformation");
+		gTree.addWorkload("CompileAnswer", "join_partial_results", 1);
+		gTree.addWorkload("CompileAnswer", "check_consistency", 1);
+		gTree.addWorkload("CompileAnswer", "compile_result", 1);
+		gTree.addGoal("ReplyUser", "RetrieveInformation");
+		gTree.addWorkload("ReplyUser", "reply_user", 1);
+		return gTree;
 	}
 
 	private static void visitNodes(NodeList nList) {
