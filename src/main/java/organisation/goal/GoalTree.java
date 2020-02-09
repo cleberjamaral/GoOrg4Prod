@@ -4,8 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import annotations.AccountableFor;
-import annotations.Throughput;
+import annotations.Inform;
 import annotations.Workload;
 import organisation.search.Parameters;
 
@@ -58,17 +57,11 @@ public class GoalTree {
 		g.addWorkload(new Workload(workload, effort));
 	}
 	
-	public void addThroughput(String goal, String thoughput, double amount) {
+	public void addInform(String goal, String thoughput, double amount) {
 		GoalNode g = findAGoalByName(this.rootNode, goal);
-		g.addThroughput(new Throughput(thoughput, amount));
+		g.addThroughput(new Inform(thoughput, amount));
 	}
 	
-	public void addAccountableFor(String goal, String accountableFor) {
-		GoalNode hostGoal = findAGoalByName(this.rootNode, goal);
-		GoalNode accoGoal = findAGoalByName(this.rootNode, accountableFor);
-		hostGoal.addAccountableFor(new AccountableFor(accoGoal));
-	}
-
 	private GoalNode findAGoalByName(GoalNode root, String name) {
 		if (root.getGoalName().equals(name)) {
 			return root;
@@ -98,13 +91,13 @@ public class GoalTree {
 			double sumEfforts = 0;
 			double sumThroughput = 0;
 			for (Workload w : s.getWorkloads())
-				sumEfforts += w.getEffort();
-			for (Throughput t : s.getThroughputs())
-				sumThroughput += t.getAmount();
+				sumEfforts += (double) w.getValue();
+			for (Inform t : s.getInforms())
+				sumThroughput += (double) t.getValue();
 
 			// the number of slices is at least 1 being more according to properties
 			int slices = (int) Math.max(Math.max(Math.ceil(sumEfforts / Parameters.getMaxWorkload()),
-					Math.ceil(sumThroughput / Parameters.getMaxThroughput())), 1.0);
+					Math.ceil(sumThroughput / Parameters.getMaxDataAmount())), 1.0);
 			
 			GoalNode g = null;
 			for (int i = 0; i < slices; i++) {
@@ -114,9 +107,9 @@ public class GoalTree {
 				if (slices > 1) {
 					g.setGoalName(g.getGoalName() + "$" + i);
 					for (Workload w : g.getWorkloads())
-						w.setEffort(w.getEffort() / slices);
-					for (Throughput t : g.getThroughputs())
-						t.setAmount(t.getAmount() / slices);
+						w.setValue((double) w.getValue() / slices);
+					for (Inform t : g.getInforms())
+						t.setValue((double) t.getValue() / slices);
 				}
 			}
 			// when reaching the last slice, go to the next node
@@ -133,7 +126,7 @@ public class GoalTree {
 		double sumEfforts = 0;
 		for (GoalNode g : this.tree) {
 			for (Workload w : g.getWorkloads()) 
-				sumEfforts += w.getEffort();
+				sumEfforts += (double) w.getValue();
 			
 		}
 		return sumEfforts;

@@ -25,7 +25,7 @@ public abstract class Annotation {
 	@Override
 	public String toString() {
 		if (value instanceof Double)
-			return this.getClass() + "[id=" + id + ",value=" + String.format("%.1f", value) + "]";
+			return this.getClass().getSimpleName() + "[id=" + id + ",value=" + String.format("%.1f", value) + "]";
 		else 
 			return this.getClass().getSimpleName() + "[id=" + id + ",value=" + value.toString() + "]";
 	}

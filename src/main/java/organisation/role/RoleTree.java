@@ -3,7 +3,7 @@ package organisation.role;
 import java.util.HashSet;
 import java.util.Set;
 
-import annotations.Throughput;
+import annotations.Inform;
 import annotations.Workload;
 import organisation.exception.DuplicatedRootRole;
 import organisation.exception.RoleNotFound;
@@ -110,9 +110,9 @@ public class RoleTree {
 		for (Workload w : newGoal.getWorkloads())
 			role.addWorkload(w.clone());
 
-		// Copy all throughput of the goal to this new role
-		for (Throughput t : newGoal.getThroughputs())
-			role.addThroughput(t.clone());
+		// Copy all informs of the goal to this new role
+		for (Inform t : newGoal.getInforms())
+			role.addInform(t.clone());
 
 		// changes on content may change role signature, its children must be updated
 		for (RoleNode child : role.getDescendants())
@@ -128,7 +128,7 @@ public class RoleTree {
 		double sumEfforts = 0;
 		for (RoleNode r : this.tree) {
 			for (Workload w : r.getWorkloads()) {
-				sumEfforts += w.getEffort();
+				sumEfforts += (double) w.getValue();
 			}
 		}
 		return sumEfforts;

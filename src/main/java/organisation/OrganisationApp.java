@@ -9,7 +9,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import annotations.Throughput;
+import annotations.Inform;
 import annotations.Workload;
 import busca.BuscaLargura;
 import busca.BuscaProfundidade;
@@ -34,7 +34,7 @@ public class OrganisationApp {
 	static GoalNode rootNode = null;
 	static GoalNode referenceGoalNode = null;
 	static double maxEffort = 8;
-	static double maxThroughput = 8;
+	static double maxDataAmount = 8;
 	static SimpleLogger LOG;
 
 	public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
@@ -51,7 +51,7 @@ public class OrganisationApp {
 			
 			List<Object> limits = new ArrayList<>();
 			Workload w = new Workload("maxEffort", maxEffort);
-			Throughput t = new Throughput("maxThroughput", maxThroughput);
+			Inform t = new Inform("maxDataAmount", maxDataAmount);
 			limits.add(w);
 			limits.add(t);
 
@@ -131,13 +131,12 @@ public class OrganisationApp {
 		gTree.addGoal("BuyInputs", "GetInputs");
 		gTree.addWorkload("BuyInputs", "purchase", 7);
 		gTree.addWorkload("BuyInputs","messages",10);
-		gTree.addThroughput("BuyInputs", "reports", 2);
-		gTree.addThroughput("BuyInputs", "registerSuppliers", 2);
+		gTree.addInform("BuyInputs", "reports", 2);
+		gTree.addInform("BuyInputs", "registerSuppliers", 2);
 		gTree.addGoal("GetScaffold", "GetInputs");
 		gTree.addWorkload("GetScaffold", "purchase", 7);
 		gTree.addWorkload("GetScaffold","messages",10);
-		gTree.addThroughput("GetScaffold", "reports", 2);
-		gTree.addAccountableFor("GetInputs", "BuyInputs");
+		gTree.addInform("GetScaffold", "reports", 2);
 		gTree.addGoal("Inspect", "PaintHouse");
 		gTree.addWorkload("Inspect", "inspection", 8);
 		gTree.addGoal("Financial", "PaintHouse");

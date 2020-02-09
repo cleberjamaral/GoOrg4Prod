@@ -1,12 +1,9 @@
 package organisation.goal;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import annotations.AccountableFor;
-import annotations.Throughput;
+import annotations.Inform;
 import annotations.Workload;
 
 public class GoalNode {
@@ -15,8 +12,7 @@ public class GoalNode {
 	private String operator;
 	private List<GoalNode> descendants = new ArrayList<>();
 	private List<Workload> workloads = new ArrayList<>();
-	private List<Throughput> throughputs = new ArrayList<>();
-	private Set<AccountableFor> accountabilities = new HashSet<>();
+	private List<Inform> throughputs = new ArrayList<>();
 
 	public GoalNode(GoalNode p, String name) {
 		goalName = name;
@@ -30,7 +26,7 @@ public class GoalNode {
 	public void addWorkload(Workload workload) {
 		Workload w = getWorkload(workload.getId());
 		if (w != null) {
-			w.setEffort(w.getEffort() + workload.getEffort());
+			w.setValue((double) w.getValue() + (double) workload.getValue());
 		} else {
 			workloads.add(workload);
 		}
@@ -50,26 +46,18 @@ public class GoalNode {
 	public double getSumWorkload() {
 		double sumEfforts = 0;
 		for (Workload w : getWorkloads())
-			sumEfforts += w.getEffort();
+			sumEfforts += (double) w.getValue();
 		return sumEfforts;
 	}
 
-	public void addThroughput(Throughput t) {
+	public void addThroughput(Inform t) {
 		throughputs.add(t);
 	}
 
-	public List<Throughput> getThroughputs() {
+	public List<Inform> getInforms() {
 		return throughputs;
 	}
 	
-	public void addAccountableFor(AccountableFor a) {
-		accountabilities.add(a);
-	}
-
-	public Set<AccountableFor> getAccountabilities() {
-		return accountabilities;
-	}
-
 	public void addDescendant(GoalNode newDescendent) {
 		descendants.add(newDescendent);
 	}
@@ -119,11 +107,8 @@ public class GoalNode {
 		for (Workload w : getWorkloads()) 
 			clone.addWorkload(w.clone());
 		
-		for (Throughput t : getThroughputs()) 
+		for (Inform t : getInforms()) 
 			clone.addThroughput(t.clone());
-
-		for (AccountableFor a : getAccountabilities()) 
-			clone.addAccountableFor(a.clone());
 
 		clone.operator = this.operator;
 		

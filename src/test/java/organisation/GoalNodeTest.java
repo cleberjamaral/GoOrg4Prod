@@ -55,7 +55,7 @@ public class GoalNodeTest {
 		assertTrue(g10.getWorkloads().containsAll(g00.getWorkloads()));
 
 		double sumS1 = 0;
-		for (Workload w : g10.getWorkloads()) sumS1 += w.getEffort();
+		for (Workload w : g10.getWorkloads()) sumS1 += (double) w.getValue();
 		System.out.println("sumS1: " + (int)sumS1);
 		assertEquals((int)sumS1, 4);
 

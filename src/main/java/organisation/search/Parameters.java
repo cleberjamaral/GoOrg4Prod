@@ -14,11 +14,11 @@ public class Parameters {
 	// Cost penalty used to infer VERY bad decisions on search
 	private static int extraPenalty = defaultPenalty * 2;
 
-	public static double getMaxThroughput() {
+	public static double getMaxDataAmount() {
 		return maxThroughput;
 	}
 
-	public static void setMaxThroughput(double maxThroughput) {
+	public static void setMaxDataAmount(double maxThroughput) {
 		Parameters.maxThroughput = maxThroughput;
 	}
 

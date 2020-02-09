@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import annotations.Throughput;
+import annotations.Inform;
 import annotations.Workload;
 import busca.Antecessor;
 import busca.Estado;
@@ -65,9 +65,9 @@ public class Organisation implements Estado, Antecessor {
 	public Organisation(String orgName, GoalTree gt, Cost costFunction, List<Object> limits) {
 		for (Object l : limits) {
 			if (l instanceof Workload)
-				Parameters.setMaxWorkload(((Workload) l).getEffort());
-			if (l instanceof Throughput)
-				Parameters.setMaxThroughput(((Throughput) l).getAmount());
+				Parameters.setMaxWorkload((double)((Workload) l).getValue());
+			if (l instanceof Inform)
+				Parameters.setMaxDataAmount((double)((Inform) l).getValue());
 		}
 		this.orgName = orgName;
 		createOrganisation(gt, costFunction);
@@ -160,10 +160,10 @@ public class Organisation implements Estado, Antecessor {
 				return;
 			}
 
-			// Prune states which parent cannot afford throughput 
-			if (nr.getParentSumThroughput() > Parameters.getMaxThroughput()) {
+			// Prune states which parent cannot afford data amount 
+			if (nr.getParentSumDataAmount() > Parameters.getMaxDataAmount()) {
 				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned: " + nr.getAssignedGoals()
-						+ ", amount: " + nr.getParentSumThroughput() + " > " + Parameters.getMaxThroughput());
+						+ ", amount: " + nr.getParentSumDataAmount() + " > " + Parameters.getMaxDataAmount());
 				return;
 			}
 
@@ -193,10 +193,10 @@ public class Organisation implements Estado, Antecessor {
 				return;
 			}
 
-			// Prune states which parent cannot afford throughput 
-			if (jr.getParentSumThroughput() > Parameters.getMaxThroughput()) {
+			// Prune states which parent cannot afford data amount 
+			if (jr.getParentSumDataAmount() > Parameters.getMaxDataAmount()) {
 				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned: " + jr.getAssignedGoals()
-						+ ", amount: " + jr.getParentSumThroughput() + " > " + Parameters.getMaxThroughput());
+						+ ", amount: " + jr.getParentSumDataAmount() + " > " + Parameters.getMaxDataAmount());
 				return;
 			}
 
