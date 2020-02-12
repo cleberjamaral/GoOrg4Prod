@@ -169,6 +169,11 @@ public class OrganisationApp {
 		return gTree;
 	}
 
+	private static GoalTree createFloodsGDT() {
+		GoalTree gTree = new GoalTree("RescueVictims");
+		return gTree;
+	}
+	
 	private static void visitNodes(NodeList nList) {
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 
