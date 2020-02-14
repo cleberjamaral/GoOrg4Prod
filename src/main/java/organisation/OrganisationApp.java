@@ -169,8 +169,15 @@ public class OrganisationApp {
 		return gTree;
 	}
 
-	private static GoalTree createFloodsGDT() {
-		GoalTree gTree = new GoalTree("RescueVictims");
+	private static GoalTree createFullLinkAutomationGDT() {
+		GoalTree gTree = new GoalTree("TakeOrdersToTrucks");
+		gTree.addGoal("TakeOrdersToTrucks", "PickCrateFromReplenishment");
+		gTree.addGoal("TakeOrdersToTrucks", "MoveCrateToConveyorBelt");
+		gTree.addGoal("TakeOrdersToTrucks", "PlaceOrdersOnTheConveyor");
+		gTree.addGoal("TakeOrdersToTrucks", "MoveCrateBackToReplenishment");
+		gTree.addGoal("TakeOrdersToTrucks", "BoxOrders");
+		gTree.addGoal("TakeOrdersToTrucks", "MoveBoxToDeliverySite");
+		gTree.addGoal("TakeOrdersToTrucks", "PlaceOrdersOnTheTruck");
 		return gTree;
 	}
 	
