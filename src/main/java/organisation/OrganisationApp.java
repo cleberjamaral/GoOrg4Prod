@@ -176,8 +176,10 @@ public class OrganisationApp {
 		gTree.addWorkload("PickCrateFromReplenishment", "crate_lifting", 1);
 		gTree.addGoal("MoveCrateToConveyor", "LoadConveyorBelt");
 		gTree.addWorkload("MoveCrateToConveyor", "crate_side_transferring", 1);
+		gTree.addInform("PickCrateFromReplenishment", "crate_is_ready", "MoveCrateToConveyor", 2);
 		gTree.addGoal("PlaceOrdersOnConveyor", "LoadConveyorBelt");
 		gTree.addWorkload("PlaceOrdersOnConveyor", "load_conveyor", 1);
+		gTree.addInform("MoveCrateToConveyor", "conveyor_loaded", "PlaceOrdersOnConveyor", 2);
 //		gTree.addGoal("PutCrateBack", "FullLink");
 //		gTree.addGoal("MoveCrateBackToReplenishment", "PutCrateBack");
 //		gTree.addWorkload("MoveCrateBackToReplenishment", "crate_side_transferring", 1);
