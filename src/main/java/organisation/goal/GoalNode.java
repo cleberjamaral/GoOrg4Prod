@@ -50,7 +50,7 @@ public class GoalNode {
 		return sumEfforts;
 	}
 
-	public void addThroughput(Inform t) {
+	public void addInform(Inform t) {
 		throughputs.add(t);
 	}
 
@@ -108,7 +108,7 @@ public class GoalNode {
 			clone.addWorkload(w.clone());
 		
 		for (Inform t : getInforms()) 
-			clone.addThroughput(t.clone());
+			clone.addInform(t.clone());
 
 		clone.operator = this.operator;
 		

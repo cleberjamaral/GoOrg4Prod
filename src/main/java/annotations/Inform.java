@@ -1,9 +1,14 @@
 package annotations;
 
-public class Inform extends Annotation{
+import organisation.goal.GoalNode;
 
-	public Inform(String id, double amount) {
+public class Inform extends Annotation {
+	
+	protected GoalNode recipient;
+
+	public Inform(String id, GoalNode recipient, double amount) {
 		super(id, amount);
+		this.recipient = recipient;
 	}
 	
 	@Override
@@ -17,7 +22,7 @@ public class Inform extends Annotation{
 	}
 
 	public Inform clone() {
-		Inform clone = new Inform(this.id, (double) this.value);
+		Inform clone = new Inform(this.id, recipient, (double) this.value);
 	
 	    return clone;
 	}

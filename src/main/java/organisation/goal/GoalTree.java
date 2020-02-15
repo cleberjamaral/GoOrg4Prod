@@ -57,9 +57,10 @@ public class GoalTree {
 		g.addWorkload(new Workload(workload, effort));
 	}
 	
-	public void addInform(String goal, String thoughput, double amount) {
+	public void addInform(String goal, String inform, String recipient, double amount) {
 		GoalNode g = findAGoalByName(this.rootNode, goal);
-		g.addThroughput(new Inform(thoughput, amount));
+		GoalNode r = findAGoalByName(this.rootNode, recipient);
+		g.addInform(new Inform(inform, r, amount));
 	}
 	
 	private GoalNode findAGoalByName(GoalNode root, String name) {

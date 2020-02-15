@@ -47,11 +47,11 @@ public class OrganisationApp {
 		if ((args.length < 1) || (args[0].equals("0"))) {
 			// Sample organization
 			//GoalTree gTree = createRetrieveInfoGDT();
-			GoalTree gTree = createPaintHouseGDT();
+			GoalTree gTree = createFullLinkAutomationGDT();
 			
 			List<Object> limits = new ArrayList<>();
 			Workload w = new Workload("maxEffort", maxEffort);
-			Inform t = new Inform("maxDataAmount", maxDataAmount);
+			Inform t = new Inform("maxDataAmount", null, maxDataAmount);
 			limits.add(w);
 			limits.add(t);
 
@@ -63,7 +63,7 @@ public class OrganisationApp {
 			if (args.length == 2) {
 				inicial = new Organisation("orgApp", gTree, Cost.valueOf(args[1]), limits);
 			} else {
-				inicial = new Organisation("orgApp", gTree, Cost.GENERALIST, limits);
+				inicial = new Organisation("orgApp", gTree, Cost.SPECIALIST, limits);
 			}
 
 		} else {
@@ -131,12 +131,12 @@ public class OrganisationApp {
 		gTree.addGoal("BuyInputs", "GetInputs");
 		gTree.addWorkload("BuyInputs", "purchase", 7);
 		gTree.addWorkload("BuyInputs","messages",10);
-		gTree.addInform("BuyInputs", "reports", 2);
-		gTree.addInform("BuyInputs", "registerSuppliers", 2);
+		gTree.addInform("BuyInputs", "reports", "GetInputs", 2);
+		gTree.addInform("BuyInputs", "registerSuppliers", "GetInputs", 2);
 		gTree.addGoal("GetScaffold", "GetInputs");
 		gTree.addWorkload("GetScaffold", "purchase", 7);
 		gTree.addWorkload("GetScaffold","messages",10);
-		gTree.addInform("GetScaffold", "reports", 2);
+		gTree.addInform("GetScaffold", "reports", "GetInputs", 2);
 		gTree.addGoal("Inspect", "PaintHouse");
 		gTree.addWorkload("Inspect", "inspection", 8);
 		gTree.addGoal("Financial", "PaintHouse");
@@ -170,14 +170,26 @@ public class OrganisationApp {
 	}
 
 	private static GoalTree createFullLinkAutomationGDT() {
-		GoalTree gTree = new GoalTree("TakeOrdersToTrucks");
-		gTree.addGoal("TakeOrdersToTrucks", "PickCrateFromReplenishment");
-		gTree.addGoal("TakeOrdersToTrucks", "MoveCrateToConveyorBelt");
-		gTree.addGoal("TakeOrdersToTrucks", "PlaceOrdersOnTheConveyor");
-		gTree.addGoal("TakeOrdersToTrucks", "MoveCrateBackToReplenishment");
-		gTree.addGoal("TakeOrdersToTrucks", "BoxOrders");
-		gTree.addGoal("TakeOrdersToTrucks", "MoveBoxToDeliverySite");
-		gTree.addGoal("TakeOrdersToTrucks", "PlaceOrdersOnTheTruck");
+		GoalTree gTree = new GoalTree("FullLink");
+		gTree.addGoal("LoadConveyorBelt", "FullLink");
+		gTree.addGoal("PickCrateFromReplenishment", "LoadConveyorBelt");
+		gTree.addWorkload("PickCrateFromReplenishment", "crate_lifting", 1);
+		gTree.addGoal("MoveCrateToConveyor", "LoadConveyorBelt");
+		gTree.addWorkload("MoveCrateToConveyor", "crate_side_transferring", 1);
+		gTree.addGoal("PlaceOrdersOnConveyor", "LoadConveyorBelt");
+		gTree.addWorkload("PlaceOrdersOnConveyor", "load_conveyor", 1);
+//		gTree.addGoal("PutCrateBack", "FullLink");
+//		gTree.addGoal("MoveCrateBackToReplenishment", "PutCrateBack");
+//		gTree.addWorkload("MoveCrateBackToReplenishment", "crate_side_transferring", 1);
+//		gTree.addGoal("PlaceCrateOnReplenishment", "PutCrateBack");
+//		gTree.addWorkload("PlaceCrateOnReplenishment", "crate_lifting", 1);
+		gTree.addGoal("LoadTruck", "FullLink");
+		gTree.addGoal("PickBoxFromConveyor", "LoadTruck");
+		gTree.addWorkload("PickBoxFromConveyor", "unload_conveyor", 1);
+		gTree.addGoal("MoveBoxToDeliverySite", "LoadTruck");
+		gTree.addWorkload("MoveBoxToDeliverySite", "box_side_transferring", 1);
+		gTree.addGoal("PlaceOrdersOnTheTruck", "LoadTruck");
+		gTree.addWorkload("PlaceOrdersOnTheTruck", "load_truck", 1);
 		return gTree;
 	}
 	
