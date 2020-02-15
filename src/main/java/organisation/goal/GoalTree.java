@@ -27,9 +27,10 @@ public class GoalTree {
 		return this.rootNode;
 	}
 	
-	public void addGoal(String name, GoalNode parent) {
+	public GoalNode addGoal(String name, GoalNode parent) {
 		GoalNode g = new GoalNode(parent, name);
 		if (!treeContains(g)) tree.add(g);
+		return g;
 	}
 	
 	private boolean treeContains(GoalNode g) {
@@ -43,6 +44,12 @@ public class GoalTree {
 	public void addGoal(String name, String parent) {
 		GoalNode parentGoal = findAGoalByName(this.rootNode, parent);
 		addGoal(name,parentGoal);
+	}
+
+	public void addGoal(String name, String parent, double reportAmount) {
+		GoalNode parentGoal = findAGoalByName(this.rootNode, parent);
+		GoalNode g = addGoal(name,parentGoal);
+		g.addInform(new Inform("report", parentGoal, reportAmount));
 	}
 
 	public void addAllDescendants(GoalNode root) {

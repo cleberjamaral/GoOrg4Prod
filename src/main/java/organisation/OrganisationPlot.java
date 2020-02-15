@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -50,10 +51,12 @@ public class OrganisationPlot {
 
 				out.println("</table>> ];");
 
-				for (GoalNode g : or.getAssignedGoals()) {
+				Iterator<GoalNode> iterator = or.getAssignedGoals().iterator();
+				while (iterator.hasNext()) {
+					iterator.next();
 					for (Inform s : or.getInforms()) {
 						for (RoleNode rnn : o.getRolesTree().getTree()) {
-							if (rnn.getAssignedGoals().contains(s.getRecipient())) {
+							if (rnn.getAssignedGoals().contains(s.getRecipient()) && (rnn != or)) {
 								out.println("\t\"" + or.getRoleName() + "\"->\"" + rnn.getRoleName() + "\" [label=\""+ s.getId() + ":" + s.getValue() +"\"] ;");
 							}
 						}
@@ -61,7 +64,7 @@ public class OrganisationPlot {
 				}
 
 				if (or.getParent() != null)
-					links.add("\"" + or.getParent().getRoleName() + "\"->\"" + or.getRoleName() + "\"");
+					links.add("\"" + or.getParent().getRoleName() + "\"->\"" + or.getRoleName() + "\"[label=\"superior of\"]");
 			}
 
 			for (String l : links)
