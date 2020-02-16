@@ -6,8 +6,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
@@ -51,20 +53,22 @@ public class OrganisationPlot {
 
 				out.println("</table>> ];");
 
+				Set<String> uniqueInformArrows = new HashSet<>();
 				Iterator<GoalNode> iterator = or.getAssignedGoals().iterator();
 				while (iterator.hasNext()) {
 					iterator.next();
 					for (Inform s : or.getInforms()) {
 						for (RoleNode rnn : o.getRolesTree().getTree()) {
 							if (rnn.getAssignedGoals().contains(s.getRecipient()) && (rnn != or)) {
-								out.println("\t\"" + or.getRoleName() + "\"->\"" + rnn.getRoleName() + "\" [label=\""+ s.getId() + ":" + s.getValue() +"\"] ;");
+								uniqueInformArrows.add("\t\"" + or.getRoleName() + "\"->\"" + rnn.getRoleName() + "\" [label=\""+ s.getId() + ":" + s.getValue() +"\"] ;");
 							}
 						}
 					}
 				}
+				uniqueInformArrows.forEach(i -> {out.println(i);});
 
 				if (or.getParent() != null)
-					links.add("\"" + or.getParent().getRoleName() + "\"->\"" + or.getRoleName() + "\"[label=\"superior of\"]");
+					links.add("\"" + or.getParent().getRoleName() + "\"->\"" + or.getRoleName() + "\"[label=\"superior\"]");
 			}
 
 			for (String l : links)
