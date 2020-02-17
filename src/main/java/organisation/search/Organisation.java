@@ -188,18 +188,25 @@ public class Organisation implements Estado, Antecessor {
 
 			// Prune states with effort greater than max
 			if (jr.getSumWorkload() > Parameters.getMaxWorkload()) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") joinRole pruned: " + jr.getSumWorkload()
+				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") joinRole pruned#1: " + jr.getSumWorkload()
 						+ " > " + Parameters.getMaxWorkload());
 				return;
 			}
 
 			// Prune states which parent cannot afford data amount 
 			if (jr.getParentSumDataAmount() > Parameters.getMaxDataAmount()) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned: " + jr.getAssignedGoals()
+				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") joinRole pruned#2: " + jr.getAssignedGoals()
 						+ ", amount: " + jr.getParentSumDataAmount() + " > " + Parameters.getMaxDataAmount());
 				return;
 			}
 
+			// Prune states which parent cannot afford data amount 
+			if (jr.getRoleSumDataAmount() > Parameters.getMaxDataAmount()) {
+				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") joinRole pruned#3: " + jr.getAssignedGoals()
+						+ ", amount: " + jr.getRoleSumDataAmount() + " > " + Parameters.getMaxDataAmount());
+				return;
+			}
+			
 			newState.cost = penalty.getJoinRolePenalty(hostRole, goalToAssign, this.getRolesTree(), newState.getRolesTree());
 			newState.accCost = this.accCost + newState.cost;
 

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import annotations.DataLoad;
 import annotations.Inform;
 import annotations.Workload;
 import organisation.search.Parameters;
@@ -49,7 +50,7 @@ public class GoalTree {
 	public void addGoal(String name, String parent, double reportAmount) {
 		GoalNode parentGoal = findAGoalByName(this.rootNode, parent);
 		GoalNode g = addGoal(name,parentGoal);
-		g.addInform(new Inform("report", parentGoal, reportAmount));
+		addInform(name, "report", g.getParent().getGoalName(), reportAmount);
 	}
 
 	public void addAllDescendants(GoalNode root) {
@@ -68,6 +69,7 @@ public class GoalTree {
 		GoalNode g = findAGoalByName(this.rootNode, goal);
 		GoalNode r = findAGoalByName(this.rootNode, recipient);
 		g.addInform(new Inform(inform, r, amount));
+		r.addDataLoad(new DataLoad(inform, g, amount));
 	}
 	
 	private GoalNode findAGoalByName(GoalNode root, String name) {
@@ -97,15 +99,14 @@ public class GoalTree {
 	private void brakeGoalNode(GoalNode original, GoalNode parent) {
 		original.getDescendants().forEach(s -> {
 			double sumEfforts = 0;
-			double sumThroughput = 0;
-			for (Workload w : s.getWorkloads())
-				sumEfforts += (double) w.getValue();
-			for (Inform t : s.getInforms())
-				sumThroughput += (double) t.getValue();
+			double sumDataAmount = 0;
+			for (Workload w : s.getWorkloads())	sumEfforts += (double) w.getValue();
+			//for (Inform t : s.getInforms())	sumDataAmount += (double) t.getValue();
+			for (DataLoad t : s.getDataLoads())	sumDataAmount += (double) t.getValue();
 
 			// the number of slices is at least 1 being more according to properties
 			int slices = (int) Math.max(Math.max(Math.ceil(sumEfforts / Parameters.getMaxWorkload()),
-					Math.ceil(sumThroughput / Parameters.getMaxDataAmount())), 1.0);
+					Math.ceil(sumDataAmount / Parameters.getMaxDataAmount())), 1.0);
 			
 			GoalNode g = null;
 			for (int i = 0; i < slices; i++) {
@@ -114,10 +115,9 @@ public class GoalTree {
 				// it will be sliced only if slices > 1
 				if (slices > 1) {
 					g.setGoalName(g.getGoalName() + "$" + i);
-					for (Workload w : g.getWorkloads())
-						w.setValue((double) w.getValue() / slices);
-					for (Inform t : g.getInforms())
-						t.setValue((double) t.getValue() / slices);
+					for (Workload w : g.getWorkloads())	w.setValue((double) w.getValue() / slices);
+					//for (Inform w : g.getInforms())	w.setValue((double) w.getValue() / slices);
+					for (DataLoad w : g.getDataLoads())	w.setValue((double) w.getValue() / slices);
 				}
 			}
 			// when reaching the last slice, go to the next node

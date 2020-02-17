@@ -54,6 +54,7 @@ public class OrganisationApp {
 			Inform t = new Inform("maxDataAmount", null, maxDataAmount);
 			limits.add(w);
 			limits.add(t);
+			gTree.brakeGoalTree();
 
 			OrganisationPlot p = new OrganisationPlot();
 			p.deleteExistingDiagrams();
@@ -84,6 +85,7 @@ public class OrganisationApp {
 			visitNodes(nList);
 			
 			GoalTree t = new GoalTree(rootNode);
+			t.brakeGoalTree();
 
 			OrganisationPlot p = new OrganisationPlot();
 			p.deleteExistingDiagrams();
@@ -174,10 +176,10 @@ public class OrganisationApp {
 		gTree.addGoal("LoadConveyorBelt", "FullLink");
 		//gTree.addGoal("PickCrateFromReplenishment", "LoadConveyorBelt", 1);
 		//gTree.addWorkload("PickCrateFromReplenishment", "crate_lifting", 8);
-		gTree.addGoal("MoveCrateToConveyor", "LoadConveyorBelt", 8);
-		gTree.addWorkload("MoveCrateToConveyor", "crate_side_transferring", 16);
+		gTree.addGoal("MoveCrateToConveyor", "LoadConveyorBelt", 1);
+		gTree.addWorkload("MoveCrateToConveyor", "crate_side_transferring", 10);
 		//gTree.addInform("PickCrateFromReplenishment", "crate_is_ready", "MoveCrateToConveyor", 0.1);
-		gTree.addGoal("PlaceOrdersOnConveyor", "LoadConveyorBelt", 8);
+		gTree.addGoal("PlaceOrdersOnConveyor", "LoadConveyorBelt", 1);
 		gTree.addWorkload("PlaceOrdersOnConveyor", "load_conveyor", 8);
 		gTree.addInform("MoveCrateToConveyor", "conveyor_loaded", "PlaceOrdersOnConveyor", 1.6);
 //		gTree.addGoal("PutCrateBack", "FullLink");
@@ -186,9 +188,9 @@ public class OrganisationApp {
 //		gTree.addGoal("PlaceCrateOnReplenishment", "PutCrateBack");
 //		gTree.addWorkload("PlaceCrateOnReplenishment", "crate_lifting", 1);
 		gTree.addGoal("LoadTruck", "FullLink");
-		gTree.addGoal("PickBoxFromConveyor", "LoadTruck", 8);
+		gTree.addGoal("PickBoxFromConveyor", "LoadTruck", 5);
 		gTree.addWorkload("PickBoxFromConveyor", "unload_conveyor", 8);
-		gTree.addGoal("MoveBoxToDeliverySite", "LoadTruck", 8);
+		gTree.addGoal("MoveBoxToDeliverySite", "LoadTruck", 4);
 		gTree.addWorkload("MoveBoxToDeliverySite", "box_side_transferring", 8);
 		gTree.addInform("PickBoxFromConveyor", "conveyor_unloaded", "MoveBoxToDeliverySite", 0.8);
 		//gTree.addGoal("PlaceOrdersOnTheTruck", "LoadTruck", 1);

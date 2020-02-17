@@ -3,6 +3,7 @@ package organisation.goal;
 import java.util.ArrayList;
 import java.util.List;
 
+import annotations.DataLoad;
 import annotations.Inform;
 import annotations.Workload;
 
@@ -12,7 +13,8 @@ public class GoalNode {
 	private String operator;
 	private List<GoalNode> descendants = new ArrayList<>();
 	private List<Workload> workloads = new ArrayList<>();
-	private List<Inform> throughputs = new ArrayList<>();
+	private List<Inform> informs = new ArrayList<>();
+	private List<DataLoad> dataloads = new ArrayList<>();
 
 	public GoalNode(GoalNode p, String name) {
 		goalName = name;
@@ -51,11 +53,19 @@ public class GoalNode {
 	}
 
 	public void addInform(Inform t) {
-		throughputs.add(t);
+		informs.add(t);
 	}
 
 	public List<Inform> getInforms() {
-		return throughputs;
+		return informs;
+	}
+
+	public void addDataLoad(DataLoad t) {
+		dataloads.add(t);
+	}
+
+	public List<DataLoad> getDataLoads() {
+		return dataloads;
 	}
 	
 	public void addDescendant(GoalNode newDescendent) {
@@ -109,6 +119,9 @@ public class GoalNode {
 		
 		for (Inform t : getInforms()) 
 			clone.addInform(t.clone());
+
+		for (DataLoad t : getDataLoads()) 
+			clone.addDataLoad(t.clone());
 
 		clone.operator = this.operator;
 		

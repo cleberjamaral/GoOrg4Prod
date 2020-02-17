@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
+import annotations.DataLoad;
 import annotations.Inform;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
@@ -49,6 +50,9 @@ public class OrganisationPlot {
 						+ "</font></td></tr><tr><td align=\"center\">" + or.getAssignedGoals() + "</td></tr>");
 
 				for (Object s : or.getWorkloads())
+					out.print("<tr><td align=\"left\">" + s.toString() + "</td></tr>");
+
+				for (Object s : or.getInforms())
 					out.print("<tr><td align=\"left\">" + s.toString() + "</td></tr>");
 
 				out.println("</table>> ];");
@@ -144,10 +148,16 @@ public class OrganisationPlot {
 		for (Object s : g.getWorkloads())
 			out.print("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
 
+		for (Object s : g.getDataLoads())
+			out.print("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
+
 		out.println("</table>> ];");
 
-		for (Inform s : g.getInforms())
-			out.println("\t\"" + g.getGoalName() + "\"->\"" + s.getRecipient() + "\" [label=\""+ s.getId() + ":" + s.getValue() +"\"] ;");
+//		for (Inform s : g.getInforms())
+//			out.println("\t\"" + g.getGoalName() + "\"->\"" + s.getRecipient() + "\" [label=\""+ s.getId() + ":" + s.getValue() +"\"] ;");
+
+		for (DataLoad s : g.getDataLoads())
+			out.println("\t\"" + s.getSender() + "\"->\"" + g.getGoalName() + "\" [label=\""+ s.getId() + ":" + s.getValue() +"\"] ;");
 
 		g.getDescendants().forEach(dg -> {
 			plotGoalNode(out, dg);
