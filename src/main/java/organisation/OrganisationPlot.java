@@ -66,9 +66,6 @@ public class OrganisationPlot {
 					}
 				}
 				uniqueInformArrows.forEach(i -> {out.println(i);});
-
-				if (or.getParent() != null)
-					links.add("\"" + or.getParent().getRoleName() + "\"->\"" + or.getRoleName() + "\"[label=\"superior\"]");
 			}
 
 			for (String l : links)
