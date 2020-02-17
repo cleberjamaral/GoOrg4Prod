@@ -63,7 +63,7 @@ public class OrganisationApp {
 			if (args.length == 2) {
 				inicial = new Organisation("orgApp", gTree, Cost.valueOf(args[1]), limits);
 			} else {
-				inicial = new Organisation("orgApp", gTree, Cost.TALLER, limits);
+				inicial = new Organisation("orgApp", gTree, Cost.GENERALIST, limits);
 			}
 
 		} else {
@@ -172,28 +172,28 @@ public class OrganisationApp {
 	private static GoalTree createFullLinkAutomationGDT() {
 		GoalTree gTree = new GoalTree("FullLink");
 		gTree.addGoal("LoadConveyorBelt", "FullLink");
-		gTree.addGoal("PickCrateFromReplenishment", "LoadConveyorBelt", 1);
-		gTree.addWorkload("PickCrateFromReplenishment", "crate_lifting", 0.1);
-		gTree.addGoal("MoveCrateToConveyor", "LoadConveyorBelt", 1);
-		gTree.addWorkload("MoveCrateToConveyor", "crate_side_transferring", 0.1);
-		gTree.addInform("PickCrateFromReplenishment", "crate_is_ready", "MoveCrateToConveyor", 0.1);
-		gTree.addGoal("PlaceOrdersOnConveyor", "LoadConveyorBelt", 1);
-		gTree.addWorkload("PlaceOrdersOnConveyor", "load_conveyor", 1);
-		gTree.addInform("MoveCrateToConveyor", "conveyor_loaded", "PlaceOrdersOnConveyor", 0.1);
+		//gTree.addGoal("PickCrateFromReplenishment", "LoadConveyorBelt", 1);
+		//gTree.addWorkload("PickCrateFromReplenishment", "crate_lifting", 8);
+		gTree.addGoal("MoveCrateToConveyor", "LoadConveyorBelt", 8);
+		gTree.addWorkload("MoveCrateToConveyor", "crate_side_transferring", 16);
+		//gTree.addInform("PickCrateFromReplenishment", "crate_is_ready", "MoveCrateToConveyor", 0.1);
+		gTree.addGoal("PlaceOrdersOnConveyor", "LoadConveyorBelt", 8);
+		gTree.addWorkload("PlaceOrdersOnConveyor", "load_conveyor", 8);
+		gTree.addInform("MoveCrateToConveyor", "conveyor_loaded", "PlaceOrdersOnConveyor", 1.6);
 //		gTree.addGoal("PutCrateBack", "FullLink");
 //		gTree.addGoal("MoveCrateBackToReplenishment", "PutCrateBack");
 //		gTree.addWorkload("MoveCrateBackToReplenishment", "crate_side_transferring", 1);
 //		gTree.addGoal("PlaceCrateOnReplenishment", "PutCrateBack");
 //		gTree.addWorkload("PlaceCrateOnReplenishment", "crate_lifting", 1);
 		gTree.addGoal("LoadTruck", "FullLink");
-		gTree.addGoal("PickBoxFromConveyor", "LoadTruck", 1);
-		gTree.addWorkload("PickBoxFromConveyor", "unload_conveyor", 1);
-		gTree.addGoal("MoveBoxToDeliverySite", "LoadTruck", 1);
-		gTree.addWorkload("MoveBoxToDeliverySite", "box_side_transferring", 1);
-		gTree.addInform("PickBoxFromConveyor", "conveyor_unloaded", "MoveBoxToDeliverySite", 0.1);
-		gTree.addGoal("PlaceOrdersOnTheTruck", "LoadTruck", 1);
-		gTree.addWorkload("PlaceOrdersOnTheTruck", "load_truck", 1);
-		gTree.addInform("MoveBoxToDeliverySite", "box_on_site", "PlaceOrdersOnTheTruck", 0.1);
+		gTree.addGoal("PickBoxFromConveyor", "LoadTruck", 8);
+		gTree.addWorkload("PickBoxFromConveyor", "unload_conveyor", 8);
+		gTree.addGoal("MoveBoxToDeliverySite", "LoadTruck", 8);
+		gTree.addWorkload("MoveBoxToDeliverySite", "box_side_transferring", 8);
+		gTree.addInform("PickBoxFromConveyor", "conveyor_unloaded", "MoveBoxToDeliverySite", 0.8);
+		//gTree.addGoal("PlaceOrdersOnTheTruck", "LoadTruck", 1);
+		//gTree.addWorkload("PlaceOrdersOnTheTruck", "load_truck", 8);
+		//gTree.addInform("MoveBoxToDeliverySite", "box_on_site", "PlaceOrdersOnTheTruck", 0.1);
 		return gTree;
 	}
 	

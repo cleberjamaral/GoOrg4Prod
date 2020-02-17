@@ -62,9 +62,6 @@ public class OrganisationPlot {
 						}
 					}
 				}
-
-				if (or.getParent() != null)
-					links.add("\"" + or.getParent().getRoleName() + "\"->\"" + or.getRoleName() + "\"[label=\"superior of\"]");
 			}
 
 			for (String l : links)
