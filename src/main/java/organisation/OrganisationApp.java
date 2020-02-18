@@ -9,7 +9,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import annotations.Inform;
 import annotations.Workload;
 import busca.BuscaLargura;
 import busca.BuscaProfundidade;
@@ -19,11 +18,10 @@ import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.search.Cost;
 import organisation.search.Organisation;
+import organisation.search.Parameters;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 
 import simplelogger.SimpleLogger;
@@ -44,9 +42,8 @@ public class OrganisationApp {
 
 		Organisation inicial;
 		
-		List<Object> limits = new ArrayList<>();
-		limits.add(new Workload("maxEffort", maxEffort));
-		limits.add(new Inform("maxDataAmount", null, maxDataAmount));
+		Parameters.setMaxWorkload(maxEffort);
+		Parameters.setMaxDataAmount(maxDataAmount);
 		
 		Cost c = Cost.GENERALIST;
 		GoalTree gTree = null;
@@ -86,7 +83,7 @@ public class OrganisationApp {
 		gTree.brakeGoalTree();
 		p.plotGoalTree("broken", gTree);
 
-		inicial = new Organisation("orgApp", gTree, c, limits);
+		inicial = new Organisation("orgApp", gTree, c);
 
 		Nodo n = null;
 

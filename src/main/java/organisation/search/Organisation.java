@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import annotations.Inform;
-import annotations.Workload;
 import busca.Antecessor;
 import busca.Estado;
 import organisation.OrganisationPlot;
@@ -58,17 +56,6 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public Organisation(String orgName, GoalTree gt, Cost costFunction) {
-		this.orgName = orgName;
-		createOrganisation(gt, costFunction);
-	}
-
-	public Organisation(String orgName, GoalTree gt, Cost costFunction, List<Object> limits) {
-		for (Object l : limits) {
-			if (l instanceof Workload)
-				Parameters.setMaxWorkload((double)((Workload) l).getValue());
-			if (l instanceof Inform)
-				Parameters.setMaxDataAmount((double)((Inform) l).getValue());
-		}
 		this.orgName = orgName;
 		createOrganisation(gt, costFunction);
 	}
