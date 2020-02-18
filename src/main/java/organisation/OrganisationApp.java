@@ -43,30 +43,22 @@ public class OrganisationApp {
 		LOG = SimpleLogger.getInstance(2);
 
 		Organisation inicial;
+		
+		List<Object> limits = new ArrayList<>();
+		limits.add(new Workload("maxEffort", maxEffort));
+		limits.add(new Inform("maxDataAmount", null, maxDataAmount));
+		
+		Cost c = Cost.GENERALIST;
+		GoalTree gTree = null;
+		
 		// if a Moise XML file was not provided, use a sample organisation
 		if ((args.length < 1) || (args[0].equals("0"))) {
 			// Sample organization
 			//GoalTree gTree = createRetrieveInfoGDT();
-			GoalTree gTree = createFullLinkAutomationGDT();
-			
-			List<Object> limits = new ArrayList<>();
-			Workload w = new Workload("maxEffort", maxEffort);
-			Inform t = new Inform("maxDataAmount", null, maxDataAmount);
-			limits.add(w);
-			limits.add(t);
+			gTree = createFullLinkAutomationGDT();
 
-			OrganisationPlot p = new OrganisationPlot();
-			p.deleteExistingDiagrams();
-			p.plotGoalTree("originalGDT", gTree);
-			gTree.brakeGoalTree();
-			p.plotGoalTree("brokenDGT", gTree);
-			
 			// if an argument to choose a cost function was given
-			if (args.length == 2) {
-				inicial = new Organisation("orgApp", gTree, Cost.valueOf(args[1]), limits);
-			} else {
-				inicial = new Organisation("orgApp", gTree, Cost.GENERALIST, limits);
-			}
+			if (args.length == 2) c = Cost.valueOf(args[1]);
 
 		} else {
 			String file = args[0];
@@ -85,17 +77,16 @@ public class OrganisationApp {
 			NodeList nList = document.getElementsByTagName("scheme");
 			visitNodes(nList);
 			
-			GoalTree t = new GoalTree(rootNode);
-
-			OrganisationPlot p = new OrganisationPlot();
-			p.deleteExistingDiagrams();
-			p.plotGoalTree("originalGDT", t);
-			t.brakeGoalTree();
-			p.plotGoalTree("brokenDGT", t);
-
-			t.addAllDescendants(rootNode);
-			inicial = new Organisation("orgApp", t, Cost.SPECIALIST);
+			gTree = new GoalTree(rootNode);
+			gTree.addAllDescendants(gTree.getRootNode());
 		}
+		OrganisationPlot p = new OrganisationPlot();
+		p.deleteExistingDiagrams();
+		p.plotGoalTree("original", gTree);
+		gTree.brakeGoalTree();
+		p.plotGoalTree("broken", gTree);
+
+		inicial = new Organisation("orgApp", gTree, c, limits);
 
 		Nodo n = null;
 
