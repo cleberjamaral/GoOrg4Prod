@@ -22,7 +22,7 @@ public class CostResolver {
 		CostResolver.costFunction = costFunction;
 	}
 
-	public int getNonKindshipPenalty(RoleNode role, GoalNode goal) {
+	public int getNonKinshipPenalty(RoleNode role, GoalNode goal) {
 		// the given role has goal's parent associated?
 		if (role.hasParentGoal(goal))
 			return Parameters.getMinimalPenalty();
@@ -37,7 +37,7 @@ public class CostResolver {
 
 	public int getAddRolePenalty(RoleNode role, GoalNode goal, RoleTree oldTree, RoleTree newTree) throws RoleNotFound {
 
-		int cost = getNonKindshipPenalty(role, goal);
+		int cost = getNonKinshipPenalty(role, goal);
 
 		// High punishment when it is preferred more generalist structures
 		if (costFunction == Cost.GENERALIST)
@@ -81,7 +81,7 @@ public class CostResolver {
 	public int getJoinRolePenalty(RoleNode role, GoalNode goal, RoleTree oldTree, RoleTree newTree)
 			throws RoleNotFound {
 
-		int cost = getNonKindshipPenalty(role, goal);
+		int cost = getNonKinshipPenalty(role, goal);
 
 		// High punishment when it is preferred taller and the role is not a child
 		if ((costFunction == Cost.TALLER) && (!role.hasParentGoal(goal)))
