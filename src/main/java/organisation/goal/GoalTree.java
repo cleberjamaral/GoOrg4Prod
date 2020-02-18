@@ -210,7 +210,7 @@ public class GoalTree {
 				sumEfforts += (double) w.getValue();
 
 			// the number of slices is at least 1 being more according to properties
-			int slices = (int) Math.max(Math.ceil(sumEfforts / Parameters.getMaxWorkload()), 1.0);
+			int slices = (int) Math.max(Math.ceil(sumEfforts / Parameters.getWorkloadGrain()), 1.0);
 
 			GoalNode g = null;
 			for (int i = 0; i < slices; i++) {
@@ -245,7 +245,7 @@ public class GoalTree {
 			for (DataLoad t : s.getDataLoads())	sumDataAmount += (double) t.getValue();
 
 			// the number of slices is at least 1 being more according to properties
-			int slices = (int) Math.max(Math.ceil(sumDataAmount / Parameters.getMaxDataAmount()), 1.0);
+			int slices = (int) Math.max(Math.ceil(sumDataAmount / Parameters.getDataLoadGrain()), 1.0);
 			
 			GoalNode g = null;
 			for (int i = 0; i < slices; i++) {

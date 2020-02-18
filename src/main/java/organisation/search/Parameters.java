@@ -2,10 +2,14 @@ package organisation.search;
 
 public class Parameters {
 
-	// max throughput allowed, in case of excess goal/role must be broken 
-	private static double maxThroughput = 8;
-	// max workload allowed, in case of excess goal/role must be broken 
+	// max dataload allowed, in case of excess it must go to another role
+	private static double maxDataLoad = 8;
+	// max workload allowed, in case of excess it must go to another role 
 	private static double maxWorkload = 8;
+	// dataload granularity, for breaking goals
+	private static double dataLoadGrain = 8;
+	// workload granularity, for breaking goals
+	private static double workloadGrain = 8;
 
 	// Minimal penalty for creating a new state
 	private static int minimalPenalty = 1;
@@ -14,12 +18,28 @@ public class Parameters {
 	// Cost penalty used to infer VERY bad decisions on search
 	private static int extraPenalty = defaultPenalty * 2;
 
-	public static double getMaxDataAmount() {
-		return maxThroughput;
+	public static double getDataLoadGrain() {
+		return dataLoadGrain;
 	}
 
-	public static void setMaxDataAmount(double maxThroughput) {
-		Parameters.maxThroughput = maxThroughput;
+	public static void setDataLoadGrain(double dataLoadGrain) {
+		Parameters.dataLoadGrain = dataLoadGrain;
+	}
+
+	public static double getWorkloadGrain() {
+		return workloadGrain;
+	}
+
+	public static void setWorkloadGrain(double workloadGrain) {
+		Parameters.workloadGrain = workloadGrain;
+	}
+
+	public static double getMaxDataLoad() {
+		return maxDataLoad;
+	}
+
+	public static void setMaxDataLoad(double maxDataLoad) {
+		Parameters.maxDataLoad = maxDataLoad;
 	}
 
 	public static double getMaxWorkload() {

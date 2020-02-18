@@ -1,5 +1,7 @@
 package annotations;
 
+import java.text.DecimalFormat;
+
 public abstract class Annotation {
 
 	protected String id;
@@ -24,8 +26,10 @@ public abstract class Annotation {
 	
 	@Override
 	public String toString() {
-		if (value instanceof Double)
-			return this.getClass().getSimpleName() + "[id=" + id + ",value=" + String.format("%.1f", value) + "]";
+		if (value instanceof Double) {
+			DecimalFormat df = new DecimalFormat("#.##");
+			return this.getClass().getSimpleName() + "[id=" + id + ",value=" + df.format(value) + "]";
+		}
 		else 
 			return this.getClass().getSimpleName() + "[id=" + id + ",value=" + value.toString() + "]";
 	}

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,6 +22,8 @@ import organisation.role.RoleNode;
 import organisation.search.Organisation;
 
 public class OrganisationPlot {
+	
+	DecimalFormat df = new DecimalFormat("#.##");
 
 	public OrganisationPlot() {
 
@@ -41,9 +44,9 @@ public class OrganisationPlot {
 		{
 
 			out.println("digraph G {");
-			// TODO: build the roles tree as a nodes tree like in goals node?
+
 			for (RoleNode or : o.getRolesTree().getTree()) {
-				out.print("\t\"" + or.getRoleName()// headGoal.getGoalName()
+				out.print("\t\"" + or.getRoleName()
 						+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
 						+ "shape = \"Mrecord\" label = <<table border=\"0\" cellborder=\"0\" bgcolor=\"white\">"
 						+ "<tr><td bgcolor=\"black\" align=\"center\"><font color=\"white\">" + or.getRoleName()
@@ -64,7 +67,9 @@ public class OrganisationPlot {
 					for (Inform s : or.getInforms()) {
 						for (RoleNode rnn : o.getRolesTree().getTree()) {
 							if (rnn.getAssignedGoals().contains(s.getRecipient()) && (rnn != or)) {
-								uniqueInformArrows.add("\t\"" + or.getRoleName() + "\"->\"" + rnn.getRoleName() + "\" [label=\""+ s.getId() + ":" + s.getValue() +"\"] ;");
+								uniqueInformArrows
+										.add("\t\"" + or.getRoleName() + "\"->\"" + rnn.getRoleName() + "\" [label=\""
+												+ s.getId() + ":" + df.format(s.getValue()) + "\"] ;");
 							}
 						}
 					}
@@ -157,7 +162,8 @@ public class OrganisationPlot {
 //			out.println("\t\"" + g.getGoalName() + "\"->\"" + s.getRecipient() + "\" [label=\""+ s.getId() + ":" + s.getValue() +"\"] ;");
 
 		for (DataLoad s : g.getDataLoads())
-			out.println("\t\"" + s.getSender() + "\"->\"" + g.getGoalName() + "\" [label=\""+ s.getId() + ":" + s.getValue() +"\"] ;");
+			out.println("\t\"" + s.getSender() + "\"->\"" + g.getGoalName() + "\" [label=\"" + s.getId() + ":"
+					+ df.format(s.getValue()) + "\"] ;");
 
 		g.getDescendants().forEach(dg -> {
 			plotGoalNode(out, dg);

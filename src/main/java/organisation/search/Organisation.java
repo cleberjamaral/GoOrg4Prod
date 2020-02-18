@@ -148,9 +148,9 @@ public class Organisation implements Estado, Antecessor {
 			}
 
 			// Prune states which parent cannot afford data amount 
-			if (nr.getParentSumDataAmount() > Parameters.getMaxDataAmount()) {
+			if (nr.getParentSumDataAmount() > Parameters.getMaxDataLoad()) {
 				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned: " + nr.getAssignedGoals()
-						+ ", amount: " + nr.getParentSumDataAmount() + " > " + Parameters.getMaxDataAmount());
+						+ ", amount: " + nr.getParentSumDataAmount() + " > " + Parameters.getMaxDataLoad());
 				return;
 			}
 
@@ -181,16 +181,16 @@ public class Organisation implements Estado, Antecessor {
 			}
 
 			// Prune states which parent cannot afford data amount 
-			if (jr.getParentSumDataAmount() > Parameters.getMaxDataAmount()) {
+			if (jr.getParentSumDataAmount() > Parameters.getMaxDataLoad()) {
 				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") joinRole pruned#2: " + jr.getAssignedGoals()
-						+ ", amount: " + jr.getParentSumDataAmount() + " > " + Parameters.getMaxDataAmount());
+						+ ", amount: " + jr.getParentSumDataAmount() + " > " + Parameters.getMaxDataLoad());
 				return;
 			}
 
 			// Prune states which parent cannot afford data amount 
-			if (jr.getRoleSumDataAmount() > Parameters.getMaxDataAmount()) {
+			if (jr.getRoleSumDataAmount() > Parameters.getMaxDataLoad()) {
 				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") joinRole pruned#3: " + jr.getAssignedGoals()
-						+ ", amount: " + jr.getRoleSumDataAmount() + " > " + Parameters.getMaxDataAmount());
+						+ ", amount: " + jr.getRoleSumDataAmount() + " > " + Parameters.getMaxDataLoad());
 				return;
 			}
 			

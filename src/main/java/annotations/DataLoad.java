@@ -1,5 +1,7 @@
 package annotations;
 
+import java.text.DecimalFormat;
+
 import organisation.goal.GoalNode;
 
 public class DataLoad extends Annotation {
@@ -31,8 +33,9 @@ public class DataLoad extends Annotation {
 
 	@Override
 	public String toString() {
+		DecimalFormat df = new DecimalFormat("#.##");
 		return this.getClass().getSimpleName() + "[id=" + this.id + ", sender=" + this.sender.getGoalName()
-				+ ",value=" + String.format("%.1f", this.value) + "]";
+				+ ",value=" + df.format(value) + "]";
 	}
 	
 	public DataLoad clone() {

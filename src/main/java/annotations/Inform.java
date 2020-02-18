@@ -1,5 +1,7 @@
 package annotations;
 
+import java.text.DecimalFormat;
+
 import organisation.goal.GoalNode;
 
 public class Inform extends Annotation {
@@ -31,8 +33,10 @@ public class Inform extends Annotation {
 
 	@Override
 	public String toString() {
+		DecimalFormat df = new DecimalFormat("#.##");
 		return this.getClass().getSimpleName() + "[id=" + this.id + ", recipient=" + this.recipient.getGoalName()
-				+ ",value=" + String.format("%.1f", this.value) + "]";
+				+ ",value=" + df.format(value) + "]";
+
 	}
 	
 	public Inform clone() {
