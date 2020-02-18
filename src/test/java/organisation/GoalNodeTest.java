@@ -5,14 +5,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 
 import annotations.Workload;
 import organisation.goal.GoalNode;
-import organisation.goal.GoalTree;
 
 public class GoalNodeTest {
 

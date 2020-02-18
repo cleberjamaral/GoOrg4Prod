@@ -54,11 +54,12 @@ public class OrganisationApp {
 			Inform t = new Inform("maxDataAmount", null, maxDataAmount);
 			limits.add(w);
 			limits.add(t);
-			gTree.brakeGoalTree();
 
 			OrganisationPlot p = new OrganisationPlot();
 			p.deleteExistingDiagrams();
-			p.plotGoalTree("orgApp", gTree);
+			p.plotGoalTree("originalGDT", gTree);
+			gTree.brakeGoalTree();
+			p.plotGoalTree("brokenDGT", gTree);
 			
 			// if an argument to choose a cost function was given
 			if (args.length == 2) {
@@ -85,11 +86,12 @@ public class OrganisationApp {
 			visitNodes(nList);
 			
 			GoalTree t = new GoalTree(rootNode);
-			t.brakeGoalTree();
 
 			OrganisationPlot p = new OrganisationPlot();
 			p.deleteExistingDiagrams();
-			p.plotGoalTree("orgApp", t);
+			p.plotGoalTree("originalGDT", t);
+			t.brakeGoalTree();
+			p.plotGoalTree("brokenDGT", t);
 
 			t.addAllDescendants(rootNode);
 			inicial = new Organisation("orgApp", t, Cost.SPECIALIST);
