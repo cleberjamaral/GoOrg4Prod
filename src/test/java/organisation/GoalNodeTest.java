@@ -5,10 +5,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 
 import annotations.Workload;
 import organisation.goal.GoalNode;
+import organisation.goal.GoalTree;
 
 public class GoalNodeTest {
 
@@ -30,6 +34,19 @@ public class GoalNodeTest {
 	}
 	
 	@Test
+	public void testContainsWorkload() {
+		// a small tree, goal g11 has workload
+		GoalNode g00 = new GoalNode(null, "g0");
+		GoalNode g10 = new GoalNode(g00, "g1");
+		GoalNode g11 = new GoalNode(g10, "g11");
+		g11.addWorkload(new Workload("s1", 1));
+
+		assertFalse(g00.containsWorkload());
+		assertFalse(g10.containsWorkload());
+		assertTrue(g11.containsWorkload());
+	}
+	
+	@Test
 	public void testSimilarCollections() {
 		// a goal named g0
 		GoalNode g00 = new GoalNode(null, "g0");
@@ -39,7 +56,6 @@ public class GoalNodeTest {
 		GoalNode g10 = new GoalNode(g00, "g0");
 		// adding a workload s1 with value 3 (name is same, so it is equal)
 		g10.addWorkload(new Workload("s1", 3));
-
 
 		System.out.println("\n\ntestSimilarCollections");
 		System.out.println("r00: " + g00.getWorkloads());

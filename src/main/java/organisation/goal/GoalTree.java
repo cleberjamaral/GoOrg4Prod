@@ -80,7 +80,7 @@ public class GoalTree {
 	 * @param g, a goal object
 	 * @return true when the goal was found
 	 */
-	private boolean treeContains(GoalNode g) {
+	public boolean treeContains(GoalNode g) {
 		for (GoalNode gn : tree) 
 			if (gn.getGoalName().equals(g.getGoalName())) 
 				return true;
@@ -160,7 +160,7 @@ public class GoalTree {
 	 * @param name
 	 * @return
 	 */
-	private GoalNode findAGoalByName(GoalNode root, String name) {
+	public GoalNode findAGoalByName(GoalNode root, String name) {
 		if (root.getGoalName().equals(name)) {
 			return root;
 		} 
