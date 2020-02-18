@@ -15,26 +15,71 @@ public class GoalTree {
 	GoalNode rootNode;
 	Set<GoalNode> tree = new HashSet<>();
 	
+	/**
+	 * Add a goal to this goals tree
+	 * @param rootNode the root node object
+	 */
 	public GoalTree(GoalNode rootNode) {
 		this.rootNode = rootNode;
 		if (!treeContains(this.rootNode)) tree.add(this.rootNode);
 	}
 
+	/**
+	 * Add a goal to this goals tree
+	 * @param rootNode the root name
+	 */
 	public GoalTree(String rootNode) {
 		this.rootNode = new GoalNode(null, rootNode);
 		if (!treeContains(this.rootNode)) tree.add(this.rootNode);
 	}
 	
+	/**
+	 * get root node of this tree
+	 * @return the object root node
+	 */
 	public GoalNode getRootNode() {
 		return this.rootNode;
 	}
 	
+	/**
+	 * Add a goal to this tree
+	 * @param name of the nonexistent goal
+	 * @param parent, an existing parent node for this goal
+	 * @return the created goal node
+	 */
 	public GoalNode addGoal(String name, GoalNode parent) {
 		GoalNode g = new GoalNode(parent, name);
 		if (!treeContains(g)) tree.add(g);
 		return g;
 	}
 	
+	/**
+	 * Add a goal to this tree
+	 * @param name of the nonexistent goal
+	 * @param parent, the name of an existing goal
+	 */
+	public void addGoal(String name, String parent) {
+		GoalNode parentGoal = findAGoalByName(this.rootNode, parent);
+		addGoal(name,parentGoal);
+	}
+
+	/**
+	 * Add a goal to this tree and a 'report' inform annotation on it
+	 * @param name of the nonexistent goal
+	 * @param parent, the name of an existing goal
+	 * @param reportAmount, the amount of data the descendant report
+	 */
+	public void addGoal(String name, String parent, double reportAmount) {
+		GoalNode parentGoal = findAGoalByName(this.rootNode, parent);
+		GoalNode g = addGoal(name,parentGoal);
+		addInform(name, "report", g.getParent().getGoalName(), reportAmount);
+	}
+	
+	/**
+	 * check if this tree contains a given goal object
+	 * @param g, a goal object
+	 * @return true when the goal was found
+	 */
 	private boolean treeContains(GoalNode g) {
 		for (GoalNode gn : tree) 
 			if (gn.getGoalName().equals(g.getGoalName())) 
@@ -42,18 +87,14 @@ public class GoalTree {
 			
 		return false;
 	}
-	
-	public void addGoal(String name, String parent) {
-		GoalNode parentGoal = findAGoalByName(this.rootNode, parent);
-		addGoal(name,parentGoal);
-	}
 
-	public void addGoal(String name, String parent, double reportAmount) {
-		GoalNode parentGoal = findAGoalByName(this.rootNode, parent);
-		GoalNode g = addGoal(name,parentGoal);
-		addInform(name, "report", g.getParent().getGoalName(), reportAmount);
-	}
-
+	/**
+	 * Built a tree adding the descendants of a root node
+	 * This method is usually used when the tree was created with
+	 * linked nodes but not using this GoalTree class which provide
+	 * some extra facilities
+	 * @param root, a node that is linked to descendants
+	 */
 	public void addAllDescendants(GoalNode root) {
 		for (GoalNode g : root.getDescendants()) {
 			if (!treeContains(g)) tree.add(g);
@@ -61,11 +102,27 @@ public class GoalTree {
 		}
 	}
 	
+	/**
+	 * Add a workload annotation to a given goal
+	 * 
+	 * @param goal, the goal to add an annotation
+	 * @param workload, the id of the workload
+	 * @param effort, a double the necessary effort
+	 */
 	public void addWorkload(String goal, String workload, double effort) {
 		GoalNode g = findAGoalByName(this.rootNode, goal);
 		g.addWorkload(new Workload(workload, effort));
 	}
 	
+	/**
+	 * Add an inform annotation to a given goal as well as data load annotation to
+	 * each recipient
+	 * 
+	 * @param goal, the goal to add an annotation
+	 * @param inform, the id of the inform
+	 * @param recipient, the recipient goal for this inform
+	 * @param amount, a double representing amount of data
+	 */
 	public void addInform(String goal, String inform, String recipient, double amount) {
 		GoalNode g = findAGoalByName(this.rootNode, goal);
 		GoalNode r = findAGoalByName(this.rootNode, recipient);
@@ -73,23 +130,36 @@ public class GoalTree {
 		r.addDataLoad(new DataLoad(inform, g, amount));
 	}
 
-	public void removeBrokenDataLoads(GoalNode original, GoalNode root) {
+	/**
+	 * Remove data load annotations that refers to null goals, it may occur after
+	 * braking goals
+	 * 
+	 * @param g, the current goal that is being examined
+	 * @param root, the root node of the tree
+	 */
+	public void removeBrokenDataLoads(GoalNode g, GoalNode root) {
 		// Erase current dataloads of split goal
-		original.getDescendants().forEach(s -> {
+		g.getDescendants().forEach(s -> {
 			List<DataLoad> tobeRemoved = new ArrayList<>();
 			for (DataLoad d : s.getDataLoads()) {
 				if (findAGoalByName(root, d.getSender().getGoalName()) == null) {
-					//s.removeDataLoad(d);
 					tobeRemoved.add(d);
 				}
 			}
-			tobeRemoved.forEach(t -> {s.removeDataLoad(t);});
-			// when reaching the last slice, go to the next node
-			removeBrokenDataLoads(s,root);
+			// avoid remove an annotation during the loop
+			tobeRemoved.forEach(t -> {
+				s.removeDataLoad(t);
+			});
+			removeBrokenDataLoads(s, root);
 		});
-
 	}
 	
+	/**
+	 * Return the goal object descendant of a given goal
+	 * @param root, the higher kinship of the node
+	 * @param name
+	 * @return
+	 */
 	private GoalNode findAGoalByName(GoalNode root, String name) {
 		if (root.getGoalName().equals(name)) {
 			return root;
@@ -101,6 +171,12 @@ public class GoalTree {
 		return null;
 	}
 	
+	/**
+	 * Add to the given successors list all descendants of the given goal
+	 * 
+	 * @param successors, a list to receive the descendants
+	 * @param gn, the parent goal of the successors
+	 */
 	public void addSuccessorsToList(List<GoalNode> successors, GoalNode gn) {
 		for (GoalNode goal : gn.getDescendants()) {
 			successors.add(goal);
@@ -108,6 +184,10 @@ public class GoalTree {
 		}
 	}
 	
+	/**
+	 * Brake the goal tree in smaller goals if any goal is exceeding the
+	 * max allowed for the annotations
+	 */
 	public void brakeGoalTree() {
 		GoalNode newRootByWorkload = this.rootNode.cloneContent();
 		brakeGoalNodeByWorkload(this.rootNode, newRootByWorkload);
@@ -117,14 +197,21 @@ public class GoalTree {
 		this.rootNode = newRootByDataLoad;
 	}
 	
+	/**
+	 * Brake the goal if the sum of workloads exceeds max workload
+	 * 
+	 * @param original, the currently examining goal
+	 * @param parent, the parent of the examining goal
+	 */
 	private void brakeGoalNodeByWorkload(GoalNode original, GoalNode parent) {
 		original.getDescendants().forEach(s -> {
 			double sumEfforts = 0;
-			for (Workload w : s.getWorkloads())	sumEfforts += (double) w.getValue();
+			for (Workload w : s.getWorkloads())
+				sumEfforts += (double) w.getValue();
 
 			// the number of slices is at least 1 being more according to properties
 			int slices = (int) Math.max(Math.ceil(sumEfforts / Parameters.getMaxWorkload()), 1.0);
-			
+
 			GoalNode g = null;
 			for (int i = 0; i < slices; i++) {
 				g = s.cloneContent();
@@ -132,12 +219,12 @@ public class GoalTree {
 				// it will be sliced only if slices > 1
 				if (slices > 1) {
 					g.setGoalName(g.getGoalName() + "$" + i);
-					for (Workload w : g.getWorkloads())	w.setValue((double) w.getValue() / slices);
-					//
-					for (Inform j : g.getInforms())	{
+					for (Workload w : g.getWorkloads())
+						w.setValue((double) w.getValue() / slices);
+					for (Inform j : g.getInforms()) {
 						GoalNode r = j.getRecipient();
-						// Create dataloads using the created fragmented goals, later broken dataloads must be removed
-						r.addDataLoad(new DataLoad(j.getId(), g, (double) j.getValue() / slices)); 
+						// Create dataloads using the created fragmented goals
+						r.addDataLoad(new DataLoad(j.getId(), g, (double) j.getValue() / slices));
 					}
 				}
 			}
@@ -146,6 +233,12 @@ public class GoalTree {
 		});
 	}
 
+	/**
+	 * Brake the goal if the sum of dataload exceeds max dataload
+	 * 
+	 * @param original, the currently examining goal
+	 * @param parent, the parent of the examining goal
+	 */
 	private void brakeGoalNodeByDataLoad(GoalNode original, GoalNode parent) {
 		original.getDescendants().forEach(s -> {
 			double sumDataAmount = 0;
