@@ -68,6 +68,10 @@ public class GoalNode {
 		return dataloads;
 	}
 	
+	public void removeDataLoad(DataLoad t) {
+		if (dataloads.contains(t)) dataloads.remove(t);
+	}
+	
 	public void addDescendant(GoalNode newDescendent) {
 		descendants.add(newDescendent);
 	}

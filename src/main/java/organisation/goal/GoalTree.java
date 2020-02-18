@@ -1,5 +1,6 @@
 package organisation.goal;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -71,6 +72,23 @@ public class GoalTree {
 		g.addInform(new Inform(inform, r, amount));
 		r.addDataLoad(new DataLoad(inform, g, amount));
 	}
+
+	public void removeBrokenDataLoads(GoalNode original, GoalNode root) {
+		// Erase current dataloads of split goal
+		original.getDescendants().forEach(s -> {
+			List<DataLoad> tobeRemoved = new ArrayList<>();
+			for (DataLoad d : s.getDataLoads()) {
+				if (findAGoalByName(root, d.getSender().getGoalName()) == null) {
+					//s.removeDataLoad(d);
+					tobeRemoved.add(d);
+				}
+			}
+			tobeRemoved.forEach(t -> {s.removeDataLoad(t);});
+			// when reaching the last slice, go to the next node
+			removeBrokenDataLoads(s,root);
+		});
+
+	}
 	
 	private GoalNode findAGoalByName(GoalNode root, String name) {
 		if (root.getGoalName().equals(name)) {
@@ -91,22 +109,21 @@ public class GoalTree {
 	}
 	
 	public void brakeGoalTree() {
-		GoalNode newRoot = this.rootNode.cloneContent();
-		brakeGoalNode(this.rootNode, newRoot);
-		this.rootNode = newRoot;
+		GoalNode newRootByWorkload = this.rootNode.cloneContent();
+		brakeGoalNodeByWorkload(this.rootNode, newRootByWorkload);
+		removeBrokenDataLoads(newRootByWorkload,newRootByWorkload);
+		GoalNode newRootByDataLoad = newRootByWorkload.cloneContent();
+		brakeGoalNodeByDataLoad(newRootByWorkload, newRootByDataLoad);
+		this.rootNode = newRootByDataLoad;
 	}
 	
-	private void brakeGoalNode(GoalNode original, GoalNode parent) {
+	private void brakeGoalNodeByWorkload(GoalNode original, GoalNode parent) {
 		original.getDescendants().forEach(s -> {
 			double sumEfforts = 0;
-			double sumDataAmount = 0;
 			for (Workload w : s.getWorkloads())	sumEfforts += (double) w.getValue();
-			//for (Inform t : s.getInforms())	sumDataAmount += (double) t.getValue();
-			for (DataLoad t : s.getDataLoads())	sumDataAmount += (double) t.getValue();
 
 			// the number of slices is at least 1 being more according to properties
-			int slices = (int) Math.max(Math.max(Math.ceil(sumEfforts / Parameters.getMaxWorkload()),
-					Math.ceil(sumDataAmount / Parameters.getMaxDataAmount())), 1.0);
+			int slices = (int) Math.max(Math.ceil(sumEfforts / Parameters.getMaxWorkload()), 1.0);
 			
 			GoalNode g = null;
 			for (int i = 0; i < slices; i++) {
@@ -116,15 +133,42 @@ public class GoalTree {
 				if (slices > 1) {
 					g.setGoalName(g.getGoalName() + "$" + i);
 					for (Workload w : g.getWorkloads())	w.setValue((double) w.getValue() / slices);
-					//for (Inform w : g.getInforms())	w.setValue((double) w.getValue() / slices);
+					//
+					for (Inform j : g.getInforms())	{
+						GoalNode r = j.getRecipient();
+						// Create dataloads using the created fragmented goals, later broken dataloads must be removed
+						r.addDataLoad(new DataLoad(j.getId(), g, (double) j.getValue() / slices)); 
+					}
+				}
+			}
+			// when reaching the last slice, go to the next node
+			brakeGoalNodeByWorkload(s, g);
+		});
+	}
+
+	private void brakeGoalNodeByDataLoad(GoalNode original, GoalNode parent) {
+		original.getDescendants().forEach(s -> {
+			double sumDataAmount = 0;
+			for (DataLoad t : s.getDataLoads())	sumDataAmount += (double) t.getValue();
+
+			// the number of slices is at least 1 being more according to properties
+			int slices = (int) Math.max(Math.ceil(sumDataAmount / Parameters.getMaxDataAmount()), 1.0);
+			
+			GoalNode g = null;
+			for (int i = 0; i < slices; i++) {
+				g = s.cloneContent();
+				g.setParent(parent);
+				// it will be sliced only if slices > 1
+				if (slices > 1) {
+					g.setGoalName(g.getGoalName() + "$" + i);
 					for (DataLoad w : g.getDataLoads())	w.setValue((double) w.getValue() / slices);
 				}
 			}
 			// when reaching the last slice, go to the next node
-			brakeGoalNode(s, g);
+			brakeGoalNodeByDataLoad(s, g);
 		});
 	}
-
+	
 	/**
 	 * Give the sum of efforts of the whole tree
 	 * 

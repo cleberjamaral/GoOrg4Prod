@@ -46,7 +46,7 @@ public abstract class Annotation {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Workload other = (Workload) obj;
+		Annotation other = (Annotation) obj;
 		if (id == null) {
 			if (other.getId() != null)
 				return false;
