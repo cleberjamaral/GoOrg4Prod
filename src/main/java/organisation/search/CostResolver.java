@@ -35,7 +35,7 @@ public class CostResolver {
 		if (!role.getWorkloads().containsAll(goal.getWorkloads())) {
 			return Parameters.getExtraPenalty();
 		}
-		return Parameters.getMinimalPenalty();
+		return 0;
 		
 	}
 
@@ -96,8 +96,7 @@ public class CostResolver {
 		return cost;
 	}
 
-	public int getJoinRolePenalty(RoleNode role, GoalNode goal, RoleTree oldTree, RoleTree newTree)
-			throws RoleNotFound {
+	public int getJoinRolePenalty(RoleNode role, GoalNode goal, RoleTree oldTree, RoleTree newTree) {
 
 		int cost = getNonKinshipPenalty(role, goal);
 
