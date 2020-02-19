@@ -142,14 +142,14 @@ public class Organisation implements Estado, Antecessor {
 			
 			// Prune states with effort equal to 0
 			if (nr.getSumWorkload() == 0) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned: " + nr.getAssignedGoals()
+				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#1: " + nr.getAssignedGoals()
 						+ ", efforts: " + nr.getSumWorkload() + " = 0");
 				return;
 			}
 
 			// Prune states which parent cannot afford data amount 
 			if (nr.getParentSumDataAmount() > Parameters.getMaxDataLoad()) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned: " + nr.getAssignedGoals()
+				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#2: " + nr.getAssignedGoals()
 						+ ", amount: " + nr.getParentSumDataAmount() + " > " + Parameters.getMaxDataLoad());
 				return;
 			}
@@ -187,13 +187,6 @@ public class Organisation implements Estado, Antecessor {
 				return;
 			}
 
-			// Prune states which parent cannot afford data amount 
-			if (jr.getRoleSumDataAmount() > Parameters.getMaxDataLoad()) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") joinRole pruned#3: " + jr.getAssignedGoals()
-						+ ", amount: " + jr.getRoleSumDataAmount() + " > " + Parameters.getMaxDataLoad());
-				return;
-			}
-			
 			newState.cost = penalty.getJoinRolePenalty(hostRole, goalToAssign, this.getRolesTree(), newState.getRolesTree());
 			newState.accCost = this.accCost + newState.cost;
 
