@@ -22,6 +22,23 @@ public class CostResolver {
 		CostResolver.costFunction = costFunction;
 	}
 
+	/**
+	 * return a penalty when an workload is added to a role, indicating
+	 * it needs to switch the context adding setup cost
+	 * 
+	 * @param role that is receiving a goal
+	 * @param goal to me assigned to a role
+	 * @return the cost
+	 */
+	public int getSetupPenalty(RoleNode role, GoalNode goal) {
+		// the role will receive a different workload, adding setup time
+		if (!role.getWorkloads().containsAll(goal.getWorkloads())) {
+			return Parameters.getExtraPenalty();
+		}
+		return Parameters.getMinimalPenalty();
+		
+	}
+
 	public int getNonKinshipPenalty(RoleNode role, GoalNode goal) {
 		// the given role has goal's parent associated?
 		if (role.hasParentGoal(goal))
@@ -57,6 +74,7 @@ public class CostResolver {
 		// Preferring specialist structure potentially punish the creation of roles
 		RoleNode old = oldTree.findRoleBySignature(role.signature());
 		if (costFunction == Cost.SPECIALIST) {
+			
 			// Punish when it would be possible to join with the give role
 			if ((old.getWorkloads().containsAll(goal.getWorkloads()))
 					&& (old.getSumWorkload() + goal.getSumWorkload() <= Parameters.getMaxWorkload())) {
@@ -91,11 +109,10 @@ public class CostResolver {
 		if (costFunction == Cost.TALLER)
 			return cost + Parameters.getDefaultPenalty();
 
-		// Punish when it is preferred more specialist structures and some workload was
-		// added
-		RoleNode old = oldTree.findRoleBySignature(role.signature());
-		if ((costFunction == Cost.SPECIALIST) && (!old.getWorkloads().containsAll(goal.getWorkloads())))
-			return cost + Parameters.getExtraPenalty();
+		// Punish when an extra workload is added incrementing setup costs
+		if (costFunction == Cost.SPECIALIST) {
+			return cost + getSetupPenalty(role, goal);
+		}
 
 		return cost;
 	}

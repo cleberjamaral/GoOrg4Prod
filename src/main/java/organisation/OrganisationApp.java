@@ -45,7 +45,7 @@ public class OrganisationApp {
 		Parameters.setMaxWorkload(maxEffort);
 		Parameters.setMaxDataLoad(maxDataAmount);
 		
-		Cost c = Cost.GENERALIST;
+		Cost c = Cost.SPECIALIST;
 		GoalTree gTree = null;
 		
 		// if a Moise XML file was not provided, use a sample organisation
