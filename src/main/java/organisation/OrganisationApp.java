@@ -78,7 +78,8 @@ public class OrganisationApp {
 			gTree.addAllDescendants(gTree.getRootNode());
 		}
 		OrganisationPlot p = new OrganisationPlot();
-		p.deleteExistingDiagrams();
+        p.deleteExistingDiagrams();
+        p.deleteExistingGraphs();
 		p.plotGoalTree("original", gTree);
 		gTree.brakeGoalTree();
 		p.plotGoalTree("broken", gTree);
