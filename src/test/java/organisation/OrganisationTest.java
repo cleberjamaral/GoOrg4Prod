@@ -22,12 +22,10 @@ public class OrganisationTest {
 	// After generating proofs it must be checked manually and then turn this
 	// argument false for further right assertions
 	private static boolean generatingProofs = false;
-	private static OrganisationPlot p;
-	private BufferedReader fr;
 
 	@BeforeClass
 	public static void beforeTests() {
-		p = new OrganisationPlot();
+		OrganisationPlot p = new OrganisationPlot();
 		p.deleteExistingDiagrams();
 
 		if (generatingProofs)
@@ -70,6 +68,7 @@ public class OrganisationTest {
 	}
 
 	private void generateOrgForAllCosts(String orgName, GoalTree t) {
+		OrganisationPlot p = new OrganisationPlot();
 		p.plotGoalTree(orgName, t);
 
 		Cost cost[] = Cost.values();
@@ -84,8 +83,9 @@ public class OrganisationTest {
 			
 			try {
 				assertTrue(((Organisation) n.getEstado()).validateOutput());
-				fr = new BufferedReader(new FileReader("output/proofs/" + org + ".txt"));
+				BufferedReader fr = new BufferedReader(new FileReader("output/proofs/" + org + ".txt"));
 				String proof = fr.readLine();
+				fr.close();
 
 				assertEquals(n.getEstado().toString(), proof);
 			} catch (IOException | OutputDoesNotMatchWithInput e) {
