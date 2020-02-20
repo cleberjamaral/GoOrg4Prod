@@ -1,7 +1,6 @@
 package organisation;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -37,7 +36,7 @@ public class OrganisationPlot {
 	}
 
 	public void plotOrganisation(Organisation o, String plotIndex) {
-		List<String> links = new ArrayList<>();
+		Set<String> links = new HashSet<>();
 
 		createOutPutFolders();
 		
@@ -74,12 +73,14 @@ public class OrganisationPlot {
 							if (rnn.getAssignedGoals().contains(s.getRecipient()) && (rnn != or)) {
 								uniqueInformArrows
 										.add("\t\"" + or.getRoleName() + "\"->\"" + rnn.getRoleName() + "\" [label=\""
-												+ s.getId() + ":" + df.format(s.getValue()) + "\"] ;");
+												+ s.getId() + ":" + df.format(s.getValue()) + "\" style=dotted arrowhead=vee fontcolor=grey20 color=grey20];");
 							}
 						}
 					}
 				}
-				uniqueInformArrows.forEach(i -> {out.write(i+"\n");});
+                uniqueInformArrows.forEach(i -> {out.write(i+"\n");});
+                if (or.getParent() != null)	
+					links.add("\"" + or.getParent().getRoleName() + "\"->\"" + or.getRoleName() + "\"");
 			}
 
 			for (String l : links)
@@ -199,7 +200,7 @@ public class OrganisationPlot {
 
 		for (DataLoad s : g.getDataLoads())
 			out.write("\t\"" + s.getSender() + "\"->\"" + g.getGoalName() + "\" [label=\"" + s.getId() + ":"
-					+ df.format(s.getValue()) + "\"];\n");
+					+ df.format(s.getValue()) + "\" style=dotted arrowhead=vee fontcolor=grey20 color=grey20];\n");
 
 		g.getDescendants().forEach(dg -> {
 			plotGoalNode(out, dg);
