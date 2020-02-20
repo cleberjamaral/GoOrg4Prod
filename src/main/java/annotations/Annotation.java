@@ -28,10 +28,10 @@ public abstract class Annotation {
 	public String toString() {
 		if (value instanceof Double) {
 			DecimalFormat df = new DecimalFormat("#.##");
-			return this.getClass().getSimpleName() + "[id=" + id + ",value=" + df.format(value) + "]";
+			return this.getClass().getSimpleName().substring(0, 1) + "[" + id + ":" + df.format(value) + "]";
 		}
 		else 
-			return this.getClass().getSimpleName() + "[id=" + id + ",value=" + value.toString() + "]";
+			return this.getClass().getSimpleName().substring(0, 1) + "[" + id + ":" + value.toString() + "]";
 	}
 
 	@Override

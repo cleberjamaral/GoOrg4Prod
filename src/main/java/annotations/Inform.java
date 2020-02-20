@@ -34,8 +34,8 @@ public class Inform extends Annotation {
 	@Override
 	public String toString() {
 		DecimalFormat df = new DecimalFormat("#.##");
-		return this.getClass().getSimpleName() + "[id=" + this.id + ", recipient=" + this.recipient.getGoalName()
-				+ ",value=" + df.format(value) + "]";
+		return this.getClass().getSimpleName().substring(0, 1) + "[" + this.id + ":" + this.recipient.getGoalName()
+				+ ":" + df.format(value) + "]";
 
 	}
 	

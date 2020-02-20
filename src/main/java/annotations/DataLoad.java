@@ -34,8 +34,8 @@ public class DataLoad extends Annotation {
 	@Override
 	public String toString() {
 		DecimalFormat df = new DecimalFormat("#.##");
-		return this.getClass().getSimpleName() + "[id=" + this.id + ", sender=" + this.sender.getGoalName()
-				+ ",value=" + df.format(value) + "]";
+		return this.getClass().getSimpleName().substring(0, 1) + "[" + this.id + ":" + this.sender.getGoalName()
+				+ ":" + df.format(value) + "]";
 	}
 	
 	public DataLoad clone() {

@@ -89,8 +89,6 @@ public class Organisation implements Estado, Antecessor {
 		
 				OrganisationPlot p = new OrganisationPlot();
 				if (oneSolutionNeeded) {
-                    final String dot = p.plotOrganisation(this, "");
-					p.saveDotAsPNG(this.getOrgName(), dot);
 					isGoalList.clear();
 				} else {
                     final String dot = p.plotOrganisation(this, Integer.toString(isGoalList.size()));

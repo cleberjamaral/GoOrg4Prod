@@ -27,7 +27,7 @@ dependencies {
 	compile group: 'commons-io', name: 'commons-io', version: '2.6'
 
 	// java-graphviz library
-    compile group: 'guru.nidi', name: 'graphviz-java', version: '0.8.0'
+    compile group: 'guru.nidi', name: 'graphviz-java-all-j2v8', version: '0.14.1'
 	// https://mvnrepository.com/artifact/junit/junit
 	testCompile group: 'junit', name: 'junit', version: '4.13'
 }

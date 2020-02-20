@@ -19,8 +19,11 @@ import org.apache.commons.io.FileUtils;
 
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
+import guru.nidi.graphviz.engine.GraphvizEngine;
+import guru.nidi.graphviz.engine.GraphvizJdkEngine;
 import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.parse.Parser;
+import guru.nidi.graphviz.engine.GraphvizV8Engine;
 
 import annotations.DataLoad;
 import annotations.Inform;
@@ -53,16 +56,16 @@ public class OrganisationPlot {
 
 			for (final RoleNode or : o.getRolesTree().getTree()) {
 				out.write("\t\"" + or.getRoleName()
-						+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
+						+ "\" [ style = \"filled\" fillcolor = \"white\" "
 						+ "shape = \"Mrecord\" label = <<table border=\"0\" cellborder=\"0\" bgcolor=\"white\">"
 						+ "<tr><td bgcolor=\"black\" align=\"center\"><font color=\"white\">" + or.getRoleName()
 						+ "</font></td></tr><tr><td align=\"center\">" + or.getAssignedGoals() + "</td></tr>");
 
 				for (final Object s : or.getWorkloads())
-					out.write("<tr><td align=\"left\">" + s.toString() + "</td></tr>");
+					out.write("<tr><td align=\"center\">" + s.toString() + "</td></tr>");
 
 				for (final Object s : or.getInforms())
-					out.write("<tr><td align=\"left\">" + s.toString() + "</td></tr>");
+					out.write("<tr><td align=\"center\">" + s.toString() + "</td></tr>");
 
 				out.write("</table>> ];\n");
 
@@ -100,9 +103,22 @@ public class OrganisationPlot {
 
     public void saveDotAsPNG(final String name, final String out) {
         // save .png file
+        Graphviz.useEngine(new GraphvizV8Engine(), new GraphvizJdkEngine());
+        List<GraphvizEngine> engines = new ArrayList<>();
+        try {
+            GraphvizEngine engine = new GraphvizV8Engine();
+            engines.add(engine);
+        } catch (java.lang.NoClassDefFoundError e) {
+        }
+        try {
+            GraphvizEngine engine = new GraphvizJdkEngine();
+            engines.add(engine);
+        } catch (java.lang.NoClassDefFoundError e) {
+        }
+        Graphviz.useEngine(engines);
         try {
             final String filename = "output/graphs/" + name + ".png";
-            final MutableGraph mg = Parser.read(out);
+            final MutableGraph mg = new Parser().read(out);
             mg.setName(filename);
             Graphviz.fromGraph(mg).render(Format.PNG).toOutputStream(new FileOutputStream(filename, false));
         } catch (FileNotFoundException e) {
@@ -192,22 +208,22 @@ public class OrganisationPlot {
 	public void plotGoalNode(final StringWriter out, final GoalNode g) {
 		if (g.getOperator().equals("parallel")) {
 			out.write("\t\"" + g.getGoalName()
-					+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
-					+ "shape = \"diamond\" label = <<table border=\"0\" cellborder=\"0\">"
+					+ "\" [ style = \"filled\" fillcolor = \"white\" "
+					+ "shape = \"Mrecord\" label = <<table border=\"0\" cellborder=\"0\">"
 					+ "<tr><td align=\"center\"><font color=\"black\"><b>" + g.getGoalName()
 					+ "</b></font></td></tr>");
 		} else {
 			out.write("\t\"" + g.getGoalName()
-					+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
-					+ "shape = \"ellipse\" label = <<table border=\"0\" cellborder=\"0\">"
+					+ "\" [ style = \"filled\" fillcolor = \"white\" "
+					+ "shape = \"Mrecord\" label = <<table border=\"0\" cellborder=\"0\">"
 					+ "<tr><td align=\"center\"><b>" + g.getGoalName() + "</b></td></tr>");
 		}
 
 		for (final Object s : g.getWorkloads())
-			out.write("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
+			out.write("<tr><td align=\"center\"><sub><i>" + s + "</i></sub></td></tr>");
 
 		for (final Object s : g.getDataLoads())
-			out.write("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
+			out.write("<tr><td align=\"center\"><sub><i>" + s + "</i></sub></td></tr>");
 
 		out.write("</table>> ];\n");
 

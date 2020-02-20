@@ -70,7 +70,7 @@ public class OrganisationTest {
 
     private void generateOrgForAllCosts(final String orgName, final GoalTree t) {
         final OrganisationPlot op = new OrganisationPlot();
-        op.saveDotAsPNG(orgName, op.plotGoalTree(orgName, t));
+        op.plotGoalTree(orgName, t);
 
         final Cost cost[] = Cost.values();
         for (final Cost c : cost) {
@@ -78,6 +78,7 @@ public class OrganisationTest {
 
             final Organisation o = new Organisation(org, t, c);
             final Nodo n = new BuscaLargura().busca(o);
+            op.plotOrganisation((Organisation) n.getEstado(), "");
 
             if (generatingProofs)
                 op.generateProof((Organisation) n.getEstado(), org);

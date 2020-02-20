@@ -1,5 +1,6 @@
 package organisation;
 
+import busca.Nodo;
 import busca.BuscaLargura;
 import busca.BuscaProfundidade;
 import organisation.goal.GoalNode;
@@ -19,12 +20,16 @@ public class OrganisationGenerator {
 		p.saveDotAsPNG("broken_gdt", p.plotGoalTree("broken_gdt", gTree));
 
 		inicial = new Organisation("orgApp", gTree, c);
-		
+        
+        Nodo n = null;
 		if (search.equals("BFS")) 
-			new BuscaLargura().busca(inicial);
+			n = new BuscaLargura().busca(inicial);
 		
 		if (search.equals("DFS")) 
-			new BuscaProfundidade().busca(inicial);
+            n = new BuscaProfundidade().busca(inicial);
+            
+        final String dot = p.plotOrganisation((Organisation) n.getEstado(), "");
+		p.saveDotAsPNG(((Organisation) n.getEstado()).getOrgName(), dot);
     }
     
     public void generateOrganisationFromRoot(GoalNode rootNode, Cost c, String search) {
@@ -36,15 +41,15 @@ public class OrganisationGenerator {
     
 	public void createFullLinkAutomationGDT(Cost c, String search) {
 		GoalTree gTree = new GoalTree("FullLink");
-		gTree.addGoal("LoadConveyorBelt", "FullLink");
-		//gTree.addGoal("PickCrateFromReplenishment", "LoadConveyorBelt", 1);
+		gTree.addGoal("LoadConveyor", "FullLink");
+		//gTree.addGoal("PickCrateFromReplenishment", "LoadConveyor", 1);
 		//gTree.addWorkload("PickCrateFromReplenishment", "crate_lifting", 8);
-		gTree.addGoal("MoveCrateToConveyor", "LoadConveyorBelt", 1);
-		gTree.addWorkload("MoveCrateToConveyor", "crate_side_transferring", 10);
+		gTree.addGoal("MoveCrate", "LoadConveyor", 1);
+		gTree.addWorkload("MoveCrate", "move_crate", 10);
 		//gTree.addInform("PickCrateFromReplenishment", "crate_is_ready", "MoveCrateToConveyor", 0.1);
-		gTree.addGoal("PlaceOrdersOnConveyor", "LoadConveyorBelt", 1);
-		gTree.addWorkload("PlaceOrdersOnConveyor", "load_conveyor", 4);
-		gTree.addInform("MoveCrateToConveyor", "conveyor_loaded", "PlaceOrdersOnConveyor", 1.6);
+		gTree.addGoal("PlaceItems", "LoadConveyor", 1);
+		gTree.addWorkload("PlaceItems", "pnp", 4);
+		gTree.addInform("MoveCrate", "loaded", "PlaceItems", 1.6);
 //		gTree.addGoal("PutCrateBack", "FullLink");
 //		gTree.addGoal("MoveCrateBackToReplenishment", "PutCrateBack");
 //		gTree.addWorkload("MoveCrateBackToReplenishment", "crate_side_transferring", 1);
