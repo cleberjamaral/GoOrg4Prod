@@ -7,6 +7,7 @@ import organisation.goal.GoalNode;
 public class DataLoad extends Annotation {
 	
 	protected GoalNode sender;
+	protected double value;
 
 	public GoalNode getSender() {
 		return sender;
@@ -17,16 +18,15 @@ public class DataLoad extends Annotation {
 	}
 
 	public DataLoad(String id, GoalNode sender, double amount) {
-		super(id, amount);
+        super(id);
+        this.value = amount;
 		this.sender = sender;
 	}
 	
-	@Override
 	public Object getValue() {
 		return (double) value;
 	}
 	
-	@Override
 	public void setValue(Object amount) {
 		this.value = (double) amount;
 	}

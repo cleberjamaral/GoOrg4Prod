@@ -6,7 +6,8 @@ import organisation.goal.GoalNode;
 
 public class Inform extends Annotation {
 	
-	protected GoalNode recipient;
+    protected GoalNode recipient;
+    protected double value;
 
 	public GoalNode getRecipient() {
 		return recipient;
@@ -17,16 +18,15 @@ public class Inform extends Annotation {
 	}
 
 	public Inform(String id, GoalNode recipient, double amount) {
-		super(id, amount);
+        super(id);
+        this.value = amount;
 		this.recipient = recipient;
 	}
 	
-	@Override
 	public Object getValue() {
 		return (double) value;
 	}
 	
-	@Override
 	public void setValue(Object amount) {
 		this.value = (double) amount;
 	}
