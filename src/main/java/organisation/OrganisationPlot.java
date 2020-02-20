@@ -1,7 +1,6 @@
 package organisation;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -19,6 +18,7 @@ import org.apache.commons.io.FileUtils;
 
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
+import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.parse.Parser;
 
 import annotations.DataLoad;
@@ -90,8 +90,10 @@ public class OrganisationPlot {
             pout.print(out);
 
             // save .png file
-            FileOutputStream pdf = new FileOutputStream("output/graphs/" + o.getOrgName() + index + ".png", false);
-            Graphviz.fromGraph(Parser.read(out.toString())).render(Format.PNG).toOutputStream(pdf);
+            String filename = "output/graphs/" + o.getOrgName() + index + ".png";
+            final MutableGraph mg = new Parser().read(out.toString());
+            mg.setName(filename);
+            Graphviz.fromGraph(mg).render(Format.PNG).toOutputStream(new FileOutputStream(filename, false));
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -127,9 +129,11 @@ public class OrganisationPlot {
             pout.print(out);
 
             // save .png file
-            FileOutputStream pdf = new FileOutputStream("output/graphs/" + plotName + "_gdt.png", false);
-            Graphviz.fromGraph(Parser.read(out.toString())).render(Format.PNG).toOutputStream(pdf);
-
+            String filename = "output/graphs/" + plotName + "_gdt.png";
+            final MutableGraph mg = new Parser().read(out.toString());
+            mg.setName(filename);
+            Graphviz.fromGraph(mg).render(Format.PNG).toOutputStream(new FileOutputStream(filename, false));
+            
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
