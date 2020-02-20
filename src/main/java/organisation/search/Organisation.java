@@ -89,10 +89,10 @@ public class Organisation implements Estado, Antecessor {
 		
 				OrganisationPlot p = new OrganisationPlot();
 				if (oneSolutionNeeded) {
-					p.plotOrganisation(this, "");
 					isGoalList.clear();
 				} else {
-					p.plotOrganisation(this, Integer.toString(isGoalList.size()));
+                    final String dot = p.plotOrganisation(this, Integer.toString(isGoalList.size()));
+					p.saveDotAsPNG(this.getOrgName() + "_" + Integer.toString(isGoalList.size()), dot);
 				}
 			} else {
 				LOG.debug("#(" + generatedStates + "/" + prunedStates + ") Duplicated solution!" + ", Hash: "

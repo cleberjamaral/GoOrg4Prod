@@ -6,7 +6,8 @@ import organisation.goal.GoalNode;
 
 public class Inform extends Annotation {
 	
-	protected GoalNode recipient;
+    protected GoalNode recipient;
+    protected double value;
 
 	public GoalNode getRecipient() {
 		return recipient;
@@ -17,16 +18,15 @@ public class Inform extends Annotation {
 	}
 
 	public Inform(String id, GoalNode recipient, double amount) {
-		super(id, amount);
+        super(id);
+        this.value = amount;
 		this.recipient = recipient;
 	}
 	
-	@Override
 	public Object getValue() {
 		return (double) value;
 	}
 	
-	@Override
 	public void setValue(Object amount) {
 		this.value = (double) amount;
 	}
@@ -34,8 +34,8 @@ public class Inform extends Annotation {
 	@Override
 	public String toString() {
 		DecimalFormat df = new DecimalFormat("#.##");
-		return this.getClass().getSimpleName() + "[id=" + this.id + ", recipient=" + this.recipient.getGoalName()
-				+ ",value=" + df.format(value) + "]";
+		return this.getClass().getSimpleName().substring(0, 1) + "[" + this.id + ":" + this.recipient.getGoalName()
+				+ ":" + df.format(value) + "]";
 
 	}
 	

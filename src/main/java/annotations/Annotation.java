@@ -1,15 +1,11 @@
 package annotations;
 
-import java.text.DecimalFormat;
-
 public abstract class Annotation {
 
 	protected String id;
-	protected Object value;
 	
-	public Annotation(String id, Object value) {
+	public Annotation(String id) {
 		this.id = id;
-		this.value = value;
 	}
 
 	public String getId() {
@@ -19,19 +15,10 @@ public abstract class Annotation {
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public abstract Object getValue();
-	
-	public abstract void setValue(Object value);
 	
 	@Override
 	public String toString() {
-		if (value instanceof Double) {
-			DecimalFormat df = new DecimalFormat("#.##");
-			return this.getClass().getSimpleName() + "[id=" + id + ",value=" + df.format(value) + "]";
-		}
-		else 
-			return this.getClass().getSimpleName() + "[id=" + id + ",value=" + value.toString() + "]";
+		return this.getClass().getSimpleName().substring(0, 1) + "[" + id + "]";
 	}
 
 	@Override
