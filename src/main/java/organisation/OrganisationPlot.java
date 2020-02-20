@@ -2,6 +2,7 @@ package organisation;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -36,8 +37,8 @@ public class OrganisationPlot {
 
 	}
 
-	public void plotOrganisation(Organisation o, String plotIndex) {
-		List<String> links = new ArrayList<>();
+	public String plotOrganisation(final Organisation o, final String plotIndex) {
+		final List<String> links = new ArrayList<>();
 
 		createOutPutFolders();
 		
@@ -47,30 +48,30 @@ public class OrganisationPlot {
 		try (PrintWriter pout = new PrintWriter(new BufferedWriter(new FileWriter("output/diagrams/" + o.getOrgName() + index + ".gv", false)))) 
 		{
 
-            StringWriter out = new StringWriter();
+            final StringWriter out = new StringWriter();
 			out.write("digraph G {\n");
 
-			for (RoleNode or : o.getRolesTree().getTree()) {
+			for (final RoleNode or : o.getRolesTree().getTree()) {
 				out.write("\t\"" + or.getRoleName()
 						+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
 						+ "shape = \"Mrecord\" label = <<table border=\"0\" cellborder=\"0\" bgcolor=\"white\">"
 						+ "<tr><td bgcolor=\"black\" align=\"center\"><font color=\"white\">" + or.getRoleName()
 						+ "</font></td></tr><tr><td align=\"center\">" + or.getAssignedGoals() + "</td></tr>");
 
-				for (Object s : or.getWorkloads())
+				for (final Object s : or.getWorkloads())
 					out.write("<tr><td align=\"left\">" + s.toString() + "</td></tr>");
 
-				for (Object s : or.getInforms())
+				for (final Object s : or.getInforms())
 					out.write("<tr><td align=\"left\">" + s.toString() + "</td></tr>");
 
 				out.write("</table>> ];\n");
 
-				Set<String> uniqueInformArrows = new HashSet<>();
-				Iterator<GoalNode> iterator = or.getAssignedGoals().iterator();
+				final Set<String> uniqueInformArrows = new HashSet<>();
+				final Iterator<GoalNode> iterator = or.getAssignedGoals().iterator();
 				while (iterator.hasNext()) {
 					iterator.next();
-					for (Inform s : or.getInforms()) {
-						for (RoleNode rnn : o.getRolesTree().getTree()) {
+					for (final Inform s : or.getInforms()) {
+						for (final RoleNode rnn : o.getRolesTree().getTree()) {
 							if (rnn.getAssignedGoals().contains(s.getRecipient()) && (rnn != or)) {
 								uniqueInformArrows
 										.add("\t\"" + or.getRoleName() + "\"->\"" + rnn.getRoleName() + "\" [label=\""
@@ -82,25 +83,36 @@ public class OrganisationPlot {
 				uniqueInformArrows.forEach(i -> {out.write(i+"\n");});
 			}
 
-			for (String l : links)
+			for (final String l : links)
 				out.write("\t" + l + ";\n");
             out.write("}\n");
 
             // save .gv file
             pout.print(out);
 
-            // save .png file
-            String filename = "output/graphs/" + o.getOrgName() + index + ".png";
-            final MutableGraph mg = new Parser().read(out.toString());
-            mg.setName(filename);
-            Graphviz.fromGraph(mg).render(Format.PNG).toOutputStream(new FileOutputStream(filename, false));
+            return out.toString();
 
-		} catch (IOException e) {
+        } catch (final IOException e) {
 			e.printStackTrace();
-		}
+        }
+        return null;
 	}
 
-	public void generateProof(Organisation o, String plotName) {
+    public void saveDotAsPNG(final String name, final String out) {
+        // save .png file
+        try {
+            final String filename = "output/graphs/" + name + ".png";
+            final MutableGraph mg = Parser.read(out);
+            mg.setName(filename);
+            Graphviz.fromGraph(mg).render(Format.PNG).toOutputStream(new FileOutputStream(filename, false));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+	public void generateProof(final Organisation o, final String plotName) {
 		createOutPutFolders();
 
 		try (FileWriter fw = new FileWriter("output/proofs/" + plotName + ".txt", false);
@@ -108,17 +120,17 @@ public class OrganisationPlot {
 				PrintWriter out = new PrintWriter(bw)) {
 
 			out.println(o.toString());
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void plotGoalTree(String plotName, GoalTree gt) {
+	public String plotGoalTree(final String plotName, final GoalTree gt) {
         createOutPutFolders();
         
-		try (PrintWriter pout = new PrintWriter(new BufferedWriter(new FileWriter("output/diagrams/" + plotName + "_gdt.gv", false)))) {
+		try (PrintWriter pout = new PrintWriter(new BufferedWriter(new FileWriter("output/diagrams/" + plotName + ".gv", false)))) {
 
-            StringWriter out = new StringWriter();
+            final StringWriter out = new StringWriter();
 
 			out.write("digraph G {\n");
 			plotGoalNode(out, gt.getRootNode());
@@ -128,15 +140,13 @@ public class OrganisationPlot {
             // save .gv file
             pout.print(out);
 
-            // save .png file
-            String filename = "output/graphs/" + plotName + "_gdt.png";
-            final MutableGraph mg = new Parser().read(out.toString());
-            mg.setName(filename);
-            Graphviz.fromGraph(mg).render(Format.PNG).toOutputStream(new FileOutputStream(filename, false));
+            return out.toString();
             
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
-		}
+        }
+        
+        return null;
 	}
 
     private void createOutPutFolders() {
@@ -151,35 +161,35 @@ public class OrganisationPlot {
 
 	public void deleteExistingDiagrams() {
 		try {
-			File filepath = new File("output/diagrams");
+			final File filepath = new File("output/diagrams");
 			FileUtils.deleteDirectory(filepath);
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void deleteExistingProofs() {
 		try {
-			File filepath = new File("output/proofs");
+			final File filepath = new File("output/proofs");
 			FileUtils.deleteDirectory(filepath);
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
 
     public void deleteExistingGraphs() {
 		try {
-			File filepath = new File("output/graphs");
+			final File filepath = new File("output/graphs");
 			FileUtils.deleteDirectory(filepath);
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
     }
     
-	public void plotGoalNode(StringWriter out, GoalNode g) {
+	public void plotGoalNode(final StringWriter out, final GoalNode g) {
 		if (g.getOperator().equals("parallel")) {
 			out.write("\t\"" + g.getGoalName()
 					+ "\" [ style = \"filled\" fillcolor = \"white\" fontname = \"Courier New\" "
@@ -193,15 +203,15 @@ public class OrganisationPlot {
 					+ "<tr><td align=\"center\"><b>" + g.getGoalName() + "</b></td></tr>");
 		}
 
-		for (Object s : g.getWorkloads())
+		for (final Object s : g.getWorkloads())
 			out.write("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
 
-		for (Object s : g.getDataLoads())
+		for (final Object s : g.getDataLoads())
 			out.write("<tr><td align=\"left\"><sub><i>" + s + "</i></sub></td></tr>");
 
 		out.write("</table>> ];\n");
 
-		for (DataLoad s : g.getDataLoads())
+		for (final DataLoad s : g.getDataLoads())
 			out.write("\t\"" + s.getSender() + "\"->\"" + g.getGoalName() + "\" [label=\"" + s.getId() + ":"
 					+ df.format(s.getValue()) + "\"];\n");
 

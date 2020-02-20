@@ -14,9 +14,9 @@ public class OrganisationGenerator {
     	OrganisationPlot p = new OrganisationPlot();
         p.deleteExistingDiagrams();
         p.deleteExistingGraphs();
-		p.plotGoalTree("original", gTree);
-		gTree.brakeGoalTree();
-		p.plotGoalTree("broken", gTree);
+        p.saveDotAsPNG("original_gdt", p.plotGoalTree("original_gdt", gTree));
+        gTree.brakeGoalTree();
+		p.saveDotAsPNG("broken_gdt", p.plotGoalTree("broken_gdt", gTree));
 
 		inicial = new Organisation("orgApp", gTree, c);
 		
