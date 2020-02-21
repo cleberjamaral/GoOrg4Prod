@@ -6,6 +6,7 @@ import java.util.List;
 import annotations.DataLoad;
 import annotations.Inform;
 import annotations.Workload;
+import organisation.exception.CircularReference;
 
 public class GoalNode {
 	private String goalName;
@@ -52,8 +53,12 @@ public class GoalNode {
 		return sumEfforts;
 	}
 
-	public void addInform(Inform t) {
-		informs.add(t);
+	public void addInform(Inform i) throws CircularReference {
+        // prevent creating an inform to itself
+        if (i.getRecipientName().equals(this.goalName))
+            throw new CircularReference("Circular reference in inform "+i.getId()+" of goal "+this.goalName);
+        
+        informs.add(i);
 	}
 
 	public List<Inform> getInforms() {
@@ -115,7 +120,7 @@ public class GoalNode {
 		return goalName;
 	}
 
-	public GoalNode cloneContent() {
+	public GoalNode cloneContent() throws CircularReference {
 		GoalNode clone = new GoalNode(null, this.goalName);
 		
 		for (Workload w : getWorkloads()) 

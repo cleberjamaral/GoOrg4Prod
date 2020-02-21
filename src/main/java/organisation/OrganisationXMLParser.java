@@ -13,13 +13,14 @@ import org.w3c.dom.NodeList;
 
 import annotations.Inform;
 import annotations.Workload;
+import organisation.exception.CircularReference;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import simplelogger.SimpleLogger;
 
 public class OrganisationXMLParser {
 
-	public GoalTree parseXMLFile(final String file) {
+    public GoalTree parseXMLFile(final String file) {
         try {
             final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             final DocumentBuilder builder = factory.newDocumentBuilder();
@@ -51,51 +52,56 @@ public class OrganisationXMLParser {
 
     private void visitNodes(final NodeList nList, final GoalTree gTree, GoalNode referenceGoalNode,
             final Stack<GoalNode> stack) {
-        for (int temp = 0; temp < nList.getLength(); temp++) {
+        try {
+            for (int temp = 0; temp < nList.getLength(); temp++) {
 
-            final Node node = nList.item(temp);
+                final Node node = nList.item(temp);
 
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
 
-                final Element eGoal = (Element) node;
-                if (node.getNodeName().equals("goal")) {
-                    SimpleLogger.getInstance().debug("Node id = " + eGoal.getAttribute("id"));
+                    final Element eGoal = (Element) node;
+                    if (node.getNodeName().equals("goal")) {
+                        SimpleLogger.getInstance().debug("Node id = " + eGoal.getAttribute("id"));
 
-                    if (referenceGoalNode == null) {
-                        gTree.getRootNode().setGoalName(eGoal.getAttribute("id"));
-                        referenceGoalNode = gTree.getRootNode();
-                    } else {
-                        referenceGoalNode = gTree.addGoal(eGoal.getAttribute("id"), stack.peek());
+                        if (referenceGoalNode == null) {
+                            gTree.getRootNode().setGoalName(eGoal.getAttribute("id"));
+                            referenceGoalNode = gTree.getRootNode();
+                        } else {
+                            referenceGoalNode = gTree.addGoal(eGoal.getAttribute("id"), stack.peek());
+                        }
+
+                    } else if (node.getNodeName().equals("plan")) {
+                        final Element ePlan = (Element) node;
+                        stack.push(referenceGoalNode);
+                        referenceGoalNode.setOperator(ePlan.getAttribute("operator"));
+                        SimpleLogger.getInstance().debug(
+                                "Push = " + referenceGoalNode.toString() + " - Op: " + referenceGoalNode.getOperator());
+                    } else if (node.getNodeName().equals("workload")) {
+                        referenceGoalNode.addWorkload(new Workload(eGoal.getAttribute("id"),
+                                Double.parseDouble(eGoal.getAttribute("value"))));
+                        SimpleLogger.getInstance()
+                                .debug("W=" + referenceGoalNode.toString() + ":" + referenceGoalNode.getWorkloads());
+                    } else if (node.getNodeName().equals("inform")) {
+                        final Inform i = new Inform(eGoal.getAttribute("id"), eGoal.getAttribute("recipient"),
+                                Double.parseDouble(eGoal.getAttribute("value")));
+                        referenceGoalNode.addInform(i);
+                        SimpleLogger.getInstance()
+                                .debug("I=" + referenceGoalNode.toString() + ":" + referenceGoalNode.getInforms());
+                    } else if (node.getNodeName().equals("mission")) {
+                        return; // end of scheme goals
                     }
+                    if (node.hasChildNodes()) {
 
-                } else if (node.getNodeName().equals("plan")) {
-                    final Element ePlan = (Element) node;
-                    stack.push(referenceGoalNode);
-                    referenceGoalNode.setOperator(ePlan.getAttribute("operator"));
-                    SimpleLogger.getInstance().debug(
-                            "Push = " + referenceGoalNode.toString() + " - Op: " + referenceGoalNode.getOperator());
-                } else if (node.getNodeName().equals("workload")) {
-                    referenceGoalNode.addWorkload(
-                            new Workload(eGoal.getAttribute("id"), Double.parseDouble(eGoal.getAttribute("value"))));
-                    SimpleLogger.getInstance()
-                            .debug("W=" + referenceGoalNode.toString() + ":" + referenceGoalNode.getWorkloads());
-                } else if (node.getNodeName().equals("inform")) {
-                    final Inform i = new Inform(eGoal.getAttribute("id"), eGoal.getAttribute("recipient"),
-                            Double.parseDouble(eGoal.getAttribute("value")));
-                    referenceGoalNode.addInform(i);
-                    SimpleLogger.getInstance().debug("I=" + referenceGoalNode.toString() + ":" + referenceGoalNode.getInforms());
-                } else if (node.getNodeName().equals("mission")) {
-                    return; // end of scheme goals
+                        visitNodes(node.getChildNodes(), gTree, referenceGoalNode, stack);
+                        if (node.getNodeName().equals("plan")) {
+                            final GoalNode tempGN = stack.pop();
+                            SimpleLogger.getInstance().debug("Poping = " + tempGN.toString());
+                        }
+                    }
                 }
-                if (node.hasChildNodes()) {
-
-                    visitNodes(node.getChildNodes(), gTree, referenceGoalNode, stack);
-                    if (node.getNodeName().equals("plan")) {
-                        final GoalNode tempGN = stack.pop();
-						SimpleLogger.getInstance().debug("Poping = " + tempGN.toString());
-					}
-				}
-			}
-		}
-	}
+            }
+        } catch (CircularReference e) {
+            e.printStackTrace();
+        }
+    }
 }
