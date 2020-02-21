@@ -22,11 +22,11 @@
 							<goal id="MoveCrate">
 								<workload id="move" value="10.00"/>
 								<inform id="report" value="0.50" recipient="LoadConveyor"/>
+								<inform id="c_moved" value="0.10" recipient="PlaceItems"/>
 							</goal>
 							<goal id="PlaceItems">
 								<workload id="pnp-i" value="7.00"/>
 								<inform id="report" value="1.50" recipient="LoadConveyor"/>
-								<inform id="loaded" value="1.00" recipient="PlaceItems"/>
 							</goal>
 						</plan>
                     </goal>
@@ -48,16 +48,16 @@
 							<goal id="PickBox">
 								<workload id="pnp-o" value="8.00"/>
 								<inform id="report" value="1.00" recipient="LoadTruck"/>
-								<inform id="unloaded" value="1.20" recipient="MoveCrate"/>
+								<inform id="unloaded" value="1.20" recipient="MoveBox"/>
 							</goal>
 							<goal id="MoveBox">
 								<workload id="move" value="8.00"/>
-                                <inform id="report" value="1.00" recipient="LoadConveyor"/>
+                                <inform id="report" value="1.00" recipient="LoadTruck"/>
 								<inform id="b_ready" value="1.60" recipient="PlaceBox"/>
                             </goal>
 							<goal id="PlaceBox">
 								<workload id="pnp-truck" value="4.00"/>
-								<inform id="report" value="1.00" recipient="LoadConveyor"/>
+								<inform id="report" value="1.00" recipient="LoadTruck"/>
                             </goal>
 						</plan>
 					</goal>
