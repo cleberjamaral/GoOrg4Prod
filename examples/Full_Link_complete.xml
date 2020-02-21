@@ -14,13 +14,11 @@
 				<plan operator="sequence">
 					<goal id="LoadConveyor">
 						<plan operator="sequence">
-                            <!--
-							<goal id="PickCrate">
+							<goal id="LiftDown">
 								<workload id="lift" value="8.00"/>
 								<inform id="report" value="1.00" recipient="LoadConveyor"/>
 								<inform id="c_ready" value="0.10" recipient="MoveCrate"/>
                             </goal>
-                            -->
 							<goal id="MoveCrate">
 								<workload id="move" value="10.00"/>
 								<inform id="report" value="0.50" recipient="LoadConveyor"/>
@@ -31,7 +29,20 @@
 								<inform id="loaded" value="1.00" recipient="PlaceItems"/>
 							</goal>
 						</plan>
-					</goal>
+                    </goal>
+					<goal id="ReturnCrate">
+						<plan operator="sequence">
+							<goal id="MoveBack">
+								<workload id="move" value="10.00"/>
+								<inform id="report" value="0.50" recipient="ReturnCrate"/>
+								<inform id="c_ready" value="0.50" recipient="LiftUp"/>
+							</goal>
+							<goal id="LiftUp">
+								<workload id="lift" value="7.00"/>
+								<inform id="report" value="1.50" recipient="ReturnCrate"/>
+							</goal>
+						</plan>
+                    </goal>
 					<goal id="LoadTruck">
 						<plan operator="sequence">
 							<goal id="PickBox">
@@ -42,16 +53,12 @@
 							<goal id="MoveBox">
 								<workload id="move" value="8.00"/>
                                 <inform id="report" value="1.00" recipient="LoadConveyor"/>
-                                <!--
 								<inform id="b_ready" value="1.60" recipient="PlaceBox"/>
-                                -->
                             </goal>
-                            <!--
 							<goal id="PlaceBox">
 								<workload id="pnp-truck" value="4.00"/>
 								<inform id="report" value="1.00" recipient="LoadConveyor"/>
                             </goal>
-                            -->
 						</plan>
 					</goal>
 				</plan>
