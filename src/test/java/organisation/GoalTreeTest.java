@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import organisation.exception.CircularReference;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 
@@ -20,11 +21,15 @@ public class GoalTreeTest {
 	public void testFindAGoalByName() {
 		GoalTree gTree = new GoalTree("g0");
 		gTree.addGoal("g1", "g0");
-		gTree.addGoal("g11", "g1", 1.333);
-		gTree.addGoal("g12", "g1", 1);
-		gTree.addWorkload("g11", "w11", 1);
-		gTree.addWorkload("g12", "w12", 0.2);
-		gTree.addInform("g11", "i11-i12", "g12", 1.6);
+		try {
+			gTree.addGoal("g11", "g1", 1.333);
+			gTree.addGoal("g12", "g1", 1);
+			gTree.addWorkload("g11", "w11", 1);
+			gTree.addWorkload("g12", "w12", 0.2);
+			gTree.addInform("g11", "i11-i12", "g12", 1.6);
+		} catch (CircularReference e) {
+			e.printStackTrace();
+		}
 		
 		assertEquals(gTree.getRootNode(), gTree.findAGoalByName(gTree.getRootNode(),"g0"));
 		assertNotNull(gTree.findAGoalByName(gTree.getRootNode(),"g0"));
