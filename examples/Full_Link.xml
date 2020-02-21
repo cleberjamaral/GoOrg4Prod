@@ -9,19 +9,41 @@
                         http://moise.sourceforge.net/xml/os.xsd'>
 
 	<functional-specification>
-		<scheme id="retrieve_info_sch">
+		<scheme id="scheme">
 			<goal id="FullLink">
 				<plan operator="sequence">
 					<goal id="LoadConveyor">
-						<workload id="contract" value="2.00"/>
 						<plan operator="sequence">
+							<goal id="PickCrate">
+								<workload id="lift" value="8.00"/>
+								<inform id="report" value="1.00" recipient="LoadConveyor"/>
+								<inform id="c_ready" value="0.10" recipient="MoveCrate"/>
+							</goal>
 							<goal id="MoveCrate">
 								<workload id="move" value="10.00"/>
 								<inform id="report" value="1.00" recipient="LoadConveyor"/>
 							</goal>
 							<goal id="PlaceItems">
-								<workload id="pnp" value="4.00"/>
+								<workload id="pnp-i" value="4.00"/>
 								<inform id="loaded" value="1.60" recipient="PlaceItems"/>
+							</goal>
+						</plan>
+					</goal>
+					<goal id="LoadTruck">
+						<plan operator="sequence">
+							<goal id="PickBox">
+								<workload id="pnp-o" value="10.00"/>
+								<inform id="report" value="1.00" recipient="LoadTruck"/>
+								<inform id="unloaded" value="0.10" recipient="MoveCrate"/>
+							</goal>
+							<goal id="MoveBox">
+								<workload id="move" value="4.00"/>
+								<inform id="report" value="1.00" recipient="LoadConveyor"/>
+								<inform id="b_ready" value="1.60" recipient="PlaceBox"/>
+							</goal>
+							<goal id="PlaceBox">
+								<workload id="pnp-truck" value="4.00"/>
+								<inform id="report" value="1.00" recipient="LoadConveyor"/>
 							</goal>
 						</plan>
 					</goal>
