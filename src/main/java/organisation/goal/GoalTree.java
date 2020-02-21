@@ -103,14 +103,15 @@ public class GoalTree {
 		}
 	}
 	
-	public void updateRecipientGoals(GoalNode root) throws GoalNotFound {
+	public void updateRecipientGoalsAndDataLoad(GoalNode root) throws GoalNotFound {
 		for (GoalNode g : root.getDescendants()) {
 			for (Inform i : g.getInforms()) {
 				GoalNode r = findAGoalByName(getRootNode(), i.getRecipientName());
 				if (r == null) throw new GoalNotFound("Goal "+i.getRecipientName()+" not found!");
-				i.setRecipient(r);
+                i.setRecipient(r);
+                r.addDataLoad(new DataLoad(i.getId(), g, (double) i.getValue()));
 			}
-			updateRecipientGoals(g);
+			updateRecipientGoalsAndDataLoad(g);
 		}
 	}
 	
