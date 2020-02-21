@@ -1,4 +1,4 @@
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/cleberjamaral/autoOrgDesignProject) 
+Paint_House.xml[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/cleberjamaral/autoOrgDesignProject) 
 
 # GoOrg - From Goals to Organisations: automated organisation design method (Project)
 
@@ -13,7 +13,7 @@ A graphviz representation of the input and of the output should be created in th
 
 To run other examples and with other cost function use the first argument to refer to a moise organisational description file and the second argument to select a cost function (see cost enumeration in javadocs for details). An example:
 
-`gradle run --args="od0.xml FLATTER`
+`gradle run --args="Paint_House.xml FLATTER"`
 
 For other examples the proof will fail since it is set for the embedded example.
 

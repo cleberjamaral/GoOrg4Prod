@@ -11,14 +11,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import annotations.Inform;
 import annotations.Workload;
 import organisation.goal.GoalNode;
+import organisation.goal.GoalTree;
 import simplelogger.SimpleLogger;
 
 public class OrganisationXMLParser {
 
-	public GoalNode parseXMLFile(String file) {
-
+	public GoalTree parseXMLFile(String file) {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -33,10 +34,14 @@ public class OrganisationXMLParser {
 			// Visit all possible schemes from Moise 'functional-specification'
 			NodeList nList = document.getElementsByTagName("scheme");
 			Stack<GoalNode> stack = new Stack<GoalNode>();
-			GoalNode rootNode = null;
-			GoalNode referenceGoalNode = null;
-			visitNodes(nList, rootNode, referenceGoalNode, stack);
-			return rootNode;
+			GoalNode rootNode = new GoalNode(null, null);
+			visitNodes(nList, rootNode, null, stack);
+			
+	    	GoalTree gTree = new GoalTree(rootNode);
+	    	gTree.addAllDescendants(gTree.getRootNode());
+	    	gTree.updateRecipientGoals(gTree.getRootNode());
+	    	
+			return gTree;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -54,8 +59,8 @@ public class OrganisationXMLParser {
 				if (node.getNodeName().equals("goal")) {
 					SimpleLogger.getInstance().debug("Node id = " + eGoal.getAttribute("id"));
 
-					if (rootNode == null) {
-						rootNode = new GoalNode(null, eGoal.getAttribute("id"));
+					if (referenceGoalNode == null) {
+						rootNode.setGoalName(eGoal.getAttribute("id"));
 						referenceGoalNode = rootNode;
 					} else {
 						GoalNode gn = new GoalNode(stack.peek(), eGoal.getAttribute("id"));
@@ -68,10 +73,14 @@ public class OrganisationXMLParser {
 					referenceGoalNode.setOperator(ePlan.getAttribute("operator"));
 					SimpleLogger.getInstance().debug(
 							"Push = " + referenceGoalNode.toString() + " - Op: " + referenceGoalNode.getOperator());
-				} else if (node.getNodeName().equals("skill")) {
-					referenceGoalNode.addWorkload(new Workload(eGoal.getAttribute("id"), 0));
+				} else if (node.getNodeName().equals("workload")) {
+					referenceGoalNode.addWorkload(new Workload(eGoal.getAttribute("id"), Double.parseDouble(eGoal.getAttribute("value"))));
 					SimpleLogger.getInstance()
-							.debug("Skill = " + referenceGoalNode.toString() + " : " + referenceGoalNode.getWorkloads());
+							.debug("W=" + referenceGoalNode.toString() + ":" + referenceGoalNode.getWorkloads());
+				} else if (node.getNodeName().equals("inform")) {
+					referenceGoalNode.addInform(new Inform(eGoal.getAttribute("id"), eGoal.getAttribute("recipient"), Double.parseDouble(eGoal.getAttribute("value"))));
+					SimpleLogger.getInstance()
+							.debug("W=" + referenceGoalNode.toString() + ":" + referenceGoalNode.getWorkloads());
 				} else if (node.getNodeName().equals("mission")) {
 					return; // end of scheme goals
 				}

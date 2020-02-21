@@ -102,6 +102,15 @@ public class GoalTree {
 		}
 	}
 	
+	public void updateRecipientGoals(GoalNode root) {
+		for (GoalNode g : root.getDescendants()) {
+			for (Inform i : g.getInforms()) {
+				i.setRecipient(findAGoalByName(getRootNode(), i.getRecipientName()));
+			}
+			updateRecipientGoals(g);
+		}
+	}
+	
 	/**
 	 * Add a workload annotation to a given goal
 	 * 
@@ -110,7 +119,7 @@ public class GoalTree {
 	 * @param effort, a double the necessary effort
 	 */
 	public void addWorkload(String goal, String workload, double effort) {
-		GoalNode g = findAGoalByName(this.rootNode, goal);
+		GoalNode g = findAGoalByName(getRootNode(), goal);
 		g.addWorkload(new Workload(workload, effort));
 	}
 	

@@ -1,6 +1,6 @@
 package organisation;
 
-import organisation.goal.GoalNode;
+import organisation.goal.GoalTree;
 import organisation.search.Cost;
 import organisation.search.Parameters;
 
@@ -25,9 +25,9 @@ public class OrganisationApp {
 
 		} else {
 			OrganisationXMLParser parser = new OrganisationXMLParser();
-			GoalNode rootNode = parser.parseXMLFile(args[0]);
+			GoalTree gTree = parser.parseXMLFile(args[0]);
 			
-			orgGen.generateOrganisationFromRoot(rootNode, c, search);
+			orgGen.generateOrganisationFromTree(gTree, c, search);
 		}
 	}
 }
