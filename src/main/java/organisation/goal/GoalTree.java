@@ -8,6 +8,7 @@ import java.util.Set;
 import annotations.DataLoad;
 import annotations.Inform;
 import annotations.Workload;
+import organisation.exception.GoalNotFound;
 import organisation.search.Parameters;
 
 public class GoalTree {
@@ -102,10 +103,12 @@ public class GoalTree {
 		}
 	}
 	
-	public void updateRecipientGoals(GoalNode root) {
+	public void updateRecipientGoals(GoalNode root) throws GoalNotFound {
 		for (GoalNode g : root.getDescendants()) {
 			for (Inform i : g.getInforms()) {
-				i.setRecipient(findAGoalByName(getRootNode(), i.getRecipientName()));
+				GoalNode r = findAGoalByName(getRootNode(), i.getRecipientName());
+				if (r == null) throw new GoalNotFound("Goal "+i.getRecipientName()+" not found!");
+				i.setRecipient(r);
 			}
 			updateRecipientGoals(g);
 		}
