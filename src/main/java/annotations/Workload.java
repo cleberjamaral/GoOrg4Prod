@@ -23,7 +23,6 @@ public class Workload extends Annotation {
 	public String toString() {
 		DecimalFormat df = new DecimalFormat("#.##");
 		return this.getClass().getSimpleName().substring(0, 1) + "[" + this.id + ":" + df.format(value) + "]";
-
     }
     
 	public Workload clone() {

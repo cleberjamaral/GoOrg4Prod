@@ -78,9 +78,9 @@ public class OrganisationXMLParser {
 					SimpleLogger.getInstance()
 							.debug("W=" + referenceGoalNode.toString() + ":" + referenceGoalNode.getWorkloads());
 				} else if (node.getNodeName().equals("inform")) {
-					referenceGoalNode.addInform(new Inform(eGoal.getAttribute("id"), eGoal.getAttribute("recipient"), Double.parseDouble(eGoal.getAttribute("value"))));
-					SimpleLogger.getInstance()
-							.debug("W=" + referenceGoalNode.toString() + ":" + referenceGoalNode.getWorkloads());
+                    Inform i = new Inform(eGoal.getAttribute("id"), eGoal.getAttribute("recipient"), Double.parseDouble(eGoal.getAttribute("value")));
+					referenceGoalNode.addInform(i);
+					SimpleLogger.getInstance().debug("I=" + referenceGoalNode.toString() + ":" + referenceGoalNode.getInforms());
 				} else if (node.getNodeName().equals("mission")) {
 					return; // end of scheme goals
 				}
