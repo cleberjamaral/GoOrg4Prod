@@ -224,6 +224,9 @@ public class OrganisationPlot {
 		for (final Object s : g.getWorkloads())
 			out.write("<tr><td align=\"center\"><sub><i>" + s + "</i></sub></td></tr>");
 
+		for (final Object s : g.getInforms())
+			out.write("<tr><td align=\"center\">" + s + "</td></tr>");
+
 		for (final Object s : g.getDataLoads())
 			out.write("<tr><td align=\"center\"><sub><i>" + s + "</i></sub></td></tr>");
 

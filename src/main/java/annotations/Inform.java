@@ -16,6 +16,7 @@ public class Inform extends Annotation {
 
 	public void setRecipient(GoalNode recipient) {
 		this.recipient = recipient;
+		this.recipientName = recipient.getGoalName();
 	}
 
 	public Inform(String id, GoalNode recipient, double amount) {
@@ -64,7 +65,8 @@ public class Inform extends Annotation {
 	}
 	
 	public Inform clone() {
-		Inform clone = new Inform(this.id, recipient, (double) this.value);
+		// using recipient goalname, later this.recipient must receive th correct reference
+		Inform clone = new Inform(this.id, this.recipient.getGoalName(), (double) this.value);
 	
 	    return clone;
 	}

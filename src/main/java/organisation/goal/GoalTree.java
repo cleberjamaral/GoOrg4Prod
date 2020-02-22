@@ -116,16 +116,38 @@ public class GoalTree {
         }
     }
 
-    public void updateRecipientGoalsAndDataLoad(GoalNode root) throws GoalNotFound {
+    public void updateInformAndDataLoadReferences(GoalNode root) throws GoalNotFound, CircularReference {
         for (GoalNode g : root.getDescendants()) {
+        	List<Inform> toAdd = new ArrayList<>();
             for (Inform i : g.getInforms()) {
                 GoalNode r = findAGoalByName(getRootNode(), i.getRecipientName());
-                if (r == null)
-                    throw new GoalNotFound("Goal " + i.getRecipientName() + " not found!");
-                i.setRecipient(r);
-                r.addDataLoad(new DataLoad(i.getId(), g, (double) i.getValue()));
+                // check if exists an goal with the given recipient name 
+                if (r != null) {
+                    i.setRecipient(r);
+                    r.addDataLoad(new DataLoad(i.getId(), g, (double) i.getValue()));
+                } else {
+                	// check if the goal was split
+                	String recipientStem = i.getRecipientName();
+                	GoalNode rs = findAGoalByName(getRootNode(), recipientStem + "$0");
+                    if (rs == null) {
+                        throw new GoalNotFound("Goal " + recipientStem + "$0" + " not found!");
+                    } else {
+                    	int j = 0;
+                    	while (rs != null) {
+                    		if (j == 0) {
+                        		i.setRecipient(rs);
+                    		} else {
+                    			toAdd.add(new Inform(i.getId(), rs, (double) i.getValue()));
+                    		}
+                            rs.addDataLoad(new DataLoad(i.getId(), g, (double) i.getValue()));
+                    		j++;
+                    		rs = findAGoalByName(getRootNode(), recipientStem + "$" + j);
+                    	}
+                    }
+                }
             }
-            updateRecipientGoalsAndDataLoad(g);
+            for (Inform i : toAdd) g.addInform(i);
+            updateInformAndDataLoadReferences(g);
         }
     }
 
@@ -160,7 +182,7 @@ public class GoalTree {
 
 	/**
 	 * Remove data load annotations that refers to null goals, it may occur after
-	 * braking goals
+	 * breaking goals
 	 * 
 	 * @param g, the current goal that is being examined
 	 * @param root, the root node of the tree
@@ -215,16 +237,25 @@ public class GoalTree {
 	/**
 	 * Brake the goal tree in smaller goals if any goal is exceeding the
 	 * max allowed for the annotations
+	 * @throws GoalNotFound 
 	 */
-    public void brakeGoalTree() {
-        GoalNode newRootByWorkload;
+    public void brakeGoalTree() throws GoalNotFound {
         try {
-            newRootByWorkload = this.rootNode.cloneContent();
-            brakeGoalNodeByWorkload(this.rootNode, newRootByWorkload);
-            removeBrokenDataLoads(newRootByWorkload, newRootByWorkload);
-            GoalNode newRootByDataLoad = newRootByWorkload.cloneContent();
-            brakeGoalNodeByDataLoad(newRootByWorkload, newRootByDataLoad);
-            this.rootNode = newRootByDataLoad;
+        	// brake tree by workloads
+        	GoalNode newRootW = this.rootNode.cloneContent();
+            brakeGoalNodeByWorkload(this.rootNode, newRootW);
+            // set the tree for this new composition
+            this.rootNode = newRootW;
+            addAllDescendants(this.rootNode);
+            updateInformAndDataLoadReferences(this.rootNode);
+            
+            // brake tree by dataloads
+            GoalNode newRootD = this.rootNode.cloneContent();
+            brakeGoalNodeByDataLoad(this.rootNode, newRootD);
+            // set the tree for this new composition
+            this.rootNode = newRootD;
+            addAllDescendants(this.rootNode);
+            updateInformAndDataLoadReferences(this.rootNode);
         } catch (CircularReference e) {
             e.printStackTrace();
         }
@@ -236,7 +267,7 @@ public class GoalTree {
 	 * @param original, the currently examining goal
 	 * @param parent, the parent of the examining goal
 	 */
-	private void brakeGoalNodeByWorkload(GoalNode original, GoalNode parent) {
+	private void brakeGoalNodeByWorkload(GoalNode original, GoalNode newParent) {
 		original.getDescendants().forEach(s -> {
 			double sumEfforts = 0;
 			for (Workload w : s.getWorkloads())
@@ -249,19 +280,19 @@ public class GoalTree {
 			for (int i = 0; i < slices; i++) {
 				try {
                     g = s.cloneContent();
+    				g.setParent(newParent);
                 } catch (CircularReference e) {
                     e.printStackTrace();
                 }
-				g.setParent(parent);
 				// it will be sliced only if slices > 1
 				if (slices > 1) {
 					g.setGoalName(g.getGoalName() + "$" + i);
+					
 					for (Workload w : g.getWorkloads())
 						w.setValue((double) w.getValue() / slices);
+					
 					for (Inform j : g.getInforms()) {
-						GoalNode r = j.getRecipient();
-						// Create dataloads using the created fragmented goals
-						r.addDataLoad(new DataLoad(j.getId(), g, (double) j.getValue() / slices));
+						j.setValue((double) j.getValue() / slices);
 					}
 				}
 			}
@@ -295,7 +326,7 @@ public class GoalTree {
 				// it will be sliced only if slices > 1
 				if (slices > 1) {
 					g.setGoalName(g.getGoalName() + "$" + i);
-					for (DataLoad w : g.getDataLoads())	w.setValue((double) w.getValue() / slices);
+					//for (DataLoad w : g.getDataLoads())	w.setValue((double) w.getValue() / slices);
 				}
 			}
 			// when reaching the last slice, go to the next node

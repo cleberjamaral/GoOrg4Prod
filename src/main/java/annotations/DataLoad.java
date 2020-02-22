@@ -7,6 +7,7 @@ import organisation.goal.GoalNode;
 public class DataLoad extends Annotation {
 	
 	protected GoalNode sender;
+	protected String senderName;
 	protected double value;
 
 	public GoalNode getSender() {
@@ -21,6 +22,21 @@ public class DataLoad extends Annotation {
         super(id);
         this.value = amount;
 		this.sender = sender;
+	}
+	
+	/**
+	 * A dataload with a senderName in string is a previous state
+	 * when the sender goal is still unknown
+	 * 
+	 * @param id of the annotation
+	 * @param recipientName the name of the goal that will be informed
+	 * @param amount of data
+	 */
+	public DataLoad(String id, String senderName, double amount) {
+        super(id);
+        this.value = amount;
+        this.sender = null;
+		this.senderName = senderName;
 	}
 	
 	public Object getValue() {
@@ -39,7 +55,7 @@ public class DataLoad extends Annotation {
 	}
 	
 	public DataLoad clone() {
-		DataLoad clone = new DataLoad(this.id, sender, (double) this.value);
+		DataLoad clone = new DataLoad(this.id, this.sender.getGoalName(), (double) this.value);
 	
 	    return clone;
 	}

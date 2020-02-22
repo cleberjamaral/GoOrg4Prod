@@ -4,6 +4,7 @@ import busca.Nodo;
 import busca.BuscaLargura;
 import busca.BuscaProfundidade;
 import organisation.exception.CircularReference;
+import organisation.exception.GoalNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.search.Cost;
@@ -12,26 +13,32 @@ import organisation.search.Organisation;
 public class OrganisationGenerator {
     Organisation inicial;
 
-    public void generateOrganisationFromTree(GoalTree gTree, Cost c, String search) {
-        OrganisationPlot p = new OrganisationPlot();
-        p.deleteExistingDiagrams();
-        p.deleteExistingGraphs();
-        p.saveDotAsPNG("original_gdt", p.plotGoalTree("original_gdt", gTree));
-        gTree.brakeGoalTree();
-        p.saveDotAsPNG("broken_gdt", p.plotGoalTree("broken_gdt", gTree));
+	public void generateOrganisationFromTree(GoalTree gTree, Cost c, String search) {
+		try {
+			OrganisationPlot p = new OrganisationPlot();
+			p.deleteExistingDiagrams();
+			p.deleteExistingGraphs();
+			p.saveDotAsPNG("original_gdt", p.plotGoalTree("original_gdt", gTree));
+			gTree.brakeGoalTree();
+			p.saveDotAsPNG("broken_gdt", p.plotGoalTree("broken_gdt", gTree));
 
-        inicial = new Organisation("orgApp", gTree, c);
+			System.exit(0);
 
-        Nodo n = null;
-        if (search.equals("BFS"))
-            n = new BuscaLargura().busca(inicial);
+			inicial = new Organisation("orgApp", gTree, c);
 
-        if (search.equals("DFS"))
-            n = new BuscaProfundidade().busca(inicial);
+			Nodo n = null;
+			if (search.equals("BFS"))
+				n = new BuscaLargura().busca(inicial);
 
-        final String dot = p.plotOrganisation((Organisation) n.getEstado(), "");
-        p.saveDotAsPNG(((Organisation) n.getEstado()).getOrgName(), dot);
-    }
+			if (search.equals("DFS"))
+				n = new BuscaProfundidade().busca(inicial);
+
+			final String dot = p.plotOrganisation((Organisation) n.getEstado(), "");
+			p.saveDotAsPNG(((Organisation) n.getEstado()).getOrgName(), dot);
+		} catch (GoalNotFound e) {
+			e.printStackTrace();
+		}
+	}
 
     public void generateOrganisationFromRoot(GoalNode rootNode, Cost c, String search) {
         GoalTree gTree = new GoalTree(rootNode);

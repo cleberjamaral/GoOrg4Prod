@@ -41,7 +41,7 @@ public class OrganisationXMLParser {
             visitNodes(nList, gTree, null, stack);
 
             gTree.addAllDescendants(gTree.getRootNode());
-            gTree.updateRecipientGoalsAndDataLoad(gTree.getRootNode());
+            gTree.updateInformAndDataLoadReferences(gTree.getRootNode());
 
             return gTree;
         } catch (final Exception e) {

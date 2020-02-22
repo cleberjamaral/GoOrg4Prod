@@ -8,6 +8,7 @@ import busca.Antecessor;
 import busca.Estado;
 import organisation.OrganisationPlot;
 import organisation.exception.DuplicatedRootRole;
+import organisation.exception.GoalNotFound;
 import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
@@ -61,20 +62,24 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	private void createOrganisation(GoalTree gt, Cost costFunction) {
-		// If it is the first state that is going to be created
-		generatedStates++;
+		try {
+			// If it is the first state that is going to be created
+			generatedStates++;
 
-		goalsTree = gt;
-		goalsTree.brakeGoalTree();
-		goalsTree.addSuccessorsToList(goalSuccessors, goalsTree.getRootNode());
+			goalsTree = gt;
+			goalsTree.brakeGoalTree();
+			goalsTree.addSuccessorsToList(goalSuccessors, goalsTree.getRootNode());
 
-		RoleNode root = this.rolesTree.createRole(null, "r" + this.rolesTree.size(), goalsTree.getRootNode());
+			RoleNode root = this.rolesTree.createRole(null, "r" + this.rolesTree.size(), goalsTree.getRootNode());
 
-		// Used to infer a bad decision on the search
-		Parameters.setDefaultPenalty(this.goalSuccessors.size() + 1);
-		penalty = new CostResolver(costFunction);
+			// Used to infer a bad decision on the search
+			Parameters.setDefaultPenalty(this.goalSuccessors.size() + 1);
+			penalty = new CostResolver(costFunction);
 
-		logTransformation("rootRole", this, root);
+			logTransformation("rootRole", this, root);
+		} catch (GoalNotFound e) {
+			e.printStackTrace();
+		}
 	}
 
 	public boolean ehMeta() {
