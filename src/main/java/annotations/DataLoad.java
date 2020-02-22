@@ -16,6 +16,7 @@ public class DataLoad extends Annotation {
 
 	public void setSender(GoalNode sender) {
 		this.sender = sender;
+		this.senderName = sender.getGoalName();
 	}
 
 	public DataLoad(String id, GoalNode sender, double amount) {
