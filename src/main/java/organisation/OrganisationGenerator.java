@@ -22,8 +22,6 @@ public class OrganisationGenerator {
 			gTree.brakeGoalTree();
 			p.saveDotAsPNG("broken_gdt", p.plotGoalTree("broken_gdt", gTree));
 
-			System.exit(0);
-
 			inicial = new Organisation("orgApp", gTree, c);
 
 			Nodo n = null;
