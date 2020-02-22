@@ -50,8 +50,7 @@ public class OrganisationGenerator {
         try {
 			GoalTree gTree = new GoalTree("g0");
 			gTree.addGoal("g1", "g0");
-			gTree.addGoal("g2", "g1");
-			gTree.addInform("g1", "i1", "g2", 13.5);
+			gTree.addInform("g0", "i1", "g1", 13.5);
 			
             generateOrganisationFromTree(gTree, c, search);
         } catch (CircularReference e) {

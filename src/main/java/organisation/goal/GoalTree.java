@@ -198,30 +198,6 @@ public class GoalTree {
 	}
 
 	/**
-	 * Remove data load annotations that refers to null goals, it may occur after
-	 * breaking goals
-	 * 
-	 * @param g, the current goal that is being examined
-	 * @param root, the root node of the tree
-	 */
-	public void removeBrokenDataLoads(GoalNode g, GoalNode root) {
-		// Erase current dataloads of split goal
-		g.getDescendants().forEach(s -> {
-			List<DataLoad> tobeRemoved = new ArrayList<>();
-			for (DataLoad d : s.getDataLoads()) {
-				if (findAGoalByName(root, d.getSender().getGoalName()) == null) {
-					tobeRemoved.add(d);
-				}
-			}
-			// avoid remove an annotation during the loop
-			tobeRemoved.forEach(t -> {
-				s.removeDataLoad(t);
-			});
-			removeBrokenDataLoads(s, root);
-		});
-	}
-	
-	/**
 	 * Return the goal object descendant of a given goal
 	 * @param root, the higher kinship of the node
 	 * @param name
