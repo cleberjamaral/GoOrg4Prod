@@ -123,11 +123,20 @@ public class GoalTreeTest {
 			GoalTree gTree = new GoalTree("g0");
 			gTree.addGoal("g1", "g0");
 			gTree.addGoal("g2", "g1");
-			System.out.println("g2 must be split into two goals with 7.5 of dataload each");
+			System.out.println("g2 must be split into two goals with 6.75 of dataload each");
 			gTree.addInform("g1", "i1", "g2", 13.5);
 			gTree.brakeGoalTree();
 			
 			GoalNode g;
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g0"));
+			System.out.println("g0 has no inform and dataloads");
+			assertTrue(0 == g.getSumInform());
+			assertTrue(0 == g.getSumDataLoad());
+
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g1"));
+			System.out.println("g1 has a sum of inform of: "+g.getSumInform());
+			assertTrue(13.5 == g.getSumInform());
+			
 			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g2$0"));
 			System.out.println("g2$0 has a sum of dataload of: "+g.getSumDataLoad());
 			assertTrue(6.75 == g.getSumDataLoad());
@@ -138,8 +147,39 @@ public class GoalTreeTest {
 		} catch (GoalNotFound e) {
 			e.printStackTrace();
 		} catch (CircularReference e) {
-			// FIXME Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+	
+	@Test
+	public void testBrakeRootByDataload() {
+		System.out.println("\n\ntestBrakeRootByDataload");
+		System.out.println("Max dataload is 8");
+		try {
+			GoalTree gTree = new GoalTree("g0");
+			gTree.addGoal("g1", "g0");
+			gTree.addInform("g1", "i1", "g0", 12.5);
+			System.out.println("g0 must be split into two goals with 6.25 of dataload each");
+			gTree.brakeGoalTree();
+			
+			GoalNode g;
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g1"));
+			System.out.println("g1 has a sum of inform of: "+g.getSumInform());
+			assertTrue(12.5 == g.getSumInform());
+
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g0$0"));
+			System.out.println("g0$0 has a sum of dataload of: "+g.getSumDataLoad());
+			assertTrue(6.25 == g.getSumDataLoad());
+			
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g0$1"));
+			System.out.println("g0$1 has a sum of dataload of: "+g.getSumDataLoad());
+			assertTrue(6.25 == g.getSumDataLoad());
+		} catch (CircularReference e) {
+			e.printStackTrace();
+		} catch (GoalNotFound e) {
+			e.printStackTrace();
+		}
+	}
+
 }

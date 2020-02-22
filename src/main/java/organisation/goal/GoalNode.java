@@ -60,6 +60,13 @@ public class GoalNode {
 		return sumData;
 	}
 
+	public double getSumInform() {
+		double sumData = 0;
+		for (Inform w : getInforms())
+			sumData += (double) w.getValue();
+		return sumData;
+	}
+
 	public void addInform(Inform i) throws CircularReference {
         // prevent creating an inform to itself
         if (i.getRecipientName().equals(this.goalName))

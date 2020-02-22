@@ -302,30 +302,34 @@ public class GoalTree {
 	 * @param original, the currently examining goal
 	 * @param parent, the parent of the examining goal
 	 */
-	private void brakeGoalNodeByDataLoad(GoalNode original, GoalNode parent) {
-		original.getDescendants().forEach(s -> {
-			double sumDataAmount = 0;
-			for (DataLoad t : s.getDataLoads())	sumDataAmount += (double) t.getValue();
+	private void brakeGoalNodeByDataLoad(GoalNode goal, GoalNode parent) {
+		double sumDataAmount = 0;
+		for (DataLoad t : goal.getDataLoads())	sumDataAmount += (double) t.getValue();
 
-			// the number of slices is at least 1 being more according to properties
-			int slices = (int) Math.max(Math.ceil(sumDataAmount / Parameters.getDataLoadGrain()), 1.0);
-			
-			GoalNode g = null;
-			for (int i = 0; i < slices; i++) {
-				try {
-                    g = s.cloneContent();
-                } catch (CircularReference e) {
-                    e.printStackTrace();
-                }
-				g.setParent(parent);
-				// it will be sliced only if slices > 1
-				if (slices > 1) {
-					g.setGoalName(g.getGoalName() + "$" + i);
+		// the number of slices is at least 1 being more according to properties
+		int slices = (int) Math.max(Math.ceil(sumDataAmount / Parameters.getDataLoadGrain()), 1.0);
+		
+		GoalNode g = null;
+		for (int i = 0; i < slices; i++) {
+			try {
+				if ((goal.getParent() == null) && (i==0)) {
+					g = parent;
+				} else {
+	                g = goal.cloneContent();
+	    			g.setParent(parent);
 				}
+            } catch (CircularReference e) {
+                e.printStackTrace();
+            }
+			// it will be sliced only if slices > 1
+			if (slices > 1) {
+				g.setGoalName(g.getGoalName() + "$" + i);
 			}
-			// when reaching the last slice, go to the next node
-			brakeGoalNodeByDataLoad(s, g);
-		});
+		}
+		
+		for (GoalNode d : goal.getDescendants()) {
+			brakeGoalNodeByDataLoad(d, g);
+		}
 	}
 	
 	/**
