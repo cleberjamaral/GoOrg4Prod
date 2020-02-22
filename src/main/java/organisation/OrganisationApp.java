@@ -21,7 +21,7 @@ public class OrganisationApp {
 			if (args.length == 2) c = Cost.valueOf(args[1]);
 
 			//Sample organization
-			orgGen.createFullLinkAutomationGDT(c, search);
+			orgGen.sampleOrganisation(c, search);
 
 		} else {
 			OrganisationXMLParser parser = new OrganisationXMLParser();

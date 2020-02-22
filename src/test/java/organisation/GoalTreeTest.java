@@ -12,13 +12,16 @@ import java.util.List;
 import org.junit.Test;
 
 import organisation.exception.CircularReference;
+import organisation.exception.GoalNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
+import organisation.search.Parameters;
 
 public class GoalTreeTest {
 	
 	@Test
 	public void testFindAGoalByName() {
+		System.out.println("\n\ntestFindAGoalByName");
 		GoalTree gTree = new GoalTree("g0");
 		gTree.addGoal("g1", "g0");
 		try {
@@ -31,17 +34,22 @@ public class GoalTreeTest {
 			e.printStackTrace();
 		}
 		
+		System.out.println("Making sure root goal can be found");
 		assertEquals(gTree.getRootNode(), gTree.findAGoalByName(gTree.getRootNode(),"g0"));
+		System.out.println("Asserting if existing goals are found");
 		assertNotNull(gTree.findAGoalByName(gTree.getRootNode(),"g0"));
 		assertNotNull(gTree.findAGoalByName(gTree.getRootNode(),"g1"));
 		assertNotNull(gTree.findAGoalByName(gTree.getRootNode(),"g11"));
 		assertNotNull(gTree.findAGoalByName(gTree.getRootNode(),"g12"));
+		System.out.println("Asserting if unexisting goals are not returned");
 		assertNull(gTree.findAGoalByName(gTree.getRootNode(),"g"));
 		assertNull(gTree.findAGoalByName(gTree.getRootNode(),"g123"));
 	}
 
 	@Test
 	public void testAddSuccessorsToList() {
+		System.out.println("\n\ntestAddSuccessorsToList");
+
 		// create a set of nodes
 		GoalNode g00 = new GoalNode(null, "g0");
 		GoalNode g10 = new GoalNode(g00, "g1");
@@ -56,8 +64,10 @@ public class GoalTreeTest {
 		GoalTree gTree = new GoalTree(g00);
 		
 		// add all descendants of the given root
+		System.out.println("Adding descendants of the root to the tree");
 		gTree.addAllDescendants(g00);
 		
+		System.out.println("Asserting if the tree has all descendants and only them");
 		assertTrue(gTree.treeContains(g00));
 		assertTrue(gTree.treeContains(g10));
 		assertTrue(gTree.treeContains(g11));
@@ -66,6 +76,7 @@ public class GoalTreeTest {
 		assertFalse(gTree.treeContains(g001));
 		
 				
+		System.out.println("Asserting if the goals successors is showing correct list");
 		List<GoalNode> goalSuccessors = new ArrayList<GoalNode>();
 		gTree.addSuccessorsToList(goalSuccessors, gTree.getRootNode());
 		
@@ -76,5 +87,59 @@ public class GoalTreeTest {
 		assertFalse(goalSuccessors.contains(g001));
 		// cannot contain the root itself
 		assertFalse(goalSuccessors.contains(g00));
+	}
+	
+	@Test
+	public void testBrakeSimpleGDTByWorkload() {
+		System.out.println("\n\ntestBrakeSimpleGDTByWorkload");
+		System.out.println("Max workload is 8");
+		Parameters.setMaxWorkload(8.0);
+		try {
+			GoalTree gTree = new GoalTree("g0");
+			gTree.addGoal("g1", "g0");
+			System.out.println("g1 must be split into two goals with 7.5 of workload each");
+			gTree.addWorkload("g1", "w1", 15);
+			gTree.brakeGoalTree();
+			
+			GoalNode g;
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g1$0"));
+			System.out.println("g1$0 has a sum of workload of: "+g.getSumWorkload());
+			assertTrue(7.50 == g.getSumWorkload());
+			
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g1$1"));
+			System.out.println("g1$1 has a sum of workload of: "+g.getSumWorkload());
+			assertTrue(7.50 == g.getSumWorkload());
+		} catch (GoalNotFound e) {
+			e.printStackTrace();
+		}
+	}
+		
+	@Test
+	public void testBrakeSimpleGDTByDataload() {
+		System.out.println("\n\ntestBrakeSimpleGDTByDataload");
+		System.out.println("Max dataload is 8");
+		Parameters.setMaxDataLoad(8.0);
+		try {
+			GoalTree gTree = new GoalTree("g0");
+			gTree.addGoal("g1", "g0");
+			gTree.addGoal("g2", "g1");
+			System.out.println("g2 must be split into two goals with 7.5 of dataload each");
+			gTree.addInform("g1", "i1", "g2", 13.5);
+			gTree.brakeGoalTree();
+			
+			GoalNode g;
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g2$0"));
+			System.out.println("g2$0 has a sum of dataload of: "+g.getSumDataLoad());
+			assertTrue(6.75 == g.getSumDataLoad());
+			
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g2$1"));
+			System.out.println("g2$1 has a sum of dataload of: "+g.getSumDataLoad());
+			assertTrue(6.75 == g.getSumDataLoad());
+		} catch (GoalNotFound e) {
+			e.printStackTrace();
+		} catch (CircularReference e) {
+			// FIXME Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

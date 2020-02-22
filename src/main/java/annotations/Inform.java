@@ -66,7 +66,7 @@ public class Inform extends Annotation {
 	
 	public Inform clone() {
 		// using recipient goalname, later this.recipient must receive th correct reference
-		Inform clone = new Inform(this.id, this.recipient.getGoalName(), (double) this.value);
+		Inform clone = new Inform(this.id, this.recipientName, (double) this.value);
 	
 	    return clone;
 	}

@@ -53,6 +53,13 @@ public class GoalNode {
 		return sumEfforts;
 	}
 
+	public double getSumDataLoad() {
+		double sumData = 0;
+		for (DataLoad w : getDataLoads())
+			sumData += (double) w.getValue();
+		return sumData;
+	}
+
 	public void addInform(Inform i) throws CircularReference {
         // prevent creating an inform to itself
         if (i.getRecipientName().equals(this.goalName))

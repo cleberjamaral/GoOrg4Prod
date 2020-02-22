@@ -46,39 +46,13 @@ public class OrganisationGenerator {
         generateOrganisationFromTree(gTree, c, search);
     }
 
-    public void createFullLinkAutomationGDT(Cost c, String search) {
+    public void sampleOrganisation(Cost c, String search) {
         try {
-            GoalTree gTree = new GoalTree("FullLink");
-            gTree.addGoal("LoadConveyor", "FullLink");
-            // gTree.addGoal("PickCrateFromReplenishment", "LoadConveyor", 1);
-            // gTree.addWorkload("PickCrateFromReplenishment", "crate_lifting", 8);
-            gTree.addGoal("MoveCrate", "LoadConveyor", 1);
-            gTree.addWorkload("MoveCrate", "move_crate", 10);
-            // gTree.addInform("PickCrateFromReplenishment", "crate_is_ready",
-            // "MoveCrateToConveyor", 0.1);
-            gTree.addGoal("PlaceItems", "LoadConveyor", 1);
-            gTree.addWorkload("PlaceItems", "pnp", 4);
-            gTree.addInform("MoveCrate", "loaded", "PlaceItems", 1.6);
-            // gTree.addGoal("PutCrateBack", "FullLink");
-            // gTree.addGoal("MoveCrateBackToReplenishment", "PutCrateBack");
-            // gTree.addWorkload("MoveCrateBackToReplenishment", "crate_side_transferring",
-            // 1);
-            // gTree.addGoal("PlaceCrateOnReplenishment", "PutCrateBack");
-            // gTree.addWorkload("PlaceCrateOnReplenishment", "crate_lifting", 1);
-
-            /*
-             * gTree.addGoal("LoadTruck", "FullLink"); gTree.addGoal("PickBoxFromConveyor",
-             * "LoadTruck", 5); gTree.addWorkload("PickBoxFromConveyor", "unload_conveyor",
-             * 8); gTree.addGoal("MoveBoxToDeliverySite", "LoadTruck", 4);
-             * gTree.addWorkload("MoveBoxToDeliverySite", "box_side_transferring", 8);
-             * gTree.addInform("PickBoxFromConveyor", "conveyor_unloaded",
-             * "MoveBoxToDeliverySite", 0.8);
-             * 
-             */
-            // gTree.addGoal("PlaceOrdersOnTheTruck", "LoadTruck", 1);
-            // gTree.addWorkload("PlaceOrdersOnTheTruck", "load_truck", 8);
-            // gTree.addInform("MoveBoxToDeliverySite", "box_on_site",
-            // "PlaceOrdersOnTheTruck", 0.1);
+			GoalTree gTree = new GoalTree("g0");
+			gTree.addGoal("g1", "g0");
+			gTree.addGoal("g2", "g1");
+			gTree.addInform("g1", "i1", "g2", 13.5);
+			
             generateOrganisationFromTree(gTree, c, search);
         } catch (CircularReference e) {
             e.printStackTrace();

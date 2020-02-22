@@ -118,7 +118,9 @@ public class GoalTree {
 
     public void updateInformAndDataLoadReferences(GoalNode root) throws GoalNotFound, CircularReference {
         for (GoalNode g : root.getDescendants()) {
+        	int numberSlices = 0;
         	List<Inform> toAdd = new ArrayList<>();
+        	List<DataLoad> toUpdate = new ArrayList<>();
             for (Inform i : g.getInforms()) {
                 GoalNode r = findAGoalByName(getRootNode(), i.getRecipientName());
                 // check if exists an goal with the given recipient name 
@@ -134,19 +136,34 @@ public class GoalTree {
                     } else {
                     	int j = 0;
                     	while (rs != null) {
+                    		// adjust the first inform to refer to the first slice
                     		if (j == 0) {
                         		i.setRecipient(rs);
                     		} else {
+                        		// add to a list since here the informs are under iteration
                     			toAdd.add(new Inform(i.getId(), rs, (double) i.getValue()));
                     		}
-                            rs.addDataLoad(new DataLoad(i.getId(), g, (double) i.getValue()));
+                    		DataLoad d = new DataLoad(i.getId(), g, (double) i.getValue());
+                    		toUpdate.add(d);
+                            rs.addDataLoad(d);
                     		j++;
                     		rs = findAGoalByName(getRootNode(), recipientStem + "$" + j);
                     	}
+                    	numberSlices = j;
+                    	i.setValue((double) i.getValue() / numberSlices); 
                     }
                 }
             }
-            for (Inform i : toAdd) g.addInform(i);
+            // add informs to this split goal
+            for (Inform i : toAdd) {
+            	i.setValue((double) i.getValue() / numberSlices);
+            	g.addInform(i);
+            }
+            // adjust dataloads since slices was previously unknown 
+            for (DataLoad d : toUpdate) {
+            	d.setValue((double) d.getValue() / numberSlices);
+            }
+            
             updateInformAndDataLoadReferences(g);
         }
     }
@@ -288,9 +305,11 @@ public class GoalTree {
 				if (slices > 1) {
 					g.setGoalName(g.getGoalName() + "$" + i);
 					
+					// workload is a primitive annotation which must be present 
 					for (Workload w : g.getWorkloads())
 						w.setValue((double) w.getValue() / slices);
 					
+					// inform is primitive, dataloads are later created from informs 
 					for (Inform j : g.getInforms()) {
 						j.setValue((double) j.getValue() / slices);
 					}
@@ -326,7 +345,6 @@ public class GoalTree {
 				// it will be sliced only if slices > 1
 				if (slices > 1) {
 					g.setGoalName(g.getGoalName() + "$" + i);
-					//for (DataLoad w : g.getDataLoads())	w.setValue((double) w.getValue() / slices);
 				}
 			}
 			// when reaching the last slice, go to the next node
