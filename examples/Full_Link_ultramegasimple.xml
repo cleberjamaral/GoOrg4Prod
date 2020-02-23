@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
+
+<organisational-specification id="organisation" os-version="0.8"
+
+	xmlns='http://moise.sourceforge.net/os' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:schemaLocation='http://moise.sourceforge.net/os
+                        http://moise.sourceforge.net/xml/os.xsd'>
+
+	<functional-specification>
+		<scheme id="scheme">
+			<goal id="FullLink">
+				<plan operator="sequence">
+					<goal id="MoveCrate">
+						<workload id="move" value="4.00"/>
+						<inform id="report" value="1.00" recipient="FullLink"/>
+						<inform id="c_moved" value="0.10" recipient="PlaceItems"/>
+					</goal>
+					<goal id="PlaceItems">
+						<workload id="pnp-i" value="4.00"/>
+						<inform id="report" value="1.00" recipient="FullLink"/>
+					</goal>
+				</plan>
+			</goal>
+		</scheme>
+	</functional-specification>
+
+</organisational-specification>
