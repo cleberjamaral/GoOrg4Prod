@@ -56,9 +56,19 @@ public class CostResolver {
 
 		int cost = getNonKinshipPenalty(role, goal);
 
-		// High punishment when it is preferred more generalist structures
-		if (costFunction == Cost.GENERALIST)
-			return cost + Parameters.getExtraPenalty();
+		// High punishment when another role could receive the workload making the tree more generalist
+		if (costFunction == Cost.GENERALIST) {
+
+			// check if another role should receive this workload to become generalist
+			for (RoleNode r : oldTree.getTree()) {
+				// no cost: If there is a role that does not have the workloads and could receive it
+				if ((r.getWorkloads().containsAll(goal.getWorkloads()))
+						&& (r.getSumWorkload() + goal.getSumWorkload() <= Parameters.getMaxWorkload())) {
+
+					return cost + Parameters.getExtraPenalty();
+				}
+			}
+		}
 
 		// High punishment when it is creating more levels in a preferable flatter
 		// structure
@@ -107,7 +117,7 @@ public class CostResolver {
 			
 			// Punish when it would be possible to join with the give role
 			if (old.getWorkloads().containsAll(goal.getWorkloads())) {
-				return cost + Parameters.getExtraPenalty();
+				return cost + Parameters.getDefaultPenalty();
 			}
 		}
 
