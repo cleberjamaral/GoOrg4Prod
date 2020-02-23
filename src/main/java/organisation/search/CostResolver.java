@@ -96,9 +96,20 @@ public class CostResolver {
 		return cost;
 	}
 
-	public int getJoinRolePenalty(RoleNode role, GoalNode goal, RoleTree oldTree, RoleTree newTree) {
+	public int getJoinRolePenalty(RoleNode role, GoalNode goal, RoleTree oldTree, RoleTree newTree) throws RoleNotFound {
 
 		int cost = getNonKinshipPenalty(role, goal);
+
+		// Punish when workload already exists, trying to put it to another generalist role
+		if (costFunction == Cost.GENERALIST) {
+			// Preferring specialist structure potentially punish the creation of roles
+			RoleNode old = oldTree.findRoleBySignature(role.signature());
+			
+			// Punish when it would be possible to join with the give role
+			if (old.getWorkloads().containsAll(goal.getWorkloads())) {
+				return cost + Parameters.getExtraPenalty();
+			}
+		}
 
 		// High punishment when it is preferred taller and the role is not a child
 		if ((costFunction == Cost.TALLER) && (!role.hasParentGoal(goal)))
