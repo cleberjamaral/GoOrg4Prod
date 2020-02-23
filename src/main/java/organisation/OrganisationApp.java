@@ -10,6 +10,9 @@ public class OrganisationApp {
 		// parameters
 		Parameters.setMaxWorkload(8.0);
 		Parameters.setMaxDataLoad(8.0);
+		Parameters.setWorkloadGrain(2.0);
+		Parameters.setDataLoadGrain(2.0);
+		
 		Cost c = Cost.SPECIALIST;
 		String search = "BFS";
 		

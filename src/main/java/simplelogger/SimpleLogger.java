@@ -5,7 +5,7 @@ import java.io.PrintStream;
 
 public class SimpleLogger {
 	
-	int level = 1; //1 see everything, 2 hid trace, 3 hid trace and debug, 4 hid trace, debug and warn
+	int level = 4; //1 see everything, 2 hid trace, 3 hid trace and debug, 4 hid trace, debug and warn
 	private static SimpleLogger singleObj;
 	boolean printToFile = false;
 	
