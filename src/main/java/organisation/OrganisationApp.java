@@ -30,8 +30,12 @@ public class OrganisationApp {
 			OrganisationXMLParser parser = new OrganisationXMLParser();
 			GoalTree gTree = parser.parseXMLFile(args[0]);
 			
+			String path[] = args[0].split("/");
+			String name = path[path.length-1];
+			name = name.substring(0, name.length()-4);
+			
 			c = Cost.valueOf(args[1]);
-			orgGen.generateOrganisationFromTree(gTree, c, search);
+			orgGen.generateOrganisationFromTree(name, gTree, c, search);
 		}
 	}
 }

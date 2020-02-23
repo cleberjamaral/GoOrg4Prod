@@ -13,16 +13,16 @@ import organisation.search.Organisation;
 public class OrganisationGenerator {
     Organisation inicial;
 
-	public void generateOrganisationFromTree(GoalTree gTree, Cost c, String search) {
+	public void generateOrganisationFromTree(String name, GoalTree gTree, Cost c, String search) {
 		try {
 			OrganisationPlot p = new OrganisationPlot();
 			p.deleteExistingDiagrams();
 			p.deleteExistingGraphs();
-			p.saveDotAsPNG("original_gdt", p.plotGoalTree("original_gdt", gTree));
+			p.saveDotAsPNG(name + "_original_gdt", p.plotGoalTree(name + "_original_gdt", gTree));
 			gTree.brakeGoalTree();
-			p.saveDotAsPNG("broken_gdt", p.plotGoalTree("broken_gdt", gTree));
+			p.saveDotAsPNG(name + "_broken_gdt", p.plotGoalTree(name + "_broken_gdt", gTree));
 
-			inicial = new Organisation("orgApp", gTree, c);
+			inicial = new Organisation(name, gTree, c);
 
 			Nodo n = null;
 			if (search.equals("BFS"))
@@ -38,19 +38,13 @@ public class OrganisationGenerator {
 		}
 	}
 
-    public void generateOrganisationFromRoot(GoalNode rootNode, Cost c, String search) {
-        GoalTree gTree = new GoalTree(rootNode);
-        gTree.addAllDescendants(gTree.getRootNode());
-        generateOrganisationFromTree(gTree, c, search);
-    }
-
     public void sampleOrganisation(Cost c, String search) {
         try {
 			GoalTree gTree = new GoalTree("g0");
 			gTree.addGoal("g1", "g0");
 			gTree.addInform("g1", "i1", "g0", 13.5);
 			
-            generateOrganisationFromTree(gTree, c, search);
+            generateOrganisationFromTree("sample", gTree, c, search);
         } catch (CircularReference e) {
             e.printStackTrace();
         }
