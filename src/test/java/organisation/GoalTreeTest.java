@@ -6,9 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import organisation.exception.CircularReference;
@@ -18,23 +20,32 @@ import organisation.goal.GoalTree;
 import organisation.search.Parameters;
 
 public class GoalTreeTest {
-	
+
+	@Before
+	public void resetGoalTreeSingleton() throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+	   Field instance = GoalTree.class.getDeclaredField("instance");
+	   instance.setAccessible(true);
+	   instance.set(null, null);
+	}
+
 	@Test
 	public void testFindAGoalByName() {
 		System.out.println("\n\ntestFindAGoalByName");
 		
 		GoalNode g0 = new GoalNode(null, "g0");
-		GoalTree gTree = GoalTree.getCleanInstance();
+		GoalTree gTree = GoalTree.getInstance();
 		gTree.setRootNode(g0);
 
-		gTree.addGoal("g1", "g0");
 		try {
+			gTree.addGoal("g1", "g0");
 			gTree.addGoal("g11", "g1", 1.333);
 			gTree.addGoal("g12", "g1", 1);
 			gTree.addWorkload("g11", "w11", 1);
 			gTree.addWorkload("g12", "w12", 0.2);
 			gTree.addInform("g11", "i11-i12", "g12", 1.6);
 		} catch (CircularReference e) {
+			e.printStackTrace();
+		} catch (GoalNotFound e) {
 			e.printStackTrace();
 		}
 		
@@ -65,7 +76,7 @@ public class GoalTreeTest {
 		GoalNode g001 = new GoalNode(g000, "g001");
 		
 		// create a tree just with the root
-		GoalTree gTree = GoalTree.getCleanInstance();
+		GoalTree gTree = GoalTree.getInstance();
 		gTree.setRootNode(g00);
 		
 		// add all descendants of the given root
@@ -97,11 +108,16 @@ public class GoalTreeTest {
 	@Test
 	public void testBrakeSimpleGDTByWorkload() {
 		System.out.println("\n\ntestBrakeSimpleGDTByWorkload");
-		System.out.println("Max workload is 8");
+
+		// parameters
+		Parameters.getInstance();
 		Parameters.setMaxWorkload(8.0);
+		Parameters.setWorkloadGrain(8.0);
+		System.out.println("Max workload is 8");
+		
 		try {
 			GoalNode g0 = new GoalNode(null, "g0");
-			GoalTree gTree = GoalTree.getCleanInstance();
+			GoalTree gTree = GoalTree.getInstance();
 			gTree.setRootNode(g0);
 			gTree.addGoal("g1", "g0");
 			System.out.println("g1 must be split into two goals with 7.5 of workload each");
@@ -124,11 +140,16 @@ public class GoalTreeTest {
 	@Test
 	public void testBrakeSimpleGDTByDataload() {
 		System.out.println("\n\ntestBrakeSimpleGDTByDataload");
-		System.out.println("Max dataload is 8");
+		
+		// parameters
+		Parameters.getInstance();
 		Parameters.setMaxDataLoad(8.0);
+		Parameters.setDataLoadGrain(8.0);
+		System.out.println("Max dataload is 8");
+
 		try {
 			GoalNode g0 = new GoalNode(null, "g0");
-			GoalTree gTree = GoalTree.getCleanInstance();
+			GoalTree gTree = GoalTree.getInstance();
 			gTree.setRootNode(g0);
 			gTree.addGoal("g1", "g0");
 			gTree.addGoal("g2", "g1");
@@ -167,7 +188,7 @@ public class GoalTreeTest {
 		System.out.println("Max dataload is 8");
 		try {
 			GoalNode g0 = new GoalNode(null, "g0");
-			GoalTree gTree = GoalTree.getCleanInstance();
+			GoalTree gTree = GoalTree.getInstance();
 			gTree.setRootNode(g0);
 			gTree.addGoal("g1", "g0");
 			gTree.addInform("g1", "i1", "g0", 12.5);

@@ -15,8 +15,8 @@ import organisation.search.Parameters;
 public class GoalTree {
 
 	private static GoalTree instance = null;
-    GoalNode rootNode;
-    Set<GoalNode> tree = new HashSet<>();
+    private GoalNode rootNode;
+    private Set<GoalNode> tree = new HashSet<>();
 
     private GoalTree() {}
     
@@ -28,17 +28,6 @@ public class GoalTree {
         return instance; 
     }
 	
-	/**
-	 * This method destroy the old instance and creates another
-	 * 
-	 * @return a clean instance of this singleton
-	 */
-	public static GoalTree getCleanInstance() {
-		instance = new GoalTree();
-		
-		return instance;
-	}
-    
     /**
      * Add a goal to this goals tree
      * 
@@ -207,9 +196,14 @@ public class GoalTree {
      * @param goal,     the goal to add an annotation
      * @param workload, the id of the workload
      * @param effort,   a double the necessary effort
+     * @throws GoalNotFound 
      */
-    public void addWorkload(String goal, String workload, double effort) {
+    public void addWorkload(String goal, String workload, double effort) throws GoalNotFound {
         GoalNode g = findAGoalByName(getRootNode(), goal);
+        
+        if (g == null) 
+        	throw new GoalNotFound("Goal '"+goal+"' not found!");
+        
         g.addWorkload(new Workload(workload, effort));
     }
 
@@ -265,30 +259,34 @@ public class GoalTree {
 	 * max allowed for the annotations
 	 * @throws GoalNotFound 
 	 */
-    public void brakeGoalTree() throws GoalNotFound {
-        try {
-        	// brake tree by workloads
+	public void brakeGoalTree() throws GoalNotFound {
+		try {
+			// brake tree by workloads
 			for (GoalNode d : getTree()) {
 				d.clearDataLoads();
 				brakeGoalNodeByWorkload(d);
 			}
+			
+			addAllDescendants(getRootNode());
+			
 			for (GoalNode d : getTree()) {
 				updateInformAndDataLoadReferences(d);
 			}
-            
-            // brake tree by dataloads
+
+			// brake tree by dataloads
 			for (GoalNode d : getTree()) {
 				brakeGoalNodeByDataLoad(d);
 				d.clearDataLoads();
 			}
+			
 			for (GoalNode d : getTree()) {
 				updateInformAndDataLoadReferences(d);
 			}
-            
-        } catch (CircularReference e) {
-            e.printStackTrace();
-        }
-    }
+
+		} catch (CircularReference e) {
+			e.printStackTrace();
+		}
+	}
 	
 	/**
 	 * Brake the goal if the sum of workloads exceeds max workload
@@ -328,7 +326,6 @@ public class GoalTree {
 	    			else 
 	    				g.setParent(goal.getParent());
 					g.setGoalName(originalName + "$" + i);
-					addGoal(g);
 				}
 			}
 		} catch (CircularReference e) {
@@ -387,7 +384,7 @@ public class GoalTree {
 	 * 
 	 * @return a double
 	 */
-	public double sumEfforts() {
+	public double getSumEfforts() {
 		double sumEfforts = 0;
 		for (GoalNode g : this.getTree()) {
 			for (Workload w : g.getWorkloads()) 
@@ -396,4 +393,21 @@ public class GoalTree {
 		}
 		return sumEfforts;
 	}
+	
+	public double getSumDataLoad() {
+		double sumDataLoad = 0;
+		for (GoalNode g : this.getTree()) {
+			for (DataLoad w : g.getDataLoads()) 
+				sumDataLoad += (double) w.getValue();
+			
+		}
+		return sumDataLoad;
+	}
+
+	public int idealNumberOfRoles() {
+		return Math.max(
+				(int) Math.ceil(getSumEfforts() / Parameters.getMaxWorkload()),
+				(int) Math.ceil(getSumDataLoad() / Parameters.getMaxDataLoad()));
+	}
+
 }

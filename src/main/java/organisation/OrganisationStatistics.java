@@ -122,7 +122,7 @@ public class OrganisationStatistics {
 			this.numberOfBrokenInforms += g.getInforms().size();
         }
 
-		this.sumEfforts = gTree.sumEfforts();
+		this.sumEfforts = gTree.getSumEfforts();
 	}
 	
     private void createOutPutFolders() {

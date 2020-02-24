@@ -9,7 +9,6 @@ import busca.Estado;
 import organisation.OrganisationPlot;
 import organisation.OrganisationStatistics;
 import organisation.exception.DuplicatedRootRole;
-import organisation.exception.GoalNotFound;
 import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
@@ -115,10 +114,10 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public boolean validateOutput() throws OutputDoesNotMatchWithInput {
-		if (Math.round(goalsTree.sumEfforts()) != Math.round(rolesTree.sumEfforts())) {
+		if (Math.round(goalsTree.getSumEfforts()) != Math.round(rolesTree.getSumEfforts())) {
 			throw new OutputDoesNotMatchWithInput(
 					"The sum of efforts of the goals tree must match with the sum of efforts of the created roles tree! GoalsTree:"
-							+ goalsTree.sumEfforts() + " RolesTree:" + rolesTree.sumEfforts());
+							+ goalsTree.getSumEfforts() + " RolesTree:" + rolesTree.getSumEfforts());
 		}
 		return true;
 	}

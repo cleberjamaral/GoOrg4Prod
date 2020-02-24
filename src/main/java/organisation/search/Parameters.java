@@ -2,6 +2,8 @@ package organisation.search;
 
 public class Parameters {
 
+	private static Parameters instance = null;
+	
 	// max dataload allowed, in case of excess it must go to another role
 	private static double maxDataLoad = 8;
 	// max workload allowed, in case of excess it must go to another role 
@@ -17,6 +19,16 @@ public class Parameters {
 	private static int defaultPenalty = 10;
 	// Cost penalty used to infer VERY bad decisions on search
 	private static int extraPenalty = defaultPenalty * 2;
+
+    private Parameters() {}
+    
+	public static Parameters getInstance() 
+    { 
+        if (instance == null) 
+        	instance = new Parameters();
+  
+        return instance; 
+    }
 
 	public static double getDataLoadGrain() {
 		return dataLoadGrain;

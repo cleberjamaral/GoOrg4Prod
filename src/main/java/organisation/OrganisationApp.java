@@ -13,7 +13,7 @@ public class OrganisationApp {
 		Parameters.setWorkloadGrain(2.0);
 		Parameters.setDataLoadGrain(2.0);
 		
-		Cost c = Cost.SPECIALIST;
+		Cost c = Cost.GENERALIST;
 		String search = "BFS";
 		
 		OrganisationGenerator orgGen = new OrganisationGenerator();

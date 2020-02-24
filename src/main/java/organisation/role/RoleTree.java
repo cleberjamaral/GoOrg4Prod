@@ -124,7 +124,7 @@ public class RoleTree {
 	 * 
 	 * @return a double
 	 */
-	public double sumEfforts() {
+	public double getSumEfforts() {
 		double sumEfforts = 0;
 		for (RoleNode r : this.tree) {
 			for (Workload w : r.getWorkloads()) {
