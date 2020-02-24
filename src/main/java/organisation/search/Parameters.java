@@ -8,9 +8,9 @@ public class Parameters {
 	private static double maxDataLoad = 8;
 	// max workload allowed, in case of excess it must go to another role 
 	private static double maxWorkload = 8;
-	// dataload granularity, for breaking goals
+	// dataload granularity, for breaking goals (max grain size)
 	private static double dataLoadGrain = 8;
-	// workload granularity, for breaking goals
+	// workload granularity, for breaking goals (max grain size)
 	private static double workloadGrain = 8;
 
 	// Minimal penalty for creating a new state
