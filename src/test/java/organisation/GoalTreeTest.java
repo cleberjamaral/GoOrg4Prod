@@ -333,4 +333,65 @@ public class GoalTreeTest {
 		}
 	}
 
+	@Test
+	public void testBrakeWithGranularityGDTByWorkloadAndDataload() {
+		System.out.println("\n\ntestBrakeWithGranularityGDTByWorkloadAndDataload");
+		
+		// parameters
+		Parameters.getInstance();
+		Parameters.setMaxWorkload(8.0);
+		Parameters.setWorkloadGrain(4.0);
+		System.out.println("Max workload is 8");
+		System.out.println("workload grain is 4");
+		Parameters.setMaxDataLoad(8.0);
+		Parameters.setDataLoadGrain(2.0);
+		System.out.println("Max dataload is 8");
+		System.out.println("dataloadgrain is 2");
+
+		try {
+			GoalNode g0 = new GoalNode(null, "g0");
+			GoalTree gTree = GoalTree.getInstance();
+			gTree.setRootNode(g0);
+			gTree.addGoal("g1", "g0");
+			gTree.addGoal("g2", "g1");
+			System.out.println("g1 must be split into four goals with 3.5 of workload each");
+			gTree.addWorkload("g1", "w1", 14);
+			System.out.println("g2 must be split into four goals with 1.85 of dataload each");
+			gTree.addInform("g1", "i1", "g2", 7.4);
+			gTree.brakeGoalTree();
+			
+			GoalNode g;
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g0"));
+			System.out.println("g0 has no inform and dataloads: " + g.getInforms() + " - " + g.getDataLoads());
+			assertEquals(0, g.getSumInform(), 0);
+			assertEquals(0, g.getSumDataLoad(), 0);
+
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g1$0"));
+			System.out.println("g1$0 ~ g1$3 all have sum of inform: " + g.getSumInform() + ", details: " + g.getInforms());
+			System.out.println("g1$0 ~ g1$3 all have sum of workload: " + g.getSumWorkload() + ", details: " + g.getWorkloads());
+			assertEquals(3.5, g.getSumWorkload(), 0);
+			assertEquals(1, g.getWorkloads().size(), 0);
+			assertEquals(1.85, g.getSumInform(), 0);
+			assertEquals(4, g.getInforms().size(), 0);
+			
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g2$0"));
+			System.out.println("g2$0 ~ g2$3 all have sum of dataload: " + g.getSumDataLoad() + ", details: " + g.getDataLoads());
+			assertEquals(1.85, g.getSumDataLoad(), 0);
+			assertEquals(4, g.getDataLoads().size(), 0);
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g2$1"));
+			assertEquals(1.85, g.getSumDataLoad(), 0);
+			assertEquals(4, g.getDataLoads().size(), 0);
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g2$2"));
+			assertEquals(1.85, g.getSumDataLoad(), 0);
+			assertEquals(4, g.getDataLoads().size(), 0);
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g2$3"));
+			assertEquals(1.85, g.getSumDataLoad(), 0);
+			assertEquals(4, g.getDataLoads().size(), 0);
+		} catch (GoalNotFound e) {
+			e.printStackTrace();
+		} catch (CircularReference e) {
+			e.printStackTrace();
+		}
+	}
+
 }
