@@ -27,6 +27,9 @@ public class OrganisationApp {
 			orgGen.sampleOrganisation(c, search);
 
 		} else {
+			// Expected input example:
+			// ./gradlew run --args="examples/Full_Link_ultramegasimple.xml GENERALIST BFS"
+			
 			OrganisationXMLParser parser = new OrganisationXMLParser();
 			GoalTree gTree = parser.parseXMLFile(args[0]);
 			
@@ -34,7 +37,10 @@ public class OrganisationApp {
 			String name = path[path.length-1];
 			name = name.substring(0, name.length()-4);
 			
-			c = Cost.valueOf(args[1]);
+			if (args.length >= 2) c = Cost.valueOf(args[1]);
+			
+			if (args.length >= 3) search = args[2];
+			
 			orgGen.generateOrganisationFromTree(name, gTree, c, search);
 		}
 	}
