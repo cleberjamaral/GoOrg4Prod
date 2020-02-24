@@ -114,6 +114,7 @@ public class GoalTreeTest {
 		Parameters.setMaxWorkload(8.0);
 		Parameters.setWorkloadGrain(8.0);
 		System.out.println("Max workload is 8");
+		System.out.println("workload grain is 8");
 		
 		try {
 			GoalNode g0 = new GoalNode(null, "g0");
@@ -148,6 +149,8 @@ public class GoalTreeTest {
 		Parameters.setMaxDataLoad(8.0);
 		Parameters.setDataLoadGrain(8.0);
 		System.out.println("Max dataload is 8");
+		System.out.println("dataload grain is 8");
+
 
 		try {
 			GoalNode g0 = new GoalNode(null, "g0");
@@ -188,15 +191,17 @@ public class GoalTreeTest {
 		}
 	}
 	
-	
 	@Test
 	public void testBrakeRootByDataload() {
 		System.out.println("\n\ntestBrakeRootByDataload");
+		
 		// parameters
 		Parameters.getInstance();
 		Parameters.setMaxDataLoad(8.0);
 		Parameters.setDataLoadGrain(8.0);
 		System.out.println("Max dataload is 8");
+		System.out.println("dataload grain is 8");
+		
 		try {
 			GoalNode g0 = new GoalNode(null, "g0");
 			GoalTree gTree = GoalTree.getInstance();
@@ -227,7 +232,46 @@ public class GoalTreeTest {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void testBrakeWithGranularityGDTByWorkload() {
+		System.out.println("\n\ntestBrakeSimpleGDTByWorkload");
 
+		// parameters
+		Parameters.getInstance();
+		Parameters.setMaxWorkload(8.0);
+		Parameters.setWorkloadGrain(4.0);
+		System.out.println("Max workload is 8");
+		System.out.println("workload grain is 4");
+		
+		try {
+			GoalNode g0 = new GoalNode(null, "g0");
+			GoalTree gTree = GoalTree.getInstance();
+			gTree.setRootNode(g0);
+			gTree.addGoal("g1", "g0");
+			System.out.println("g1 must be split into four goals with 3.75 of workload each");
+			gTree.addWorkload("g1", "w1", 15);
+			gTree.brakeGoalTree();
+			
+			GoalNode g;
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g1$0"));
+			System.out.println("g1$0 ~ g1$3 sum workload of: " + g.getSumWorkload() + ", details: " + g.getWorkloads());
+			assertEquals(3.75, g.getSumWorkload(), 0);
+			assertEquals(1, g.getWorkloads().size(), 0);
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g1$1"));
+			assertEquals(3.75, g.getSumWorkload(), 0);
+			assertEquals(1, g.getWorkloads().size(), 0);
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g1$2"));
+			assertEquals(3.75, g.getSumWorkload(), 0);
+			assertEquals(1, g.getWorkloads().size(), 0);
+			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g1$3"));
+			assertEquals(3.75, g.getSumWorkload(), 0);
+			assertEquals(1, g.getWorkloads().size(), 0);
+		} catch (GoalNotFound e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@Test
 	public void testBrakeWithGranularityGDTByDataload() {
 		System.out.println("\n\ntestBrakeWithGranularityGDTByDataload");
@@ -288,4 +332,5 @@ public class GoalTreeTest {
 			e.printStackTrace();
 		}
 	}
+
 }
