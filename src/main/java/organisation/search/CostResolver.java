@@ -40,7 +40,8 @@ public class CostResolver {
 	}
 
 	public int getNonKinshipPenalty(RoleNode role, GoalNode goal) {
-		// the given role has goal's parent associated?
+		return Parameters.getMinimalPenalty();
+/*		// the given role has goal's parent associated?
 		if (role.hasParentGoal(goal))
 			return Parameters.getMinimalPenalty();
 
@@ -49,7 +50,7 @@ public class CostResolver {
 			return Parameters.getMinimalPenalty();
 
 		// Punish association of goals with no kinship
-		return Parameters.getDefaultPenalty();
+		return Parameters.getDefaultPenalty();*/
 	}
 
 	public int getAddRolePenalty(RoleNode role, GoalNode goal, RoleTree oldTree, RoleTree newTree) throws RoleNotFound {
@@ -117,7 +118,7 @@ public class CostResolver {
 			
 			// Punish when it would be possible to join with the give role
 			if (old.getWorkloads().containsAll(goal.getWorkloads())) {
-				return cost + Parameters.getDefaultPenalty();
+				return Parameters.getDefaultPenalty();
 			}
 		}
 

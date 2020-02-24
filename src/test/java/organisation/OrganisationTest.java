@@ -3,6 +3,7 @@ package organisation;
 import busca.BuscaLargura;
 import busca.Nodo;
 import organisation.exception.OutputDoesNotMatchWithInput;
+import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.search.Cost;
 import organisation.search.Organisation;
@@ -21,13 +22,16 @@ public class OrganisationTest {
 	// BE CAREFULL! if generateproof is true, the assertion should be always true
 	// After generating proofs it must be checked manually and then turn this
 	// argument false for further right assertions
-	final static boolean generatingProofs = false;
+	final static boolean generatingProofs = true;
 
 	@BeforeClass
 	public static void beforeTests() {
 		final OrganisationPlot p = new OrganisationPlot();
         p.deleteExistingDiagrams();
         p.deleteExistingGraphs();
+        
+		OrganisationStatistics s = OrganisationStatistics.getInstance();
+		s.deleteExistingStatistics();
 
         if (generatingProofs)
             p.deleteExistingProofs();
@@ -37,22 +41,29 @@ public class OrganisationTest {
     public void testOrgSingleGoals() {
 
         // Sample organization
-        final GoalTree t = new GoalTree("g1");
-        t.addGoal("g11", "g1");
-        t.addGoal("g111", "g11");
-        t.addGoal("g112", "g11");
-        t.addGoal("g12", "g1");
-        t.addGoal("g121", "g12");
-        t.addGoal("g1211", "g121");
+		GoalNode g1 = new GoalNode(null, "g1");
+		GoalTree gTree = GoalTree.getCleanInstance();
+		gTree.setRootNode(g1);
 
-        generateOrgForAllCosts("o0", t);
+		gTree.addGoal("g11", "g1");
+		gTree.addGoal("g111", "g11");
+		gTree.addGoal("g112", "g11");
+		gTree.addGoal("g12", "g1");
+		gTree.addGoal("g121", "g12");
+		gTree.addGoal("g1211", "g121");
+
+        generateOrgForAllCosts("o0", gTree);
     }
 
     @Test
     public void testOrgGoalsWithWorkload() {
 
         // Sample organization
-        final GoalTree gTree = new GoalTree("PaintHouse");
+		GoalNode root = new GoalNode(null, "PaintHouse");
+		
+		GoalTree gTree = GoalTree.getCleanInstance();
+		gTree.setRootNode(root);
+		
         gTree.addGoal("GetInputs", "PaintHouse");
         gTree.addWorkload("GetInputs", "Contract", 2);
         gTree.addGoal("HireScaffold", "GetInputs");
@@ -72,9 +83,13 @@ public class OrganisationTest {
         final OrganisationPlot op = new OrganisationPlot();
         op.plotGoalTree(orgName, t);
 
+        OrganisationStatistics s = OrganisationStatistics.getInstance();
+
         final Cost cost[] = Cost.values();
         for (final Cost c : cost) {
             final String org = orgName + "_" + c.name();
+
+            s.prepareStatisticsFile(org);
 
             final Organisation o = new Organisation(org, t, c);
             final Nodo n = new BuscaLargura().busca(o);

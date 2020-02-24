@@ -7,6 +7,7 @@ import java.util.List;
 import busca.Antecessor;
 import busca.Estado;
 import organisation.OrganisationPlot;
+import organisation.OrganisationStatistics;
 import organisation.exception.DuplicatedRootRole;
 import organisation.exception.GoalNotFound;
 import organisation.exception.OutputDoesNotMatchWithInput;
@@ -62,24 +63,19 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	private void createOrganisation(GoalTree gt, Cost costFunction) {
-		try {
-			// If it is the first state that is going to be created
-			generatedStates++;
+		// If it is the first state that is going to be created
+		generatedStates++;
 
-			goalsTree = gt;
-			goalsTree.brakeGoalTree();
-			goalsTree.addSuccessorsToList(goalSuccessors, goalsTree.getRootNode());
+		goalsTree = gt;
+		goalsTree.addSuccessorsToList(goalSuccessors, goalsTree.getRootNode());
 
-			RoleNode root = this.rolesTree.createRole(null, "r" + this.rolesTree.size(), goalsTree.getRootNode());
+		RoleNode root = this.rolesTree.createRole(null, "r" + this.rolesTree.size(), goalsTree.getRootNode());
 
-			// Used to infer a bad decision on the search
-			Parameters.setDefaultPenalty(this.goalSuccessors.size() + 1);
-			penalty = new CostResolver(costFunction);
+		// Used to infer a bad decision on the search
+		Parameters.setDefaultPenalty(this.goalSuccessors.size() + 1);
+		penalty = new CostResolver(costFunction);
 
-			logTransformation("rootRole", this, root);
-		} catch (GoalNotFound e) {
-			e.printStackTrace();
-		}
+		logTransformation("rootRole", this, root);
 	}
 
 	public boolean ehMeta() {
@@ -93,17 +89,27 @@ public class Organisation implements Estado, Antecessor {
 						+ this.toString() + ", Hash: " + this.hashCode() + ", Cost: " + this.accCost + "/" + this.cost);
 		
 				OrganisationPlot p = new OrganisationPlot();
+				OrganisationStatistics s = OrganisationStatistics.getInstance();
 				if (oneSolutionNeeded) {
 					isGoalList.clear();
+					
+                    final String dot = p.plotOrganisation(this, "");
+        			p.saveDotAsPNG(this.getOrgName(), dot);
+
+                    s.saveOnStatistics(this);
+                    
+                    return true;
 				} else {
-                    final String dot = p.plotOrganisation(this, Integer.toString(isGoalList.size()));
-					p.saveDotAsPNG(this.getOrgName() + "_" + Integer.toString(isGoalList.size()), dot);
+                    p.plotOrganisation(this, Integer.toString(isGoalList.size()));
+					
+					s.saveOnStatistics(this);
+
+					return false;
 				}
 			} else {
 				LOG.debug("#(" + generatedStates + "/" + prunedStates + ") Duplicated solution!" + ", Hash: "
 						+ this.hashCode());
 			}
-			return oneSolutionNeeded;
 		}
 		return false;
 	}

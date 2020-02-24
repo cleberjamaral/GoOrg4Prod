@@ -1,11 +1,11 @@
 package organisation;
 
-import busca.Nodo;
+import java.io.File;
+
 import busca.BuscaLargura;
 import busca.BuscaProfundidade;
 import organisation.exception.CircularReference;
 import organisation.exception.GoalNotFound;
-import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.search.Cost;
 import organisation.search.Organisation;
@@ -15,24 +15,28 @@ public class OrganisationGenerator {
 
 	public void generateOrganisationFromTree(String name, GoalTree gTree, Cost c, String search) {
 		try {
-			OrganisationPlot p = new OrganisationPlot();
+			OrganisationStatistics s = OrganisationStatistics.getInstance();
+			s.deleteExistingStatistics();
+            s.prepareStatisticsFile(name);
+
+            OrganisationPlot p = new OrganisationPlot();
 			p.deleteExistingDiagrams();
 			p.deleteExistingGraphs();
 			p.saveDotAsPNG(name + "_original_gdt", p.plotGoalTree(name + "_original_gdt", gTree));
+			s.saveDataOfGoalTree(gTree);
+			
 			gTree.brakeGoalTree();
 			p.saveDotAsPNG(name + "_broken_gdt", p.plotGoalTree(name + "_broken_gdt", gTree));
+			s.saveDataOfBrokenTree(gTree);
 
 			inicial = new Organisation(name, gTree, c);
 
-			Nodo n = null;
 			if (search.equals("BFS"))
-				n = new BuscaLargura().busca(inicial);
+				new BuscaLargura().busca(inicial);
 
 			if (search.equals("DFS"))
-				n = new BuscaProfundidade().busca(inicial);
-
-			final String dot = p.plotOrganisation((Organisation) n.getEstado(), "");
-			p.saveDotAsPNG(((Organisation) n.getEstado()).getOrgName(), dot);
+				new BuscaProfundidade().busca(inicial);
+			
 		} catch (GoalNotFound e) {
 			e.printStackTrace();
 		}
@@ -40,13 +44,27 @@ public class OrganisationGenerator {
 
     public void sampleOrganisation(Cost c, String search) {
         try {
-			GoalTree gTree = new GoalTree("g0");
+			GoalTree gTree = GoalTree.getInstance();
+			gTree.setRootNode("g0");
 			gTree.addGoal("g1", "g0");
-			gTree.addInform("g1", "i1", "g0", 13.5);
+			gTree.addWorkload("g1", "w1", 4);
+			gTree.addInform("g1", "i1", "g0", 4);
 			
             generateOrganisationFromTree("sample", gTree, c, search);
         } catch (CircularReference e) {
             e.printStackTrace();
         }
+    }
+
+    public void createOutPutFolders() {
+        // create folders if doesnt exist
+		File file = new File("output/diagrams/tmp");
+		file.getParentFile().mkdirs();
+        file = new File("output/graphs/tmp");
+        file.getParentFile().mkdirs();
+        file = new File("output/proofs/tmp");
+        file.getParentFile().mkdirs();
+        file = new File("output/statistics/tmp");
+        file.getParentFile().mkdirs();
     }
 }

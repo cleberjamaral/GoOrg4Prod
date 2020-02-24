@@ -14,15 +14,37 @@ import organisation.search.Parameters;
 
 public class GoalTree {
 
+	private static GoalTree instance = null;
     GoalNode rootNode;
     Set<GoalNode> tree = new HashSet<>();
 
+    private GoalTree() {}
+    
+	public static GoalTree getInstance() 
+    { 
+        if (instance == null) 
+        	instance = new GoalTree();
+  
+        return instance; 
+    }
+	
+	/**
+	 * This method destroy the old instance and creates another
+	 * 
+	 * @return a clean instance of this singleton
+	 */
+	public static GoalTree getCleanInstance() {
+		instance = new GoalTree();
+		
+		return instance;
+	}
+    
     /**
      * Add a goal to this goals tree
      * 
      * @param rootNode the root node object
      */
-    public GoalTree(GoalNode rootNode) {
+    public void setRootNode(GoalNode rootNode) {
         this.rootNode = rootNode;
         if (!treeContains(this.rootNode))
             tree.add(this.rootNode);
@@ -33,7 +55,7 @@ public class GoalTree {
      * 
      * @param rootNode the root name
      */
-    public GoalTree(String rootNode) {
+    public void setRootNode(String rootNode) {
         this.rootNode = new GoalNode(null, rootNode);
         if (!treeContains(this.rootNode))
             tree.add(this.rootNode);
@@ -48,6 +70,16 @@ public class GoalTree {
         return this.rootNode;
     }
 
+
+    /**
+     * get tree of goals
+     * 
+     * @return a set of GoalNode
+     */
+    public Set<GoalNode> getTree() {
+        return this.tree;
+    }
+    
     /**
      * Add a goal to this tree
      * 
@@ -60,6 +92,11 @@ public class GoalTree {
         if (!treeContains(g))
             tree.add(g);
         return g;
+    }
+    
+    public void addGoal(GoalNode goal) {
+        if (!treeContains(goal))
+            tree.add(goal);
     }
 
     /**
@@ -116,57 +153,53 @@ public class GoalTree {
         }
     }
 
-    public void updateInformAndDataLoadReferences(GoalNode root) throws GoalNotFound, CircularReference {
-        for (GoalNode g : root.getDescendants()) {
-        	int numberSlices = 0;
-        	List<Inform> toAdd = new ArrayList<>();
-        	List<DataLoad> toUpdate = new ArrayList<>();
-            for (Inform i : g.getInforms()) {
-                GoalNode r = findAGoalByName(getRootNode(), i.getRecipientName());
-                // check if exists an goal with the given recipient name 
-                if (r != null) {
-                    i.setRecipient(r);
-                    r.addDataLoad(new DataLoad(i.getId(), g, (double) i.getValue()));
-                } else {
-                	// check if the goal was split
-                	String recipientStem = i.getRecipientName();
-                	GoalNode rs = findAGoalByName(getRootNode(), recipientStem + "$0");
-                    if (rs == null) {
-                        throw new GoalNotFound("Goal " + recipientStem + "$0" + " not found!");
-                    } else {
-                    	int j = 0;
-                    	while (rs != null) {
-                    		// adjust the first inform to refer to the first slice
-                    		if (j == 0) {
-                        		i.setRecipient(rs);
-                    		} else {
-                        		// add to a list since here the informs are under iteration
-                    			toAdd.add(new Inform(i.getId(), rs, (double) i.getValue()));
-                    		}
-                    		DataLoad d = new DataLoad(i.getId(), g, (double) i.getValue());
-                    		toUpdate.add(d);
-                            rs.addDataLoad(d);
-                    		j++;
-                    		rs = findAGoalByName(getRootNode(), recipientStem + "$" + j);
-                    	}
-                    	numberSlices = j;
-                    	i.setValue((double) i.getValue() / numberSlices); 
-                    }
-                }
-            }
-            // add informs to this split goal
-            for (Inform i : toAdd) {
-            	i.setValue((double) i.getValue() / numberSlices);
-            	g.addInform(i);
-            }
-            // adjust dataloads since slices was previously unknown 
-            for (DataLoad d : toUpdate) {
-            	d.setValue((double) d.getValue() / numberSlices);
-            }
-            
-            updateInformAndDataLoadReferences(g);
-        }
-    }
+	public void updateInformAndDataLoadReferences(GoalNode goal) throws GoalNotFound, CircularReference {
+		int numberSlices = 0;
+		List<Inform> toAdd = new ArrayList<>();
+		List<DataLoad> toUpdate = new ArrayList<>();
+		for (Inform i : goal.getInforms()) {
+			GoalNode r = findAGoalByName(getRootNode(), i.getRecipientName());
+			// check if exists an goal with the given recipient name
+			if (r != null) {
+				i.setRecipient(r);
+				r.addDataLoad(new DataLoad(i.getId(), goal, (double) i.getValue()));
+			} else {
+				// check the recipient goal was split
+				String recipientStem = i.getRecipientName();
+				GoalNode rs = findAGoalByName(getRootNode(), recipientStem + "$0");
+				if (rs == null) {
+					throw new GoalNotFound("Goal " + recipientStem + "$0" + " not found!");
+				} else {
+					int j = 0;
+					while (rs != null) {
+						// adjust the first inform to refer to the first slice
+						if (j == 0) {
+							i.setRecipient(rs);
+						} else {
+							// add to a list since here the informs are under iteration
+							toAdd.add(new Inform(i.getId(), rs, (double) i.getValue()));
+						}
+						DataLoad d = new DataLoad(i.getId(), goal, (double) i.getValue());
+						toUpdate.add(d);
+						rs.addDataLoad(d);
+						j++;
+						rs = findAGoalByName(getRootNode(), recipientStem + "$" + j);
+					}
+					numberSlices = j;
+					i.setValue((double) i.getValue() / numberSlices);
+				}
+			}
+		}
+		// add informs to this split goal
+		for (Inform i : toAdd) {
+			i.setValue((double) i.getValue() / numberSlices);
+			goal.addInform(i);
+		}
+		// adjust dataloads since slices was previously unknown
+		for (DataLoad d : toUpdate) {
+			d.setValue((double) d.getValue() / numberSlices);
+		}
+	}
 
     /**
      * Add a workload annotation to a given goal
@@ -235,20 +268,23 @@ public class GoalTree {
     public void brakeGoalTree() throws GoalNotFound {
         try {
         	// brake tree by workloads
-        	GoalNode newRootW = this.rootNode.cloneContent();
-            brakeGoalNodeByWorkload(this.rootNode, newRootW);
-            // set the tree for this new composition
-            this.rootNode = newRootW;
-            addAllDescendants(this.rootNode);
-            updateInformAndDataLoadReferences(this.rootNode);
+			for (GoalNode d : getTree()) {
+				d.clearDataLoads();
+				brakeGoalNodeByWorkload(d);
+			}
+			for (GoalNode d : getTree()) {
+				updateInformAndDataLoadReferences(d);
+			}
             
             // brake tree by dataloads
-            GoalNode newRootD = this.rootNode.cloneContent();
-            brakeGoalNodeByDataLoad(this.rootNode, newRootD);
-            // set the tree for this new composition
-            this.rootNode = newRootD;
-            addAllDescendants(this.rootNode);
-            updateInformAndDataLoadReferences(this.rootNode);
+			for (GoalNode d : getTree()) {
+				brakeGoalNodeByDataLoad(d);
+				d.clearDataLoads();
+			}
+			for (GoalNode d : getTree()) {
+				updateInformAndDataLoadReferences(d);
+			}
+            
         } catch (CircularReference e) {
             e.printStackTrace();
         }
@@ -260,40 +296,44 @@ public class GoalTree {
 	 * @param original, the currently examining goal
 	 * @param parent, the parent of the examining goal
 	 */
-	private void brakeGoalNodeByWorkload(GoalNode original, GoalNode newParent) {
-		original.getDescendants().forEach(s -> {
+	private void brakeGoalNodeByWorkload(GoalNode goal) {
+		try {
 			double sumEfforts = 0;
-			for (Workload w : s.getWorkloads())
+			for (Workload w : goal.getWorkloads())
 				sumEfforts += (double) w.getValue();
 
 			// the number of slices is at least 1 being more according to properties
 			int slices = (int) Math.max(Math.ceil(sumEfforts / Parameters.getWorkloadGrain()), 1.0);
 
-			GoalNode g = null;
-			for (int i = 0; i < slices; i++) {
-				try {
-                    g = s.cloneContent();
-    				g.setParent(newParent);
-                } catch (CircularReference e) {
-                    e.printStackTrace();
-                }
-				// it will be sliced only if slices > 1
-				if (slices > 1) {
-					g.setGoalName(g.getGoalName() + "$" + i);
-					
-					// workload is a primitive annotation which must be present 
-					for (Workload w : g.getWorkloads())
-						w.setValue((double) w.getValue() / slices);
-					
-					// inform is primitive, dataloads are later created from informs 
-					for (Inform j : g.getInforms()) {
-						j.setValue((double) j.getValue() / slices);
-					}
+			if (slices > 1) {
+				String originalName = goal.getGoalName();
+				goal.setGoalName(originalName + "$0");
+
+				// workload is a primitive annotation which must be present
+				for (Workload w : goal.getWorkloads())
+					w.setValue((double) w.getValue() / slices);
+
+				// inform is primitive, dataloads are later created from informs
+				for (Inform j : goal.getInforms()) {
+					j.setValue((double) j.getValue() / slices);
+				}
+
+				// clone other slices
+				for (int i = 1; i < slices; i++) {
+					GoalNode g = goal.cloneContent();
+
+					// in case it is the root goal, put root as parent
+	    			if (goal.getParent() == null)
+	    				g.setParent(goal);
+	    			else 
+	    				g.setParent(goal.getParent());
+					g.setGoalName(originalName + "$" + i);
+					addGoal(g);
 				}
 			}
-			// when reaching the last slice, go to the next node
-			brakeGoalNodeByWorkload(s, g);
-		});
+		} catch (CircularReference e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -302,33 +342,43 @@ public class GoalTree {
 	 * @param original, the currently examining goal
 	 * @param parent, the parent of the examining goal
 	 */
-	private void brakeGoalNodeByDataLoad(GoalNode goal, GoalNode parent) {
-		double sumDataAmount = 0;
-		for (DataLoad t : goal.getDataLoads())	sumDataAmount += (double) t.getValue();
+	private void brakeGoalNodeByDataLoad(GoalNode goal) {
+		try {
+			double sumDataAmount = 0;
+			for (DataLoad t : goal.getDataLoads())
+				sumDataAmount += (double) t.getValue();
 
-		// the number of slices is at least 1 being more according to properties
-		int slices = (int) Math.max(Math.ceil(sumDataAmount / Parameters.getDataLoadGrain()), 1.0);
-		
-		GoalNode g = null;
-		for (int i = 0; i < slices; i++) {
-			try {
-				if ((goal.getParent() == null) && (i==0)) {
-					g = parent;
-				} else {
-	                g = goal.cloneContent();
-	    			g.setParent(parent);
-				}
-            } catch (CircularReference e) {
-                e.printStackTrace();
-            }
-			// it will be sliced only if slices > 1
+			// the number of slices is at least 1 being more according to properties
+			int slices = (int) Math.max(Math.ceil(sumDataAmount / Parameters.getDataLoadGrain()), 1.0);
+
 			if (slices > 1) {
-				g.setGoalName(g.getGoalName() + "$" + i);
+				String originalName = goal.getGoalName();
+				goal.setGoalName(originalName + "$0");
+
+				// workload is a primitive annotation which must be present
+				for (Workload w : goal.getWorkloads())
+					w.setValue((double) w.getValue() / slices);
+
+				// inform is primitive, dataloads are later created from informs
+				for (Inform j : goal.getInforms()) {
+					j.setValue((double) j.getValue() / slices);
+				}
+
+				// clone other slices
+				for (int i = 1; i < slices; i++) {
+					GoalNode g;
+					g = goal.cloneContent();
+
+					// in case it is the root goal, put root as parent
+					if (goal.getParent() == null)
+						g.setParent(goal);
+					else
+						g.setParent(goal.getParent());
+					g.setGoalName(originalName + "$" + i);
+				}
 			}
-		}
-		
-		for (GoalNode d : goal.getDescendants()) {
-			brakeGoalNodeByDataLoad(d, g);
+		} catch (CircularReference e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -339,7 +389,7 @@ public class GoalTree {
 	 */
 	public double sumEfforts() {
 		double sumEfforts = 0;
-		for (GoalNode g : this.tree) {
+		for (GoalNode g : this.getTree()) {
 			for (Workload w : g.getWorkloads()) 
 				sumEfforts += (double) w.getValue();
 			

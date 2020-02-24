@@ -36,8 +36,7 @@ public class OrganisationXMLParser {
             final NodeList nList = document.getElementsByTagName("scheme");
             final Stack<GoalNode> stack = new Stack<GoalNode>();
 
-            final GoalNode rootNode = new GoalNode(null, null);
-            final GoalTree gTree = new GoalTree(rootNode);
+            final GoalTree gTree = GoalTree.getInstance();
             visitNodes(nList, gTree, null, stack);
 
             gTree.addAllDescendants(gTree.getRootNode());
@@ -64,7 +63,9 @@ public class OrganisationXMLParser {
                         SimpleLogger.getInstance().debug("Node id = " + eGoal.getAttribute("id"));
 
                         if (referenceGoalNode == null) {
-                            gTree.getRootNode().setGoalName(eGoal.getAttribute("id"));
+                            final GoalNode rootNode = new GoalNode(null, eGoal.getAttribute("id"));
+                            gTree.setRootNode(rootNode);
+                            
                             referenceGoalNode = gTree.getRootNode();
                         } else {
                             referenceGoalNode = gTree.addGoal(eGoal.getAttribute("id"), stack.peek());

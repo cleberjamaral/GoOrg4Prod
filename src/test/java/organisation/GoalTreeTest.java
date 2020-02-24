@@ -22,7 +22,11 @@ public class GoalTreeTest {
 	@Test
 	public void testFindAGoalByName() {
 		System.out.println("\n\ntestFindAGoalByName");
-		GoalTree gTree = new GoalTree("g0");
+		
+		GoalNode g0 = new GoalNode(null, "g0");
+		GoalTree gTree = GoalTree.getCleanInstance();
+		gTree.setRootNode(g0);
+
 		gTree.addGoal("g1", "g0");
 		try {
 			gTree.addGoal("g11", "g1", 1.333);
@@ -61,7 +65,8 @@ public class GoalTreeTest {
 		GoalNode g001 = new GoalNode(g000, "g001");
 		
 		// create a tree just with the root
-		GoalTree gTree = new GoalTree(g00);
+		GoalTree gTree = GoalTree.getCleanInstance();
+		gTree.setRootNode(g00);
 		
 		// add all descendants of the given root
 		System.out.println("Adding descendants of the root to the tree");
@@ -95,7 +100,9 @@ public class GoalTreeTest {
 		System.out.println("Max workload is 8");
 		Parameters.setMaxWorkload(8.0);
 		try {
-			GoalTree gTree = new GoalTree("g0");
+			GoalNode g0 = new GoalNode(null, "g0");
+			GoalTree gTree = GoalTree.getCleanInstance();
+			gTree.setRootNode(g0);
 			gTree.addGoal("g1", "g0");
 			System.out.println("g1 must be split into two goals with 7.5 of workload each");
 			gTree.addWorkload("g1", "w1", 15);
@@ -120,7 +127,9 @@ public class GoalTreeTest {
 		System.out.println("Max dataload is 8");
 		Parameters.setMaxDataLoad(8.0);
 		try {
-			GoalTree gTree = new GoalTree("g0");
+			GoalNode g0 = new GoalNode(null, "g0");
+			GoalTree gTree = GoalTree.getCleanInstance();
+			gTree.setRootNode(g0);
 			gTree.addGoal("g1", "g0");
 			gTree.addGoal("g2", "g1");
 			System.out.println("g2 must be split into two goals with 6.75 of dataload each");
@@ -157,7 +166,9 @@ public class GoalTreeTest {
 		System.out.println("\n\ntestBrakeRootByDataload");
 		System.out.println("Max dataload is 8");
 		try {
-			GoalTree gTree = new GoalTree("g0");
+			GoalNode g0 = new GoalNode(null, "g0");
+			GoalTree gTree = GoalTree.getCleanInstance();
+			gTree.setRootNode(g0);
 			gTree.addGoal("g1", "g0");
 			gTree.addInform("g1", "i1", "g0", 12.5);
 			System.out.println("g0 must be split into two goals with 6.25 of dataload each");

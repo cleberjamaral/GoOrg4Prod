@@ -87,6 +87,10 @@ public class GoalNode {
 		return dataloads;
 	}
 	
+	public void clearDataLoads() {
+		dataloads.clear();
+	}
+	
 	public void removeDataLoad(DataLoad t) {
 		if (dataloads.contains(t)) dataloads.remove(t);
 	}
