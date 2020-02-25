@@ -108,6 +108,9 @@ public class CostGeneralistTest {
 			}
 			
 			assertTrue(((Organisation) n.getEstado()).validateOutput());
+
+			System.out.println("The hierarchy is not being checked.");
+			
     	} catch (CircularReference e) {
 			e.printStackTrace();
 		} catch (GoalNotFound e) {
@@ -147,7 +150,7 @@ public class CostGeneralistTest {
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.prepareStatisticsFile("testTwoRolesGeneralistOrg");
 
-			System.out.println("Total workload is 4, less than 8 (max) -> goals must be assigned to two roles.");
+			System.out.println("Total workload is 10 -> goals must be assigned to two roles.");
 			Organisation o = new Organisation("testTwoRolesGeneralistOrg", gTree, Cost.GENERALIST, true);
 			Nodo n = new BuscaLargura().busca(o);
 
@@ -162,9 +165,12 @@ public class CostGeneralistTest {
 				assertTrue(r.getWorkloads().contains((new Workload("w1",0)))); 
 				assertTrue(r.getWorkloads().contains((new Workload("w2",0))));
 			}
-			System.out.println("In generalist case each role must receive at least one workload w1 and one w2.");
+			System.out.println("In generalist case, if granularity allows, each role must receive at least one workload w1 and one w2.");
 			
 			assertTrue(((Organisation) n.getEstado()).validateOutput());
+			
+			System.out.println("The hierarchy is not being checked.");
+			
 		} catch (CircularReference e) {
 			e.printStackTrace();
 		} catch (GoalNotFound e) {
@@ -173,4 +179,64 @@ public class CostGeneralistTest {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void testThreeRolesGeneralistOrg() {
+		try {
+			System.out.println("\n\ntestThreeRolesGeneralistOrg");
+
+			Parameters.getInstance();
+			Parameters.setMaxWorkload(8.0);
+			Parameters.setWorkloadGrain(4.0);
+			System.out.println("Max workload is 8");
+			System.out.println("workload grain is 4");
+			Parameters.setMaxDataLoad(8.0);
+			Parameters.setDataLoadGrain(2.0);
+			System.out.println("Max dataload is 8");
+			System.out.println("dataloadgrain is 2");
+
+			GoalNode g0 = new GoalNode(null, "g0");
+			GoalTree gTree = GoalTree.getInstance();
+			gTree.setRootNode(g0);
+			gTree.addGoal("g1", "g0");
+			gTree.addWorkload("g1", "w1", 12);
+			gTree.addGoal("g2", "g0");
+			gTree.addWorkload("g2", "w2", 9);
+			gTree.addInform("g1", "i1", "g2", 1);
+			
+			gTree.brakeGoalTree();
+
+			OrganisationStatistics s = OrganisationStatistics.getInstance();
+			s.prepareStatisticsFile("testThreeRolesGeneralistOrg");
+
+			System.out.println("Total workload is 21 -> goals must be assigned to three roles.");
+			Organisation o = new Organisation("testThreeRolesGeneralistOrg", gTree, Cost.GENERALIST, true);
+			Nodo n = new BuscaLargura().busca(o);
+
+			assertEquals(3, ((Organisation) n.getEstado()).getRolesTree().getTree().size());
+			assertEquals(21, ((Organisation) n.getEstado()).getRolesTree().getSumWorkload(), 0);
+			System.out.println("Generated rolesTree: " + ((Organisation)n.getEstado()).getRolesTree().getTree());
+			for (RoleNode r : ((Organisation)n.getEstado()).getRolesTree().getTree()) {
+				System.out.println("Role: " + r + ", workloads: "+r.getWorkloads() + ", informs: "+r.getInforms());
+				assertEquals(2, r.getWorkloads().size(), 0);
+				assertEquals(7, r.getSumWorkload(), 0);
+				// workload equals only checks the id of the workload
+				assertTrue(r.getWorkloads().contains((new Workload("w1",0)))); 
+				assertTrue(r.getWorkloads().contains((new Workload("w2",0))));
+			}
+			System.out.println("In generalist case, if granularity allows, each role must receive at least one workload w1 and one w2.");
+			
+			assertTrue(((Organisation) n.getEstado()).validateOutput());
+
+			System.out.println("The hierarchy is not being checked.");
+			
+		} catch (CircularReference e) {
+			e.printStackTrace();
+		} catch (GoalNotFound e) {
+			e.printStackTrace();
+		} catch (OutputDoesNotMatchWithInput e) {
+			e.printStackTrace();
+		}
+	}
+
 }
