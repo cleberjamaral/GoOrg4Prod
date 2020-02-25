@@ -1,4 +1,4 @@
-package organisation;
+package organisation.role;
 
 import static org.junit.Assert.assertEquals;
 

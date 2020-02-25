@@ -1,7 +1,9 @@
-package organisation;
+package organisation.search;
 
 import busca.BuscaLargura;
 import busca.Nodo;
+import organisation.OrganisationStatistics;
+import organisation.Parameters;
 import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;

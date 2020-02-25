@@ -1,4 +1,4 @@
-package organisation;
+package organisation.goal;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import organisation.Parameters;
 import organisation.exception.CircularReference;
 import organisation.exception.GoalNotFound;
 import organisation.goal.GoalNode;
