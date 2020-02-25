@@ -2,16 +2,13 @@ package organisation;
 
 import busca.BuscaLargura;
 import busca.Nodo;
-import organisation.exception.GoalNotFound;
 import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.search.Cost;
 import organisation.search.Organisation;
+import organisation.search.Parameters;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.lang.reflect.Field;
 
 import static org.junit.Assert.*;
@@ -22,22 +19,10 @@ import org.junit.Test;
 
 public class OrganisationTest {
 
-	// BE CAREFULL! if generateproof is true, the assertion should be always true
-	// After generating proofs it must be checked manually and then turn this
-	// argument false for further right assertions
-	final static boolean generatingProofs = true;
-
 	@BeforeClass
 	public static void beforeTests() {
-		final OrganisationPlot p = new OrganisationPlot();
-        p.deleteExistingDiagrams();
-        p.deleteExistingGraphs();
-        
 		OrganisationStatistics s = OrganisationStatistics.getInstance();
 		s.deleteExistingStatistics();
-
-        if (generatingProofs)
-            p.deleteExistingProofs();
     }
 
 	@Before
@@ -47,10 +32,19 @@ public class OrganisationTest {
 	   instance.set(null, null);
 	}
 
-    @Test
-    public void testOrgSingleGoals() {
+	@Test
+	public void testOrgSingleGoals() {
+		System.out.println("\n\ntestOrgSingleGoals");
+		
+		//parameters
+		Parameters.getInstance();
+		Parameters.setMaxWorkload(0.0);
+		Parameters.setWorkloadGrain(0.0);
+		Parameters.setMaxDataLoad(0.0);
+		Parameters.setDataLoadGrain(0.0);
+		System.out.println("Parameters here are not used");
 
-        // Sample organization
+		// Sample organization
 		GoalNode g1 = new GoalNode(null, "g1");
 		GoalTree gTree = GoalTree.getInstance();
 		gTree.setRootNode(g1);
@@ -61,65 +55,26 @@ public class OrganisationTest {
 		gTree.addGoal("g12", "g1");
 		gTree.addGoal("g121", "g12");
 		gTree.addGoal("g1211", "g121");
-
-        generateOrgForAllCosts("o0", gTree);
-    }
-
-    @Test
-    public void testOrgGoalsWithWorkload() {
-
-        // Sample organization
-		GoalNode root = new GoalNode(null, "PaintHouse");
+		System.out.println("Goals Tree:" + gTree.getTree());
 		
-		GoalTree gTree = GoalTree.getInstance();
-		gTree.setRootNode(root);
-		
-        gTree.addGoal("GetInputs", "PaintHouse");
-        try {
-			gTree.addWorkload("GetInputs", "Contract", 2);
-	        gTree.addGoal("HireScaffold", "GetInputs");
-	        gTree.addWorkload("HireScaffold", "Contract", 1);
-	        gTree.addGoal("BuyInputs", "GetInputs");
-	        gTree.addWorkload("BuyInputs", "purchase", 2);
-	        gTree.addWorkload("BuyInputs", "report", 3);
-	        gTree.addGoal("Paint", "PaintHouse");
-	        gTree.addWorkload("Paint", "paint", 13);
-	        gTree.addGoal("Inspect", "PaintHouse");
-	        gTree.addWorkload("Inspect", "report", 1);
-		} catch (GoalNotFound e) {
-			e.printStackTrace();
-		}
+		OrganisationStatistics s = OrganisationStatistics.getInstance();
 
-        generateOrgForAllCosts("o1", gTree);
-    }
+		final Cost cost[] = Cost.values();
+		for (final Cost c : cost) {
+			final String org = "o0" + "_" + c.name();
 
-    private void generateOrgForAllCosts(final String orgName, final GoalTree t) {
-        final OrganisationPlot op = new OrganisationPlot();
-        op.plotGoalTree(orgName, t);
+			s.prepareStatisticsFile(org);
+			
+			final Organisation o = new Organisation(org, gTree, c);
+			final Nodo n = new BuscaLargura().busca(o);
 
-        OrganisationStatistics s = OrganisationStatistics.getInstance();
+			try {
+				System.out.println("Organisation with all cost functions must have only one role.");
+				System.out.println("rTree:" + ((Organisation) n.getEstado()).getRolesTree().getTree() + ":" + c.name());
+				assertEquals(1, ((Organisation) n.getEstado()).getRolesTree().getTree().size());
 
-        final Cost cost[] = Cost.values();
-        for (final Cost c : cost) {
-            final String org = orgName + "_" + c.name();
-
-            s.prepareStatisticsFile(org);
-
-            final Organisation o = new Organisation(org, t, c);
-            final Nodo n = new BuscaLargura().busca(o);
-            op.plotOrganisation((Organisation) n.getEstado(), "");
-
-            if (generatingProofs)
-                op.generateProof((Organisation) n.getEstado(), org);
-
-            try {
-                assertTrue(((Organisation) n.getEstado()).validateOutput());
-                final BufferedReader fr = new BufferedReader(new FileReader("output/proofs/" + org + ".txt"));
-                final String proof = fr.readLine();
-				fr.close();
-
-				assertEquals(n.getEstado().toString(), proof);
-			} catch (IOException | OutputDoesNotMatchWithInput e) {
+				assertTrue(((Organisation) n.getEstado()).validateOutput());
+			} catch (OutputDoesNotMatchWithInput e) {
 				e.printStackTrace();
 			}
 		}

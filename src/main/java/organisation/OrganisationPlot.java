@@ -130,19 +130,6 @@ public class OrganisationPlot {
         }
     }
 
-	public void generateProof(final Organisation o, final String plotName) {
-		createOutPutFolders();
-
-		try (FileWriter fw = new FileWriter("output/proofs/" + plotName + ".txt", false);
-				BufferedWriter bw = new BufferedWriter(fw);
-				PrintWriter out = new PrintWriter(bw)) {
-
-			out.println(o.toString());
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public String plotGoalTree(final String plotName, final GoalTree gt) {
         createOutPutFolders();
         
@@ -173,23 +160,11 @@ public class OrganisationPlot {
 		file.getParentFile().mkdirs();
         file = new File("output/graphs/tmp");
         file.getParentFile().mkdirs();
-        file = new File("output/proofs/tmp");
-        file.getParentFile().mkdirs();
     }
 
 	public void deleteExistingDiagrams() {
 		try {
 			final File filepath = new File("output/diagrams");
-			FileUtils.deleteDirectory(filepath);
-
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void deleteExistingProofs() {
-		try {
-			final File filepath = new File("output/proofs");
 			FileUtils.deleteDirectory(filepath);
 
 		} catch (final IOException e) {

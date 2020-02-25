@@ -47,8 +47,6 @@ public class OrganisationGenerator {
 		file.getParentFile().mkdirs();
         file = new File("output/graphs/tmp");
         file.getParentFile().mkdirs();
-        file = new File("output/proofs/tmp");
-        file.getParentFile().mkdirs();
         file = new File("output/statistics/tmp");
         file.getParentFile().mkdirs();
     }

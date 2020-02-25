@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.lang.reflect.Field;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import annotations.Workload;
@@ -14,6 +15,7 @@ import busca.BuscaLargura;
 import busca.Nodo;
 import organisation.exception.CircularReference;
 import organisation.exception.GoalNotFound;
+import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.role.RoleNode;
@@ -22,6 +24,12 @@ import organisation.search.Organisation;
 import organisation.search.Parameters;
 
 public class CostGeneralistTest {
+
+	@BeforeClass
+	public static void beforeTests() {
+		OrganisationStatistics s = OrganisationStatistics.getInstance();
+		s.deleteExistingStatistics();
+    }
 
 	@Before
 	public void resetGoalTreeSingleton() throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
@@ -79,8 +87,11 @@ public class CostGeneralistTest {
 
 			//TODO: assert if inform was removed since it is circular
 			
+			OrganisationStatistics s = OrganisationStatistics.getInstance();
+			s.prepareStatisticsFile("testOneRoleGeneralistOrg");
+			
 			System.out.println("Total workload is 4 (less than 8 - max) -> goals must be assigned to one role.");
-			Organisation o = new Organisation("generalist", gTree, Cost.GENERALIST);
+			Organisation o = new Organisation("testOneRoleGeneralistOrg", gTree, Cost.GENERALIST);
 			Nodo n = new BuscaLargura().busca(o);
 
 			System.out.println("Generated rolesTree: " + ((Organisation)n.getEstado()).getRolesTree().getTree());
@@ -95,9 +106,13 @@ public class CostGeneralistTest {
 				assertEquals(1, r.getWorkloads().size(), 0);
 				assertEquals(4, r.getSumWorkload(), 0);
 			}
+			
+			assertTrue(((Organisation) n.getEstado()).validateOutput());
     	} catch (CircularReference e) {
 			e.printStackTrace();
 		} catch (GoalNotFound e) {
+			e.printStackTrace();
+		} catch (OutputDoesNotMatchWithInput e) {
 			e.printStackTrace();
 		}
     }
@@ -129,8 +144,11 @@ public class CostGeneralistTest {
 			
 			gTree.brakeGoalTree();
 
+			OrganisationStatistics s = OrganisationStatistics.getInstance();
+			s.prepareStatisticsFile("testTwoRolesGeneralistOrg");
+
 			System.out.println("Total workload is 4, less than 8 (max) -> goals must be assigned to two roles.");
-			Organisation o = new Organisation("generalist", gTree, Cost.GENERALIST);
+			Organisation o = new Organisation("testTwoRolesGeneralistOrg", gTree, Cost.GENERALIST);
 			Nodo n = new BuscaLargura().busca(o);
 
 			assertEquals(2, ((Organisation) n.getEstado()).getRolesTree().getTree().size());
@@ -145,10 +163,14 @@ public class CostGeneralistTest {
 				assertTrue(r.getWorkloads().contains((new Workload("w2",0))));
 			}
 			System.out.println("In generalist case each role must receive at least one workload w1 and one w2.");
-
+			
+			assertTrue(((Organisation) n.getEstado()).validateOutput());
 		} catch (CircularReference e) {
 			e.printStackTrace();
 		} catch (GoalNotFound e) {
+			e.printStackTrace();
+		} catch (OutputDoesNotMatchWithInput e) {
+			// FIXME Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
