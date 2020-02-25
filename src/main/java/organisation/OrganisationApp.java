@@ -5,7 +5,6 @@ import organisation.exception.GoalNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.search.Cost;
-import organisation.search.Parameters;
 
 public class OrganisationApp {
 

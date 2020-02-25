@@ -7,7 +7,6 @@ import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.search.Cost;
 import organisation.search.Organisation;
-import organisation.search.Parameters;
 
 import java.lang.reflect.Field;
 

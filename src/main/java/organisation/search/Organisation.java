@@ -8,6 +8,7 @@ import busca.Antecessor;
 import busca.Estado;
 import organisation.OrganisationPlot;
 import organisation.OrganisationStatistics;
+import organisation.Parameters;
 import organisation.exception.DuplicatedRootRole;
 import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.exception.RoleNotFound;

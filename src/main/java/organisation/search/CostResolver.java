@@ -1,5 +1,6 @@
 package organisation.search;
 
+import organisation.Parameters;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;

@@ -8,9 +8,9 @@ import java.util.Set;
 import annotations.DataLoad;
 import annotations.Inform;
 import annotations.Workload;
+import organisation.Parameters;
 import organisation.exception.CircularReference;
 import organisation.exception.GoalNotFound;
-import organisation.search.Parameters;
 
 public class GoalTree {
 

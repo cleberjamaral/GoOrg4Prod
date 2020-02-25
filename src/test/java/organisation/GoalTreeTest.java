@@ -17,7 +17,6 @@ import organisation.exception.CircularReference;
 import organisation.exception.GoalNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
-import organisation.search.Parameters;
 
 public class GoalTreeTest {
 

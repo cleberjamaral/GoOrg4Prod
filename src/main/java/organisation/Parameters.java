@@ -1,4 +1,4 @@
-package organisation.search;
+package organisation;
 
 public class Parameters {
 
