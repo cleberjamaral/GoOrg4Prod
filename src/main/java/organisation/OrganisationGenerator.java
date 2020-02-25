@@ -4,7 +4,6 @@ import java.io.File;
 
 import busca.BuscaLargura;
 import busca.BuscaProfundidade;
-import organisation.exception.CircularReference;
 import organisation.exception.GoalNotFound;
 import organisation.goal.GoalTree;
 import organisation.search.Cost;
@@ -42,33 +41,8 @@ public class OrganisationGenerator {
 		}
 	}
 
-    public void sampleOrganisation(Cost c, String search) {
-        try {
-			GoalTree gTree = GoalTree.getInstance();
-/*			GoalNode g0 = new GoalNode(null, "g0");
-			gTree.setRootNode(g0);
-			gTree.addGoal("g1", "g0");
-			gTree.addGoal("g2", "g0", 1);
-			gTree.addWorkload("g1", "w1", 4);
-			gTree.addWorkload("g2", "w2", 4);
-			gTree.addInform("g1", "i1", "g0", 4);
-			gTree.addInform("g2", "i1", "g1", 4);*/
-			
-        	gTree.setRootNode("g0");
-        	gTree.addGoal("g1", "g0");
-        	gTree.addWorkload("g1", "w1", 4);
-			gTree.addInform("g1", "i1", "g0", 4);
-			
-            generateOrganisationFromTree("sample", gTree, c, search);
-        } catch (CircularReference e) {
-            e.printStackTrace();
-        } catch (GoalNotFound e) {
-			e.printStackTrace();
-		}
-    }
-
     public void createOutPutFolders() {
-        // create folders if doesnt exist
+        // create folders if does not exist	
 		File file = new File("output/diagrams/tmp");
 		file.getParentFile().mkdirs();
         file = new File("output/graphs/tmp");
