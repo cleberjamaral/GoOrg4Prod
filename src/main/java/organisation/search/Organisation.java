@@ -16,6 +16,8 @@ import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.role.RoleNode;
 import organisation.role.RoleTree;
+import organisation.search.cost.Cost;
+import organisation.search.cost.CostResolver;
 import simplelogger.SimpleLogger;
 
 public class Organisation implements Estado, Antecessor {

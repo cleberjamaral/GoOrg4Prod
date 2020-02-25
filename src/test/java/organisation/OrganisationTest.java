@@ -5,8 +5,8 @@ import busca.Nodo;
 import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
-import organisation.search.Cost;
 import organisation.search.Organisation;
+import organisation.search.cost.Cost;
 
 import java.lang.reflect.Field;
 

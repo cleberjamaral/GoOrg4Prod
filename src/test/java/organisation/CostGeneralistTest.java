@@ -19,8 +19,8 @@ import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.role.RoleNode;
-import organisation.search.Cost;
 import organisation.search.Organisation;
+import organisation.search.cost.Cost;
 
 public class CostGeneralistTest {
 

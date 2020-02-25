@@ -1,4 +1,4 @@
-package organisation.search;
+package organisation.search.cost;
 
 import organisation.Parameters;
 import organisation.exception.RoleNotFound;

@@ -6,8 +6,8 @@ import busca.BuscaLargura;
 import busca.BuscaProfundidade;
 import organisation.exception.GoalNotFound;
 import organisation.goal.GoalTree;
-import organisation.search.Cost;
 import organisation.search.Organisation;
+import organisation.search.cost.Cost;
 
 public class OrganisationGenerator {
     Organisation inicial;
