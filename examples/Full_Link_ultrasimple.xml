@@ -14,12 +14,12 @@
 				<plan operator="sequence">
 					<goal id="MoveCrate">
 						<workload id="move" value="12.00"/>
-						<inform id="report" value="2.00" recipient="FullLink"/>
+						<inform id="report" value="1.00" recipient="FullLink"/>
 						<inform id="c_moved" value="0.20" recipient="PlaceItems"/>
 					</goal>
 					<goal id="PlaceItems">
-						<workload id="pnp-i" value="6.00"/>
-						<inform id="report" value="1.00" recipient="FullLink"/>
+						<workload id="pnp-i" value="9.00"/>
+						<inform id="report" value="0.50" recipient="FullLink"/>
 					</goal>
 				</plan>
 			</goal>

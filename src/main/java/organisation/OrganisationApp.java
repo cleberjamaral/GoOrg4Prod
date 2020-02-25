@@ -39,11 +39,10 @@ public class OrganisationApp {
 				GoalTree gTree = GoalTree.getInstance();
 				gTree.setRootNode(g0);
 				gTree.addGoal("g1", "g0");
-				System.out.println("g1 must be split into four goals with 3.5 of workload each");
-				gTree.addWorkload("g1", "w1", 5);
-				gTree.addWorkload("g1", "w2", 5);
-				System.out.println("g0 must be split into four goals with 1.85 of dataload each");
-				gTree.addInform("g1", "i1", "g0", 7);
+				gTree.addWorkload("g1", "w1", 12);
+				gTree.addGoal("g2", "g0");
+				gTree.addWorkload("g2", "w2", 9);
+				gTree.addInform("g1", "i1", "g2", 1);
 
 				orgGen.generateOrganisationFromTree("sample", gTree, c, search, oneSolution);
 			} catch (GoalNotFound | CircularReference e) {
@@ -58,8 +57,8 @@ public class OrganisationApp {
 			Parameters.getInstance();
 			Parameters.setMaxWorkload(8.0);
 			Parameters.setMaxDataLoad(8.0);
-			Parameters.setWorkloadGrain(2.0);
-			Parameters.setDataLoadGrain(2.0);
+			Parameters.setWorkloadGrain(4.0);
+			Parameters.setDataLoadGrain(4.0);
 
 			OrganisationXMLParser parser = new OrganisationXMLParser();
 			GoalTree gTree = parser.parseXMLFile(args[0]);
