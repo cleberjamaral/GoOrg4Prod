@@ -170,7 +170,6 @@ public class CostGeneralistTest {
 		} catch (GoalNotFound e) {
 			e.printStackTrace();
 		} catch (OutputDoesNotMatchWithInput e) {
-			// FIXME Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

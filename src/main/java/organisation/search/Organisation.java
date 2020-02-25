@@ -52,27 +52,41 @@ public class Organisation implements Estado, Antecessor {
 		return this.orgName;
 	}
 
+	/**
+	 * This constructor is used on every new state
+	 */
 	private Organisation() {
 		generatedStates++;
 	}
 
-	public Organisation(String orgName, GoalTree gt, Cost costFunction) {
+	/**
+	 * This constructor should be used only once for generating the root role
+	 * and setup the algorithm
+	 * 
+	 * @param orgName is an arbitrary name for this organisation
+	 * @param gTree the goal tree, supposed to be a broken tree ready to process
+	 * @param costFunction the desired cost function
+	 */
+	public Organisation(String orgName, GoalTree gTree, Cost costFunction) {
 		this.orgName = orgName;
-		createOrganisation(gt, costFunction);
-	}
+		generatedStates = 0;
 
-	private void createOrganisation(GoalTree gt, Cost costFunction) {
-		// If it is the first state that is going to be created
-		generatedStates++;
-
-		goalsTree = gt;
+		goalsTree = gTree;
 		goalsTree.addSuccessorsToList(goalSuccessors, goalsTree.getRootNode());
-
-		RoleNode root = this.rolesTree.createRole(null, "r" + this.rolesTree.size(), goalsTree.getRootNode());
-
+		
 		// Used to infer a bad decision on the search
 		Parameters.setDefaultPenalty(this.goalSuccessors.size() + 1);
 		penalty = new CostResolver(costFunction);
+		
+		// do create root role transformation once
+		addRootRole(goalsTree.getRootNode());
+	}
+
+	private void addRootRole(GoalNode goalToAssign) {
+		// It is the first state that is going to be created
+		generatedStates++;
+
+		RoleNode root = this.rolesTree.createRole(null, "r" + this.rolesTree.size(), goalToAssign);
 
 		logTransformation("rootRole", this, root);
 	}
@@ -132,6 +146,7 @@ public class Organisation implements Estado, Antecessor {
 
 		// add all possible successors
 		for (GoalNode goalToBeAssociated : goalSuccessors) {
+
 			// add all children as possible successors
 			for (RoleNode role : rolesTree.getTree()) {
 				addRole(role, suc, goalToBeAssociated);
