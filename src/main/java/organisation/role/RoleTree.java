@@ -110,9 +110,14 @@ public class RoleTree {
 		for (Workload w : newGoal.getWorkloads())
 			role.addWorkload(w.clone());
 
-		// Copy all dataloads of the goal to this new role (informs are not used for roles)
-		for (DataLoad d : newGoal.getDataLoads())
-			role.addDataLoad(d.clone());
+		// Copy all "non-circular" dataloads to new role (informs are not used for roles)
+		for (DataLoad d : newGoal.getDataLoads()) {
+			boolean circularDataload = false;
+			for (GoalNode g : role.getAssignedGoals()) {
+				if (g.getGoalName().equals(d.getSenderName())) circularDataload = true;
+			}
+			if (!circularDataload) role.addDataLoad(d.clone());
+		}
 
 		// changes on content may change role signature, its children must be updated
 		for (RoleNode child : role.getDescendants())

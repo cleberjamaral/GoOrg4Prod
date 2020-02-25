@@ -59,8 +59,8 @@ public class RoleNode {
 	}
 
 	public void addInform(Inform inform) {
-		Inform t = getInform(inform.getId());
-		if (t != null) {
+		if (this.informs.contains(inform)) {
+			Inform t = getInform(inform);
 			t.setValue((double) t.getValue() + (double) inform.getValue());
 		} else {
 			informs.add(inform);
@@ -73,10 +73,9 @@ public class RoleNode {
 	 * @param id of the inform
 	 * @return the inform that can be a new one or an existing with same id/recipient
 	 */
-	private Inform getInform(String id) {
+	private Inform getInform(Inform inform) {
 		for (Inform i : this.informs) 
-			if (i.getId().equals(id)) {
-				//TODO: check if recipient is also same
+			if (i.equals(inform)) {
 				return i;
 			}
 		
@@ -220,7 +219,9 @@ public class RoleNode {
 
 		r += "W{" + getWorkloads() + "}";
 		
-		r += "T{" + getInforms() + "}";
+		// dataloads cannot be part of signature because assigning more goals may
+		// make this role with circular dataloads which will be removed
+		//r += "T{" + getDataLoads() + "}";
 
 		return r;
 	}
@@ -247,12 +248,22 @@ public class RoleNode {
 		for (Workload w : this.workloads) 
 			clone.addWorkload(w.clone());
 
-		for (DataLoad d : this.dataloads) 
-			clone.addDataLoad(d.clone());
-
 		for (GoalNode goal : this.assignedGoals) 
 			if (!clone.assignedGoals.contains(goal)) 
 				clone.assignedGoals.add(goal);
+
+		// Copy all "non-circular" dataloads to new role (informs are not used for roles)
+		for (DataLoad d : this.getDataLoads()) {
+			boolean circularDataload = false;
+			for (GoalNode g : clone.getAssignedGoals()) {
+				if (g.getGoalName().equals(d.getSenderName())) {
+					circularDataload = true;
+				} else {
+					
+				}
+			}
+			if (!circularDataload) clone.addDataLoad(d.clone());
+		}
 		
 	    return clone;
 	}
