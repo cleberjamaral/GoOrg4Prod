@@ -68,7 +68,7 @@ public class OrganisationPlot {
 					out.write("<tr><td align=\"center\">" + s.toString() + "</td></tr>");
 
 				for (final Object s : or.getDataLoads())
-					out.write("<tr><td align=\"center\"><sub><i>" + s + "</i></sub></td></tr>");
+					out.write("<tr><td align=\"center\"><sub><i>" + s.toString() + "</i></sub></td></tr>");
 				
 				out.write("</table>> ];\n");
 

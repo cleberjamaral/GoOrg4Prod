@@ -87,10 +87,9 @@ public class RoleNode {
 		return this.informs;
 	}
 
-	private DataLoad getDataLoad(String id) {
+	private DataLoad getDataLoad(DataLoad dataload) {
 		for (DataLoad d : this.dataloads) 
-			if (d.getId().equals(id)) {
-				//TODO: check if send is also same
+			if (d.equals(dataload)) {
 				return d;
 			}
 		
@@ -98,9 +97,9 @@ public class RoleNode {
 	}
 	
 	public void addDataLoad(DataLoad dataload) {
-		DataLoad t = getDataLoad(dataload.getId());
-		if (t != null) {
-			t.setValue((double) t.getValue() + (double) dataload.getValue());
+		if (this.dataloads.contains(dataload)) {
+			DataLoad d = getDataLoad(dataload);
+			d.setValue((double) d.getValue() + (double) dataload.getValue());
 		} else {
 			this.dataloads.add(dataload);
 		}
@@ -245,11 +244,11 @@ public class RoleNode {
 
 		// descendants are not cloned, it must be resolved by the tree
 		
-		for (Workload s : this.workloads) 
-			clone.workloads.add(s.clone());
+		for (Workload w : this.workloads) 
+			clone.addWorkload(w.clone());
 
-		for (Inform t : this.informs) 
-			clone.informs.add(t.clone());
+		for (DataLoad d : this.dataloads) 
+			clone.addDataLoad(d.clone());
 
 		for (GoalNode goal : this.assignedGoals) 
 			if (!clone.assignedGoals.contains(goal)) 

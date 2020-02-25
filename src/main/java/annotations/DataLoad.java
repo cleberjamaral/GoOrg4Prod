@@ -23,6 +23,7 @@ public class DataLoad extends Annotation {
         super(id);
         this.value = amount;
 		this.sender = sender;
+		this.senderName = sender.getGoalName();
 	}
 	
 	/**
@@ -55,12 +56,12 @@ public class DataLoad extends Annotation {
 	@Override
 	public String toString() {
 		DecimalFormat df = new DecimalFormat("#.##");
-		return this.getClass().getSimpleName().substring(0, 1) + "[" + this.id + ":" + this.sender.getGoalName()
+		return this.getClass().getSimpleName().substring(0, 1) + "[" + this.id + ":" + getSenderName()
 				+ ":" + df.format(value) + "]";
 	}
 	
 	public DataLoad clone() {
-		DataLoad clone = new DataLoad(this.id, this.sender.getGoalName(), (double) this.value);
+		DataLoad clone = new DataLoad(this.id, getSenderName(), (double) this.value);
 	
 	    return clone;
 	}
@@ -78,16 +79,17 @@ public class DataLoad extends Annotation {
 		if (getClass() != obj.getClass())
 			return false;
 		DataLoad other = (DataLoad) obj;
-		if (id == null) {
+		if (getId() == null) {
 			if (other.getId() != null)
 				return false;
-		} else if (!id.equals(other.getId()))
+		} else if (!getId().equals(other.getId()))
 			return false;
-		if (sender == null) {
-			if (other.getSender() != null)
+		if (getSenderName() == null) {
+			if (other.getSenderName() != null)
 				return false;
 		} else if (!getSenderName().equals(other.getSenderName()))
 			return false;
+		
 		return true;
 	}
 

@@ -3,7 +3,7 @@ package organisation.role;
 import java.util.HashSet;
 import java.util.Set;
 
-import annotations.Inform;
+import annotations.DataLoad;
 import annotations.Workload;
 import organisation.exception.DuplicatedRootRole;
 import organisation.exception.RoleNotFound;
@@ -33,7 +33,7 @@ public class RoleTree {
 		return tree;
 	}
 
-	public void add(RoleNode role) {
+	public void addRoleToTree(RoleNode role) {
 		int countLevels = countLevels(role);
 		if (countLevels > getNumberOfLevels())
 			setNumberOfLevels(countLevels);
@@ -55,7 +55,7 @@ public class RoleTree {
 		RoleNode nr = new RoleNode(parent, name);
 
 		assignGoalToRole(nr, g);
-		add(nr);
+		addRoleToTree(nr);
 
 		return nr;
 	}
@@ -75,7 +75,7 @@ public class RoleTree {
 		// first clone all roles
 		for (RoleNode or : this.tree) {
 			RoleNode nnewS = or.cloneContent();
-			clonedTree.add(nnewS);
+			clonedTree.addRoleToTree(nnewS);
 		}
 
 		int rootNodesFound = 0;
@@ -110,9 +110,9 @@ public class RoleTree {
 		for (Workload w : newGoal.getWorkloads())
 			role.addWorkload(w.clone());
 
-		// Copy all informs of the goal to this new role
-		for (Inform t : newGoal.getInforms())
-			role.addInform(t.clone());
+		// Copy all dataloads of the goal to this new role (informs are not used for roles)
+		for (DataLoad d : newGoal.getDataLoads())
+			role.addDataLoad(d.clone());
 
 		// changes on content may change role signature, its children must be updated
 		for (RoleNode child : role.getDescendants())

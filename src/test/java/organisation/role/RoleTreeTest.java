@@ -46,10 +46,10 @@ public class RoleTreeTest {
 		r21.addWorkload(new Workload("s2", 2));
 		r21.addWorkload(new Workload("s1", 1));
 
-		rolesTree.add(r0);
-		rolesTree.add(r1);
-		rolesTree.add(r2);
-		rolesTree.add(r21);
+		rolesTree.addRoleToTree(r0);
+		rolesTree.addRoleToTree(r1);
+		rolesTree.addRoleToTree(r2);
+		rolesTree.addRoleToTree(r21);
 
 		// Test if each node was cloned and has same properties
 		RoleTree clonedTree;
@@ -73,7 +73,7 @@ public class RoleTreeTest {
 		// First level
 		RoleNode r0 = new RoleNode(null, "r0");
 		r0.assignGoal(new GoalNode(null, "g0"));
-		rolesTree.add(r0);
+		rolesTree.addRoleToTree(r0);
 		System.out.println("rolesTree : " + rolesTree);
 		assertEquals(1, rolesTree.getNumberOfLevels());
 
@@ -82,8 +82,8 @@ public class RoleTreeTest {
 		RoleNode r2 = new RoleNode(r0, "r2");
 		r1.assignGoal(new GoalNode(null, "g1"));
 		r2.assignGoal(new GoalNode(null, "g2"));
-		rolesTree.add(r1);
-		rolesTree.add(r2);
+		rolesTree.addRoleToTree(r1);
+		rolesTree.addRoleToTree(r2);
 		System.out.println("rolesTree : " + rolesTree);
 		assertEquals(2, rolesTree.getNumberOfLevels());
 
@@ -92,25 +92,25 @@ public class RoleTreeTest {
 		RoleNode r12 = new RoleNode(r1, "r12");
 		r11.assignGoal(new GoalNode(null, "g11"));
 		r12.assignGoal(new GoalNode(null, "g12"));
-		rolesTree.add(r11);
-		rolesTree.add(r12);
+		rolesTree.addRoleToTree(r11);
+		rolesTree.addRoleToTree(r12);
 		assertEquals(3, rolesTree.getNumberOfLevels());
 
 		// Still third level
 		RoleNode r21 = new RoleNode(r2, "r21");
-		rolesTree.add(r21);
+		rolesTree.addRoleToTree(r21);
 		System.out.println("rolesTree : " + rolesTree);
 		assertEquals(3, rolesTree.getNumberOfLevels());
 
 		// Forth level
 		RoleNode r121 = new RoleNode(r12, "r121");
-		rolesTree.add(r121);
+		rolesTree.addRoleToTree(r121);
 		System.out.println("rolesTree : " + rolesTree);
 		assertEquals(4, rolesTree.getNumberOfLevels());
 
 		// Fifth level
 		RoleNode r1211 = new RoleNode(r121, "r1211");
-		rolesTree.add(r1211);
+		rolesTree.addRoleToTree(r1211);
 		System.out.println("rolesTree : " + rolesTree);
 		assertEquals(5, rolesTree.getNumberOfLevels());
 	}
