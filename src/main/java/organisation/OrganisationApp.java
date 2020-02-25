@@ -13,6 +13,7 @@ public class OrganisationApp {
 
 		Cost c = Cost.GENERALIST;
 		String search = "BFS";
+		boolean oneSolution = true;
 
 		OrganisationGenerator orgGen = new OrganisationGenerator();
 
@@ -44,7 +45,7 @@ public class OrganisationApp {
 				System.out.println("g0 must be split into four goals with 1.85 of dataload each");
 				gTree.addInform("g1", "i1", "g0", 7);
 
-				orgGen.generateOrganisationFromTree("sample", gTree, c, search);
+				orgGen.generateOrganisationFromTree("sample", gTree, c, search, oneSolution);
 			} catch (GoalNotFound | CircularReference e) {
 				e.printStackTrace();
 			}
@@ -73,7 +74,7 @@ public class OrganisationApp {
 			if (args.length >= 3)
 				search = args[2];
 
-			orgGen.generateOrganisationFromTree(name, gTree, c, search);
+			orgGen.generateOrganisationFromTree(name, gTree, c, search, oneSolution);
 		}
 	}
 }

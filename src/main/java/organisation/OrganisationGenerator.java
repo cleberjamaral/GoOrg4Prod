@@ -12,7 +12,7 @@ import organisation.search.Organisation;
 public class OrganisationGenerator {
     Organisation inicial;
 
-	public void generateOrganisationFromTree(String name, GoalTree gTree, Cost c, String search) {
+	public void generateOrganisationFromTree(String name, GoalTree gTree, Cost c, String search, boolean oneSolution) {
 		try {
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.deleteExistingStatistics();
@@ -28,7 +28,7 @@ public class OrganisationGenerator {
 			p.saveDotAsPNG(name + "_broken_gdt", p.plotGoalTree(name + "_broken_gdt", gTree));
 			s.saveDataOfBrokenTree(gTree);
 
-			inicial = new Organisation(name, gTree, c);
+			inicial = new Organisation(name, gTree, c, oneSolution);
 
 			if (search.equals("BFS"))
 				new BuscaLargura().busca(inicial);

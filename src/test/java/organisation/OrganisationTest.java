@@ -65,7 +65,7 @@ public class OrganisationTest {
 
 			s.prepareStatisticsFile(org);
 			
-			final Organisation o = new Organisation(org, gTree, c);
+			final Organisation o = new Organisation(org, gTree, c, true);
 			final Nodo n = new BuscaLargura().busca(o);
 
 			try {

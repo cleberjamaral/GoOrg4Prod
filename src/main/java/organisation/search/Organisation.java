@@ -31,6 +31,10 @@ public class Organisation implements Estado, Antecessor {
 	private static int prunedStates = 0;
 	// a reference to the goals tree used by all states (static to save memory)
 	private static GoalTree goalsTree;
+	// stop algorithm after finding the first solution
+	private static boolean oneSolution = true;
+	// any name for an organisation
+	private static String orgName;
 	
 	/*** LOCAL ***/
 	// the chart that is being created, potentially a complete chart
@@ -41,15 +45,13 @@ public class Organisation implements Estado, Antecessor {
 	// Cost supporting variables
 	private int cost = 0;
 	private int accCost = 0;
-	// any name for an organisation
-	private String orgName;
 
 	public String getDescricao() {
 		return "Empty\n";
 	}
 
 	public String getOrgName() {
-		return this.orgName;
+		return orgName;
 	}
 
 	/**
@@ -67,9 +69,10 @@ public class Organisation implements Estado, Antecessor {
 	 * @param gTree the goal tree, supposed to be a broken tree ready to process
 	 * @param costFunction the desired cost function
 	 */
-	public Organisation(String orgName, GoalTree gTree, Cost costFunction) {
-		this.orgName = orgName;
-		generatedStates = 0;
+	public Organisation(String orgName, GoalTree gTree, Cost costFunction, Boolean oneSolution) {
+		Organisation.orgName = orgName;
+		Organisation.oneSolution = oneSolution;
+		Organisation.generatedStates = 0;
 
 		goalsTree = gTree;
 		goalsTree.addSuccessorsToList(goalSuccessors, goalsTree.getRootNode());
@@ -92,8 +95,6 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public boolean ehMeta() {
-		boolean oneSolutionNeeded = true;
-		
 		if (this.goalSuccessors.size() <= 0) {
 			
 			if (!isGoalList.contains(this)) {
@@ -103,7 +104,7 @@ public class Organisation implements Estado, Antecessor {
 		
 				OrganisationPlot p = new OrganisationPlot();
 				OrganisationStatistics s = OrganisationStatistics.getInstance();
-				if (oneSolutionNeeded) {
+				if (oneSolution) {
 					isGoalList.clear();
 					
                     final String dot = p.plotOrganisation(this, "");
@@ -272,7 +273,6 @@ public class Organisation implements Estado, Antecessor {
 	public Organisation createState(GoalNode gn) {
 
 		Organisation newState = new Organisation();
-		newState.orgName = getOrgName();
 		try {
 			newState.rolesTree = rolesTree.cloneContent();
 

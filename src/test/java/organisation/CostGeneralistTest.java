@@ -91,7 +91,7 @@ public class CostGeneralistTest {
 			s.prepareStatisticsFile("testOneRoleGeneralistOrg");
 			
 			System.out.println("Total workload is 4 (less than 8 - max) -> goals must be assigned to one role.");
-			Organisation o = new Organisation("testOneRoleGeneralistOrg", gTree, Cost.GENERALIST);
+			Organisation o = new Organisation("testOneRoleGeneralistOrg", gTree, Cost.GENERALIST, true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			System.out.println("Generated rolesTree: " + ((Organisation)n.getEstado()).getRolesTree().getTree());
@@ -148,7 +148,7 @@ public class CostGeneralistTest {
 			s.prepareStatisticsFile("testTwoRolesGeneralistOrg");
 
 			System.out.println("Total workload is 4, less than 8 (max) -> goals must be assigned to two roles.");
-			Organisation o = new Organisation("testTwoRolesGeneralistOrg", gTree, Cost.GENERALIST);
+			Organisation o = new Organisation("testTwoRolesGeneralistOrg", gTree, Cost.GENERALIST, true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			assertEquals(2, ((Organisation) n.getEstado()).getRolesTree().getTree().size());
