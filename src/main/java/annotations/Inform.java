@@ -70,4 +70,31 @@ public class Inform extends Annotation {
 	
 	    return clone;
 	}
+	
+	/**
+	 * An inform is equal to another if the id and sender are equal
+	 * i.e. the amount is not checked
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Inform other = (Inform) obj;
+		if (id == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!id.equals(other.getId()))
+			return false;
+		if (recipient == null) {
+			if (other.getRecipient() != null)
+				return false;
+		} else if (!getRecipientName().equals(other.getRecipientName()))
+			return false;
+		return true;
+	}
+
 }

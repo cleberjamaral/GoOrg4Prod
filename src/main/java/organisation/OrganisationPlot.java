@@ -67,6 +67,9 @@ public class OrganisationPlot {
 				for (final Object s : or.getInforms())
 					out.write("<tr><td align=\"center\">" + s.toString() + "</td></tr>");
 
+				for (final Object s : or.getDataLoads())
+					out.write("<tr><td align=\"center\"><sub><i>" + s + "</i></sub></td></tr>");
+				
 				out.write("</table>> ];\n");
 
 				final Set<String> uniqueInformArrows = new HashSet<>();

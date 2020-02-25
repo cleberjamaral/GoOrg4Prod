@@ -48,6 +48,10 @@ public class DataLoad extends Annotation {
 		this.value = (double) amount;
 	}
 
+    public String getSenderName() {
+		return senderName;
+	}
+    
 	@Override
 	public String toString() {
 		DecimalFormat df = new DecimalFormat("#.##");
@@ -60,4 +64,31 @@ public class DataLoad extends Annotation {
 	
 	    return clone;
 	}
+
+	/**
+	 * A dataload is equal to another if the id and sender are equal
+	 * i.e. the amount is not checked
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DataLoad other = (DataLoad) obj;
+		if (id == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!id.equals(other.getId()))
+			return false;
+		if (sender == null) {
+			if (other.getSender() != null)
+				return false;
+		} else if (!getSenderName().equals(other.getSenderName()))
+			return false;
+		return true;
+	}
+
 }
