@@ -44,19 +44,19 @@ public class OrganisationPlot {
 		final Set<String> links = new HashSet<>();
 
 		createOutPutFolders();
-		
+
 		String index = "";
-		if (!plotIndex.equals("")) index = "_" + plotIndex;
+		if (!plotIndex.equals(""))
+			index = "_" + plotIndex;
 
-		try (PrintWriter pout = new PrintWriter(new BufferedWriter(new FileWriter("output/diagrams/" + o.getOrgName() + index + ".gv", false)))) 
-		{
+		try (PrintWriter pout = new PrintWriter(
+				new BufferedWriter(new FileWriter("output/diagrams/" + o.getOrgName() + index + ".gv", false)))) {
 
-            final StringWriter out = new StringWriter();
+			final StringWriter out = new StringWriter();
 			out.write("digraph G {\n");
 
 			for (final RoleNode or : o.getRolesTree().getTree()) {
-				out.write("\t\"" + or.getRoleName()
-						+ "\" [ style = \"filled\" fillcolor = \"white\" "
+				out.write("\t\"" + or.getRoleName() + "\" [ style = \"filled\" fillcolor = \"white\" "
 						+ "shape = \"Mrecord\" label = <<table border=\"0\" cellborder=\"0\" bgcolor=\"white\">"
 						+ "<tr><td bgcolor=\"black\" align=\"center\"><font color=\"white\">" + or.getRoleName()
 						+ "</font></td></tr><tr><td align=\"center\">" + or.getAssignedGoals() + "</td></tr>");
@@ -69,41 +69,38 @@ public class OrganisationPlot {
 
 				for (final Object s : or.getDataLoads())
 					out.write("<tr><td align=\"center\"><sub><i>" + s.toString() + "</i></sub></td></tr>");
-				
+
 				out.write("</table>> ];\n");
 
-				final Set<String> uniqueInformArrows = new HashSet<>();
-				final Iterator<GoalNode> iterator = or.getAssignedGoals().iterator();
-				while (iterator.hasNext()) {
-					iterator.next();
-					for (final Inform s : or.getInforms()) {
-						for (final RoleNode rnn : o.getRolesTree().getTree()) {
-							if (rnn.getAssignedGoals().contains(s.getRecipient()) && (rnn != or)) {
-								uniqueInformArrows
-										.add("\t\"" + or.getRoleName() + "\"->\"" + rnn.getRoleName() + "\" [label=\""
-												+ s.getId() + ":" + df.format(s.getValue()) + "\" style=dotted arrowhead=vee fontcolor=grey20 color=grey20];");
+				for (final DataLoad d : or.getDataLoads()) {
+					for (final RoleNode rnn : o.getRolesTree().getTree()) {
+						for (final GoalNode g : rnn.getAssignedGoals()) {
+							if (g.getGoalName().equals(d.getSenderName())) {
+								out.write("\t\"" + rnn.getRoleName() + "\"->\"" + or.getRoleName() + "\" [label=\""
+										+ d.getId() + ":" + df.format(d.getValue())
+										+ "\" style=dotted arrowhead=vee fontcolor=grey20 color=grey20];");
 							}
 						}
 					}
 				}
-                uniqueInformArrows.forEach(i -> {out.write(i+"\n");});
-                if (or.getParent() != null)	
+
+				if (or.getParent() != null)
 					links.add("\"" + or.getParent().getRoleName() + "\"->\"" + or.getRoleName() + "\"");
 			}
 
 			for (final String l : links)
 				out.write("\t" + l + ";\n");
-            out.write("}\n");
+			out.write("}\n");
 
-            // save .gv file
-            pout.print(out);
+			// save .gv file
+			pout.print(out);
 
-            return out.toString();
+			return out.toString();
 
-        } catch (final IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
-        }
-        return null;
+		}
+		return null;
 	}
 
     public void saveDotAsPNG(final String name, final String out) {
