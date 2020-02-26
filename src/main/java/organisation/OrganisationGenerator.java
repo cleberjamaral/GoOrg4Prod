@@ -24,7 +24,6 @@ public class OrganisationGenerator {
 
 			GoalTree gTree = GoalTree.getInstance();
 			p.saveDotAsPNG(name + "_original_gdt", p.plotGoalTree(name + "_original_gdt", gTree));
-			s.saveDataOfGoalTree();
 			
 			gTree.brakeGoalTree();
 			p.saveDotAsPNG(name + "_broken_gdt", p.plotGoalTree(name + "_broken_gdt", gTree));

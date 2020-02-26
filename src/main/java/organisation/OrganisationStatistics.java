@@ -23,9 +23,6 @@ public class OrganisationStatistics {
 	private static OrganisationStatistics instance = null;
 	
 	int id = 0;
-	int numberOfGoals = 0;
-	int numberOfDataLoads = 0;
-	int numberOfBrokenGoals = 0;
 	int numberOfBrokenDataLoads = 0;
 	double minIdle = 0.0;
 	double sumEfforts = 0.0;
@@ -45,12 +42,8 @@ public class OrganisationStatistics {
 		//fields and sequence of columns in the CSV file
 		this.fields.add("id");
 		this.fields.add("Roles");
-		this.fields.add("rGoals");
 		this.fields.add("rWorkloads");
 		this.fields.add("rDataLoads");
-		this.fields.add("Goals");
-		this.fields.add("Dataloads");
-		this.fields.add("bGoals");
 		this.fields.add("bDataLoads");
 		this.fields.add("minIdle");
 		this.fields.add("Idleness");
@@ -77,12 +70,10 @@ public class OrganisationStatistics {
 			
 			Map<String,String> line = new HashMap<>();
 			
-			int numberOfAssignedGoals = 0;
 			int numberOfAssignedWorkloads = 0;
 			int numberOfAssignedDataLoads = 0;
 
 			for (final RoleNode or : o.getRolesTree().getTree()) {
-				numberOfAssignedGoals += or.getAssignedGoals().size();
 				numberOfAssignedWorkloads += or.getWorkloads().size();
 				numberOfAssignedDataLoads += or.getDataLoads().size();
 			}
@@ -90,12 +81,8 @@ public class OrganisationStatistics {
 			Parameters.getInstance();
 			line.put("id", (Integer.toString(++id)));
 			line.put("Roles", (Integer.toString(o.getRolesTree().getTree().size())));
-			line.put("rGoals", (Integer.toString(numberOfAssignedGoals)));
 			line.put("rWorkloads", (Integer.toString(numberOfAssignedWorkloads)));
 			line.put("rDataLoads", (Integer.toString(numberOfAssignedDataLoads)));
-			line.put("Goals", (Integer.toString(numberOfGoals)));
-			line.put("DataLoads", (Integer.toString(numberOfDataLoads)));
-			line.put("bGoals", (Integer.toString(numberOfBrokenGoals)));
 			line.put("bDataLoads", (Integer.toString(numberOfBrokenDataLoads)));
 			line.put("minIdle", (Double.toString(minIdle)));
 			line.put("Idleness", (Double.toString(o.getRolesTree().getTree().size() * Parameters.getMaxWorkload() - sumEfforts)));
@@ -112,18 +99,8 @@ public class OrganisationStatistics {
 		}
 	}
 
-	public void saveDataOfGoalTree() {
-		GoalTree gTree = GoalTree.getInstance();
-		this.numberOfGoals = gTree.getTree().size();
-
-		for (GoalNode g : gTree.getTree()) {
-			this.numberOfDataLoads += g.getDataLoads().size();
-        }
-	}
-	
 	public void saveDataOfBrokenTree() {
 		GoalTree gTree = GoalTree.getInstance();
-		this.numberOfBrokenGoals = gTree.getTree().size();
 		this.bgTree = gTree.getTree().toString();
 		
 		for (GoalNode g : gTree.getTree()) {
