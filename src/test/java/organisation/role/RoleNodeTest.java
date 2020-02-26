@@ -27,23 +27,23 @@ public class RoleNodeTest {
 		r01.assignGoal(g01);
 
 		System.out.println("\n\ntestSimilarRoles");
-		System.out.println("r00: " + r00.signature());
-		System.out.println("r01: " + r01.signature());
+		System.out.println("r00: " + r00.getRoleName());
+		System.out.println("r01: " + r01.getRoleName());
 		assertEquals(r00, r01);
 		
-		//adding another workload to r01 to make than different
+		//adding another workload to r01 does not make difference
 		r01.addWorkload(new Workload("s1", 2));
 		System.out.println("must be different");
-		System.out.println("r00: " + r00.signature());
-		System.out.println("r01: " + r01.signature());
-		assertNotEquals(r00, r01);
+		System.out.println("r00: " + r00.getRoleName());
+		System.out.println("r01: " + r01.getRoleName());
+		assertEquals(r00, r01);
 		
 		//adding another workload to r00 to be added up 
 		r00.addWorkload(new Workload("s1", 1.5));
 		r00.addWorkload(new Workload("s1", 0.5));
 		System.out.println("must be equal");
-		System.out.println("r00: " + r00.signature());
-		System.out.println("r01: " + r01.signature());
+		System.out.println("r00: " + r00.getRoleName());
+		System.out.println("r01: " + r01.getRoleName());
 		assertEquals(r00, r01);
 		
 		//adding new goals to r00
@@ -52,8 +52,8 @@ public class RoleNodeTest {
 		r00.assignGoal(g10);
 		r00.assignGoal(g11);
 		System.out.println("must be different");
-		System.out.println("r00: " + r00.signature());
-		System.out.println("r01: " + r01.signature());
+		System.out.println("r00: " + r00.getRoleName());
+		System.out.println("r01: " + r01.getRoleName());
 		assertNotEquals(r00, r01);
 		
 		//adding new goals to r01 in a different order
@@ -62,8 +62,8 @@ public class RoleNodeTest {
 		r01.assignGoal(g21);
 		r01.assignGoal(g20);
 		System.out.println("must be equal");
-		System.out.println("r00: " + r00.signature());
-		System.out.println("r01: " + r01.signature());
+		System.out.println("r00: " + r00.getRoleName());
+		System.out.println("r01: " + r01.getRoleName());
 		assertEquals(r00, r01);
 	}
 
@@ -85,9 +85,9 @@ public class RoleNodeTest {
 
 		// parent's signature
 		System.out.println("\n\ntestCloneRoleContent");
-		System.out.println("r0    : " + r0.signature());
-		System.out.println("parent: " + r1.getParentSignature());
-		assertEquals(r0.toString(), r1.getParentSignature());
+		System.out.println("r0    : " + r0.getRoleName());
+		System.out.println("parent: " + r1.getParentName());
+		assertEquals(r0.getRoleName(), r1.getParentName());
 
 		RoleNode r0clone = r0.cloneContent();
 		RoleNode r1clone = r1.cloneContent();

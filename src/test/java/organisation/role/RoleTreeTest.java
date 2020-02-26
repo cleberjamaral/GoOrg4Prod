@@ -74,7 +74,7 @@ public class RoleTreeTest {
 		RoleNode r0 = new RoleNode(null, "r0");
 		r0.assignGoal(new GoalNode(null, "g0"));
 		rolesTree.addRoleToTree(r0);
-		System.out.println("rolesTree : " + rolesTree);
+		System.out.println("rolesTree : " + rolesTree.toString());
 		assertEquals(1, rolesTree.getNumberOfLevels());
 
 		// Second level
@@ -84,7 +84,7 @@ public class RoleTreeTest {
 		r2.assignGoal(new GoalNode(null, "g2"));
 		rolesTree.addRoleToTree(r1);
 		rolesTree.addRoleToTree(r2);
-		System.out.println("rolesTree : " + rolesTree);
+		System.out.println("rolesTree : " + rolesTree.toString());
 		assertEquals(2, rolesTree.getNumberOfLevels());
 
 		// Third level

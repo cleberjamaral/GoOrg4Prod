@@ -11,7 +11,7 @@ import organisation.goal.GoalNode;
 
 public class RoleTree {
 
-	private int numberOfLevels;
+	private int numberOfLevels = 0;
 	private Set<RoleNode> tree = new HashSet<>();
 
 	public RoleTree() {

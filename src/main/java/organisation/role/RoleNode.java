@@ -213,7 +213,8 @@ public class RoleNode {
 			while (iterator.hasNext()) {
 				GoalNode n = iterator.next(); 
 				//signatureByGoals.add(n.getGoalName());
-				signatureByGoals.add(n.getGoalName().substring(0, n.getGoalName().lastIndexOf('$')));
+				if (n.getGoalName().indexOf('$') > 0)
+					signatureByGoals.add(n.getGoalName().substring(0, n.getGoalName().lastIndexOf('$')));
 			}
 		}
 		Collections.sort(signatureByGoals);
