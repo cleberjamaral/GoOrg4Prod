@@ -132,11 +132,23 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public boolean validateOutput() throws OutputDoesNotMatchWithInput {
-		if (Math.round(goalsTree.getSumEfforts()) != Math.round(rolesTree.getSumWorkload())) {
+		
+		// checking if sum of efforts match
+		if (Math.abs(goalsTree.getSumEfforts() - rolesTree.getSumWorkload()) > 0.01) {
 			throw new OutputDoesNotMatchWithInput(
-					"The sum of efforts of the goals tree must match with the sum of efforts of the created roles tree! GoalsTree:"
-							+ goalsTree.getSumEfforts() + " RolesTree:" + rolesTree.getSumWorkload());
+					"The sum of efforts of the goals tree and the created organisation does not match!");
 		}
+		
+		// number of workloads must be equal or lower (similar workloads can be joined)
+		int goalsTreeNumberOfWorkloads = 0;
+		for (GoalNode g : goalsTree.getTree())
+			goalsTreeNumberOfWorkloads += g.getWorkloads().size();
+		int organisationNumberOfWorkloads = 0;
+		for (RoleNode r : rolesTree.getTree())
+			goalsTreeNumberOfWorkloads += r.getWorkloads().size();
+		if (organisationNumberOfWorkloads > goalsTreeNumberOfWorkloads)
+			throw new OutputDoesNotMatchWithInput("There are more workloads in the output than in the input!");
+		
 		return true;
 	}
 

@@ -22,12 +22,13 @@ public class OrganisationStatistics {
 	
 	private static OrganisationStatistics instance = null;
 	
+	int id = 0;
 	int numberOfGoals = 0;
 	int numberOfWorkloads = 0;
-	int numberOfInforms = 0;
+	int numberOfDataLoads = 0;
 	int numberOfBrokenGoals = 0;
 	int numberOfBrokenWorkloads = 0;
-	int numberOfBrokenInforms = 0;
+	int numberOfBrokenDataLoads = 0;
 	double sumEfforts = 0.0;
 	List<String> fields = new ArrayList<>();
 	
@@ -40,16 +41,19 @@ public class OrganisationStatistics {
     } 
 	
 	private OrganisationStatistics() {
-		this.fields.add("Goals");
-		this.fields.add("Workloads");
-		this.fields.add("Informs");
-		this.fields.add("bGoals");
-		this.fields.add("bWorkloads");
-		this.fields.add("bInforms");
-		this.fields.add("sumEfforts");
+		//fields and sequence of columns in the CSV file
+		this.fields.add("id");
+		this.fields.add("Roles");
 		this.fields.add("rGoals");
 		this.fields.add("rWorkloads");
-		this.fields.add("rInforms");
+		this.fields.add("rDataLoads");
+		this.fields.add("sumEfforts");
+		this.fields.add("Goals");
+		this.fields.add("Workloads");
+		this.fields.add("Dataloads");
+		this.fields.add("bGoals");
+		this.fields.add("bWorkloads");
+		this.fields.add("bDataLoads");
 	}
 	
 	public void prepareStatisticsFile(final String orgName) {
@@ -74,25 +78,26 @@ public class OrganisationStatistics {
 			
 			int numberOfAssignedGoals = 0;
 			int numberOfAssignedWorkloads = 0;
-			int numberOfAssignedInforms = 0;
+			int numberOfAssignedDataLoads = 0;
 
 			for (final RoleNode or : o.getRolesTree().getTree()) {
 				numberOfAssignedGoals += or.getAssignedGoals().size();
 				numberOfAssignedWorkloads += or.getWorkloads().size();
-				numberOfAssignedInforms += or.getInforms().size();
+				numberOfAssignedDataLoads += or.getDataLoads().size();
 			}
 			
-			line.put("Goals", (Integer.toString(numberOfGoals)));
-			line.put("Workloads", (Integer.toString(numberOfWorkloads)));
-			line.put("Informs", (Integer.toString(numberOfInforms)));
-			line.put("bGoals", (Integer.toString(numberOfBrokenGoals)));
-			line.put("bWorkloads", (Integer.toString(numberOfBrokenWorkloads)));
-			line.put("bInforms", (Integer.toString(numberOfBrokenInforms)));
-			line.put("sumEfforts", (Double.toString(sumEfforts)));
+			line.put("id", (Integer.toString(++id)));
+			line.put("Roles", (Integer.toString(o.getRolesTree().getTree().size())));
 			line.put("rGoals", (Integer.toString(numberOfAssignedGoals)));
 			line.put("rWorkloads", (Integer.toString(numberOfAssignedWorkloads)));
-			line.put("rInforms", (Integer.toString(numberOfAssignedInforms)));
-			line.put("Roles", (Integer.toString(o.getRolesTree().getTree().size())));
+			line.put("rDataLoads", (Integer.toString(numberOfAssignedDataLoads)));
+			line.put("sumEfforts", (Double.toString(sumEfforts)));
+			line.put("Goals", (Integer.toString(numberOfGoals)));
+			line.put("Workloads", (Integer.toString(numberOfWorkloads)));
+			line.put("DataLoads", (Integer.toString(numberOfDataLoads)));
+			line.put("bGoals", (Integer.toString(numberOfBrokenGoals)));
+			line.put("bWorkloads", (Integer.toString(numberOfBrokenWorkloads)));
+			line.put("bDataLoads", (Integer.toString(numberOfBrokenDataLoads)));
 			
 			out.print("\n");
 			for (int i = 0; i < fields.size(); i++) {
@@ -110,7 +115,7 @@ public class OrganisationStatistics {
 
 		for (GoalNode g : gTree.getTree()) {
 			this.numberOfWorkloads += g.getWorkloads().size();
-			this.numberOfInforms += g.getInforms().size();
+			this.numberOfDataLoads += g.getDataLoads().size();
         }
 	}
 	
@@ -119,7 +124,7 @@ public class OrganisationStatistics {
 		
 		for (GoalNode g : gTree.getTree()) {
 			this.numberOfBrokenWorkloads += g.getWorkloads().size();
-			this.numberOfBrokenInforms += g.getInforms().size();
+			this.numberOfBrokenDataLoads += g.getDataLoads().size();
         }
 
 		this.sumEfforts = gTree.getSumEfforts();
