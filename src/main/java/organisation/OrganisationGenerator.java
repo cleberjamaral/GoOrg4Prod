@@ -24,11 +24,11 @@ public class OrganisationGenerator {
 
 			GoalTree gTree = GoalTree.getInstance();
 			p.saveDotAsPNG(name + "_original_gdt", p.plotGoalTree(name + "_original_gdt", gTree));
-			s.saveDataOfGoalTree(gTree);
+			s.saveDataOfGoalTree();
 			
 			gTree.brakeGoalTree();
 			p.saveDotAsPNG(name + "_broken_gdt", p.plotGoalTree(name + "_broken_gdt", gTree));
-			s.saveDataOfBrokenTree(gTree);
+			s.saveDataOfBrokenTree();
 
 			inicial = new Organisation(name, gTree, c, oneSolution);
 

@@ -24,12 +24,12 @@ public class OrganisationStatistics {
 	
 	int id = 0;
 	int numberOfGoals = 0;
-	int numberOfWorkloads = 0;
 	int numberOfDataLoads = 0;
 	int numberOfBrokenGoals = 0;
-	int numberOfBrokenWorkloads = 0;
 	int numberOfBrokenDataLoads = 0;
 	double sumEfforts = 0.0;
+	String bgTree = "";
+	
 	List<String> fields = new ArrayList<>();
 	
 	public static OrganisationStatistics getInstance() 
@@ -48,11 +48,10 @@ public class OrganisationStatistics {
 		this.fields.add("rWorkloads");
 		this.fields.add("rDataLoads");
 		this.fields.add("Goals");
-		this.fields.add("Workloads");
 		this.fields.add("Dataloads");
 		this.fields.add("bGoals");
-		this.fields.add("bWorkloads");
 		this.fields.add("bDataLoads");
+		this.fields.add("bgTree");
 	}
 	
 	public void prepareStatisticsFile(final String orgName) {
@@ -91,11 +90,10 @@ public class OrganisationStatistics {
 			line.put("rWorkloads", (Integer.toString(numberOfAssignedWorkloads)));
 			line.put("rDataLoads", (Integer.toString(numberOfAssignedDataLoads)));
 			line.put("Goals", (Integer.toString(numberOfGoals)));
-			line.put("Workloads", (Integer.toString(numberOfWorkloads)));
 			line.put("DataLoads", (Integer.toString(numberOfDataLoads)));
 			line.put("bGoals", (Integer.toString(numberOfBrokenGoals)));
-			line.put("bWorkloads", (Integer.toString(numberOfBrokenWorkloads)));
 			line.put("bDataLoads", (Integer.toString(numberOfBrokenDataLoads)));
+			line.put("bgTree", bgTree);
 			
 			out.print("\n");
 			for (int i = 0; i < fields.size(); i++) {
@@ -108,20 +106,21 @@ public class OrganisationStatistics {
 		}
 	}
 
-	public void saveDataOfGoalTree(GoalTree gTree) {
+	public void saveDataOfGoalTree() {
+		GoalTree gTree = GoalTree.getInstance();
 		this.numberOfGoals = gTree.getTree().size();
 
 		for (GoalNode g : gTree.getTree()) {
-			this.numberOfWorkloads += g.getWorkloads().size();
 			this.numberOfDataLoads += g.getDataLoads().size();
         }
 	}
 	
-	public void saveDataOfBrokenTree(GoalTree gTree) {
+	public void saveDataOfBrokenTree() {
+		GoalTree gTree = GoalTree.getInstance();
 		this.numberOfBrokenGoals = gTree.getTree().size();
+		this.bgTree = gTree.getTree().toString();
 		
 		for (GoalNode g : gTree.getTree()) {
-			this.numberOfBrokenWorkloads += g.getWorkloads().size();
 			this.numberOfBrokenDataLoads += g.getDataLoads().size();
         }
 

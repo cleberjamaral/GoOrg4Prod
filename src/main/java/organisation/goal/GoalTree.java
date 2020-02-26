@@ -254,12 +254,18 @@ public class GoalTree {
 		}
 	}
 	
+	public void updateReferences() throws GoalNotFound, CircularReference {
+		for (GoalNode d : getTree()) {
+			updateInformAndDataLoadReferences(d);
+		}
+	}
+	
 	/**
 	 * Brake the goal tree in smaller goals if any goal is exceeding the
 	 * max allowed for the annotations
 	 * @throws GoalNotFound 
 	 */
-	public void brakeGoalTree() throws GoalNotFound {
+	public synchronized void brakeGoalTree() throws GoalNotFound {
 		try {
 			// brake tree by workloads
 			for (GoalNode d : getTree()) {
@@ -268,10 +274,7 @@ public class GoalTree {
 			}
 			
 			addAllDescendants(getRootNode());
-			
-			for (GoalNode d : getTree()) {
-				updateInformAndDataLoadReferences(d);
-			}
+			updateReferences();
 
 			// brake tree by dataloads
 			for (GoalNode d : getTree()) {
@@ -279,9 +282,8 @@ public class GoalTree {
 				d.clearDataLoads();
 			}
 			
-			for (GoalNode d : getTree()) {
-				updateInformAndDataLoadReferences(d);
-			}
+			addAllDescendants(getRootNode());
+			updateReferences();
 
 		} catch (CircularReference e) {
 			e.printStackTrace();
