@@ -148,6 +148,13 @@ public class Organisation implements Estado, Antecessor {
 			goalsTreeNumberOfWorkloads += r.getWorkloads().size();
 		if (organisationNumberOfWorkloads > goalsTreeNumberOfWorkloads)
 			throw new OutputDoesNotMatchWithInput("There are more workloads in the output than in the input!");
+
+		// number of goals in the goals tree must be same as the allocated ones
+		int nAssignedGoals = 0;
+		for (final RoleNode or : this.getRolesTree().getTree()) nAssignedGoals += or.getAssignedGoals().size();
+		GoalTree gTree = GoalTree.getInstance();
+		if (nAssignedGoals != gTree.getTree().size())
+			throw new OutputDoesNotMatchWithInput("There are more workloads in the output than in the input!");
 		
 		return true;
 	}
