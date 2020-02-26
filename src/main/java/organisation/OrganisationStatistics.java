@@ -45,9 +45,10 @@ public class OrganisationStatistics {
 		//fields and sequence of columns in the CSV file
 		this.fields.add("id");
 		this.fields.add("Roles");
+		this.fields.add("%DataLoads");
+		this.fields.add("%IdleAdded");
 		this.fields.add("bDataLoads");
 		this.fields.add("rDataLoads");
-		this.fields.add("%DataLoads");
 		this.fields.add("minIdle");
 		this.fields.add("Idleness");
 		this.fields.add("bgTree");
@@ -87,7 +88,9 @@ public class OrganisationStatistics {
 			line.put("rDataLoads", (String.format("%.2f", assignedDataLoad)));
 			line.put("%DataLoads", (String.format("%.0f%%", 100 * assignedDataLoad / originalDataLoad)));
 			line.put("minIdle", (Double.toString(minIdle)));
-			line.put("Idleness", (Double.toString(o.getRolesTree().getTree().size() * Parameters.getMaxWorkload() - sumEfforts)));
+			double idleness = o.getRolesTree().getTree().size() * Parameters.getMaxWorkload() - sumEfforts;
+			line.put("Idleness", (Double.toString(idleness)));
+			line.put("%IdleAdded", (String.format("%.0f%%", 100 * (idleness - minIdle) / minIdle)));
 			line.put("bgTree", bgTree);
 			
 			out.print("\n");
