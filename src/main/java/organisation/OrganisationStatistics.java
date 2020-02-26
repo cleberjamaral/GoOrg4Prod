@@ -47,6 +47,7 @@ public class OrganisationStatistics {
 		this.fields.add("Roles");
 		this.fields.add("%DataLoads");
 		this.fields.add("%IdleAdded");
+		this.fields.add("genStates");
 		this.fields.add("bDataLoads");
 		this.fields.add("rDataLoads");
 		this.fields.add("minIdle");
@@ -92,6 +93,7 @@ public class OrganisationStatistics {
 			line.put("Idleness", (Double.toString(idleness)));
 			line.put("%IdleAdded", (String.format("%.0f%%", 100 * (idleness - minIdle) / minIdle)));
 			line.put("bgTree", bgTree);
+			line.put("genStates", (Integer.toString(o.getGeneratedStates())));
 			
 			out.print("\n");
 			for (int i = 0; i < fields.size(); i++) {

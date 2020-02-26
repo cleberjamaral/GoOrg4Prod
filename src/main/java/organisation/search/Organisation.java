@@ -335,5 +335,9 @@ public class Organisation implements Estado, Antecessor {
 				+ parent + " " + state.rolesTree + ", nSucc: " + state.goalSuccessors + ", Hash: " + state.hashCode()
 				+ ", Cost: " + state.accCost + "/" + state.cost);
 	}
+	
+	public int getGeneratedStates() {
+		return Organisation.generatedStates;
+	}
 
 }
