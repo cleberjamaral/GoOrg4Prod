@@ -71,7 +71,7 @@ public class OrganisationTest {
 
 			try {
 				System.out.println("Organisation with all cost functions must have only one role.");
-				System.out.println("rTree:" + ((Organisation) n.getEstado()).getRolesTree().getTree() + ":" + c.name());
+				//System.out.println("rTree:" + ((Organisation) n.getEstado()).getRolesTree().getTree() + ":" + c.name());
 				assertEquals(1, ((Organisation) n.getEstado()).getRolesTree().getTree().size());
 
 				assertTrue(((Organisation) n.getEstado()).validateOutput());
