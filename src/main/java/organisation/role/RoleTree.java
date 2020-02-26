@@ -60,13 +60,12 @@ public class RoleTree {
 		return nr;
 	}
 
-	public RoleNode findRoleBySignature(String roleSignature) throws RoleNotFound {
+	public RoleNode findRoleByRoleName(String roleName) throws RoleNotFound {
 		for (RoleNode or : this.tree) {
-			if (or.signature().equals(roleSignature))
+			if (or.getRoleName().equals(roleName))
 				return or;
 		}
-		throw new RoleNotFound(
-				"There is no role with signature = '" + roleSignature + "'! Tree signature: " + this.tree.toString());
+		throw new RoleNotFound("There is no role with signature = '" + roleName + "'!");
 	}
 
 	public RoleTree cloneContent() throws DuplicatedRootRole, RoleNotFound {
@@ -83,8 +82,8 @@ public class RoleTree {
 		for (RoleNode or : clonedTree.getTree()) {
 
 			// it is not the root role
-			if (!or.getParentSignature().equals("")) {
-				or.setParent(clonedTree.findRoleBySignature(or.getParentSignature()));
+			if (!or.getParentName().equals("")) {
+				or.setParent(clonedTree.findRoleByRoleName(or.getParentName()));
 			} else {
 				rootNodesFound++;
 			}
@@ -95,8 +94,8 @@ public class RoleTree {
 		return clonedTree;
 	}
 
-	public RoleNode assignGoalToRoleBySignature(String signature, GoalNode newGoal) throws RoleNotFound {
-		RoleNode role = this.findRoleBySignature(signature);
+	public RoleNode assignGoalToRoleByRoleName(String roleName, GoalNode newGoal) throws RoleNotFound {
+		RoleNode role = this.findRoleByRoleName(roleName);
 
 		assignGoalToRole(role, newGoal);
 
@@ -119,10 +118,10 @@ public class RoleTree {
 			if (!circularDataload) role.addDataLoad(d.clone());
 		}
 
-		// changes on content may change role signature, its children must be updated
+/*		// changes on content may change role signature, its children must be updated
 		for (RoleNode child : role.getDescendants())
 			child.setParentSignature(role.signature());
-	}
+*/	}
 
 	/**
 	 * Give the sum of efforts of the whole tree

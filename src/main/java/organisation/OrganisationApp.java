@@ -12,7 +12,7 @@ public class OrganisationApp {
 
 		Cost c = Cost.GENERALIST;
 		String search = "BFS";
-		boolean oneSolution = true;
+		boolean oneSolution = false;
 
 		OrganisationGenerator orgGen = new OrganisationGenerator();
 

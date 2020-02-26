@@ -17,14 +17,17 @@ import organisation.goal.GoalNode;
  *
  */
 public class RoleNode {
+	// roleName and parentName are unique names for this role and its parent in this tree (ex: r0, r1...)
 	private String roleName;
+	private String parentName;
+
 	private RoleNode parent;
-	private String parentSignature; // used to find the original parent after cloning
 	private List<RoleNode> descendants = new ArrayList<>();
 	private Set<Workload> workloads = new HashSet<>();
 	private Set<Inform> informs = new HashSet<>();
 	private Set<DataLoad> dataloads = new HashSet<>();
 	private Set<GoalNode> assignedGoals = new HashSet<>();
+
 
 	public RoleNode(RoleNode parent, String roleName) {
 		setParent(parent);
@@ -159,21 +162,21 @@ public class RoleNode {
 		return this.parent;
 	}
 
-	public String getParentSignature() {
-		return this.parentSignature;
+	public String getParentName() {
+		return this.parentName;
 	}
 	
-	public void setParentSignature(String parentSignature) {
-		this.parentSignature = parentSignature;
+	public void setParentName(String parentName) {
+		this.parentName = parentName;
 	}
 
 	public void setParent(RoleNode parent) {
 		this.parent = parent;
 		if (getParent() != null) {
-			setParentSignature(parent.signature());
+			setParentName(parent.getRoleName());
 			getParent().addDescendant(this);
 		} else {
-			setParentSignature("");
+			setParentName("");
 		}
 	}
 
@@ -239,12 +242,10 @@ public class RoleNode {
 	
 	public RoleNode cloneContent() {
 		// parent is not cloned it must be resolved by the tree
-		RoleNode clone = new RoleNode(null, this.roleName);
-		
-		clone.setParentSignature(this.parentSignature);
+		RoleNode clone = new RoleNode(null, getRoleName());
+		// parent is resolved by its cloned source parent's name
+		clone.setParentName(getParentName());
 
-		// descendants are not cloned, it must be resolved by the tree
-		
 		for (Workload w : this.workloads) 
 			clone.addWorkload(w.clone());
 
@@ -288,7 +289,7 @@ public class RoleNode {
 		if (this.assignedGoals == null) {
 			if (other.assignedGoals != null)
 				return false;
-		} else if (!signature().equals(other.signature()))
+		} else if (!assignedGoals.equals(other.assignedGoals))
 			return false;
 		return true;
 	}

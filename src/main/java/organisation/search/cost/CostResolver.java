@@ -90,7 +90,7 @@ public class CostResolver {
 
 		// TODO: check if it is creating a sibling with same skills, punishing it
 		// Preferring specialist structure potentially punish the creation of roles
-		RoleNode old = oldTree.findRoleBySignature(role.signature());
+		RoleNode old = oldTree.findRoleByRoleName(role.getRoleName());
 		if (costFunction == Cost.SPECIALIST) {
 			
 			// Punish when it would be possible to join with the give role
@@ -121,7 +121,7 @@ public class CostResolver {
 		if (costFunction == Cost.GENERALIST) {
 
 			// Preferring specialist structure potentially punish the creation of roles
-			RoleNode old = oldTree.findRoleBySignature(role.signature());
+			RoleNode old = oldTree.findRoleByRoleName(role.getRoleName());
 			
 			// Punish when it would be possible to join with the give role
 			if (old.getWorkloads().containsAll(goal.getWorkloads())) {

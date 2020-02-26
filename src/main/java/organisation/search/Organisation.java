@@ -166,7 +166,7 @@ public class Organisation implements Estado, Antecessor {
 		try {
 			Organisation newState = (Organisation) createState(goalToAssign);
 
-			RoleNode nr = newState.rolesTree.createRole(newState.rolesTree.findRoleBySignature(aGivenRole.signature()),
+			RoleNode nr = newState.rolesTree.createRole(newState.rolesTree.findRoleByRoleName(aGivenRole.getRoleName()),
 					"r" + newState.rolesTree.size(), goalToAssign);
 			
 			// Prune states with effort equal to 0
@@ -200,7 +200,7 @@ public class Organisation implements Estado, Antecessor {
 		try {
 			Organisation newState = (Organisation) createState(goalToAssign);
 
-			RoleNode jr = newState.rolesTree.assignGoalToRoleBySignature(hostRole.signature(), goalToAssign);
+			RoleNode jr = newState.rolesTree.assignGoalToRoleByRoleName(hostRole.getRoleName(), goalToAssign);
 
 			// Prune states with effort greater than max
 			if (jr.getSumWorkload() > Parameters.getMaxWorkload()) {
