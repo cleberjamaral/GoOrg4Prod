@@ -12,7 +12,7 @@ import organisation.search.cost.Cost;
 public class OrganisationGenerator {
     Organisation inicial;
 
-	public void generateOrganisationFromTree(String name, GoalTree gTree, Cost c, String search, boolean oneSolution) {
+	public void generateOrganisationFromTree(String name, Cost c, String search, boolean oneSolution) {
 		try {
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.deleteExistingStatistics();
@@ -21,6 +21,8 @@ public class OrganisationGenerator {
             OrganisationPlot p = new OrganisationPlot();
 			p.deleteExistingDiagrams();
 			p.deleteExistingGraphs();
+
+			GoalTree gTree = GoalTree.getInstance();
 			p.saveDotAsPNG(name + "_original_gdt", p.plotGoalTree(name + "_original_gdt", gTree));
 			s.saveDataOfGoalTree(gTree);
 			

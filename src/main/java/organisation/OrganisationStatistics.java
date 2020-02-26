@@ -47,7 +47,6 @@ public class OrganisationStatistics {
 		this.fields.add("rGoals");
 		this.fields.add("rWorkloads");
 		this.fields.add("rDataLoads");
-		this.fields.add("sumEfforts");
 		this.fields.add("Goals");
 		this.fields.add("Workloads");
 		this.fields.add("Dataloads");
@@ -91,7 +90,6 @@ public class OrganisationStatistics {
 			line.put("rGoals", (Integer.toString(numberOfAssignedGoals)));
 			line.put("rWorkloads", (Integer.toString(numberOfAssignedWorkloads)));
 			line.put("rDataLoads", (Integer.toString(numberOfAssignedDataLoads)));
-			line.put("sumEfforts", (Double.toString(sumEfforts)));
 			line.put("Goals", (Integer.toString(numberOfGoals)));
 			line.put("Workloads", (Integer.toString(numberOfWorkloads)));
 			line.put("DataLoads", (Integer.toString(numberOfDataLoads)));

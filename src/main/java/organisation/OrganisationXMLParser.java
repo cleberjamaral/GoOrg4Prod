@@ -20,7 +20,7 @@ import simplelogger.SimpleLogger;
 
 public class OrganisationXMLParser {
 
-    public GoalTree parseXMLFile(final String file) {
+    public void parseXMLFile(final String file) {
         try {
             final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             final DocumentBuilder builder = factory.newDocumentBuilder();
@@ -42,11 +42,9 @@ public class OrganisationXMLParser {
             gTree.addAllDescendants(gTree.getRootNode());
             gTree.updateInformAndDataLoadReferences(gTree.getRootNode());
 
-            return gTree;
         } catch (final Exception e) {
             e.printStackTrace();
         }
-        return null;
     }
 
     private void visitNodes(final NodeList nList, final GoalTree gTree, GoalNode referenceGoalNode,
