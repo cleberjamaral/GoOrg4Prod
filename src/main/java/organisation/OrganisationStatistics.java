@@ -27,6 +27,7 @@ public class OrganisationStatistics {
 	int numberOfDataLoads = 0;
 	int numberOfBrokenGoals = 0;
 	int numberOfBrokenDataLoads = 0;
+	double minIdle = 0.0;
 	double sumEfforts = 0.0;
 	String bgTree = "";
 	
@@ -51,6 +52,8 @@ public class OrganisationStatistics {
 		this.fields.add("Dataloads");
 		this.fields.add("bGoals");
 		this.fields.add("bDataLoads");
+		this.fields.add("minIdle");
+		this.fields.add("Idleness");
 		this.fields.add("bgTree");
 	}
 	
@@ -84,6 +87,7 @@ public class OrganisationStatistics {
 				numberOfAssignedDataLoads += or.getDataLoads().size();
 			}
 			
+			Parameters.getInstance();
 			line.put("id", (Integer.toString(++id)));
 			line.put("Roles", (Integer.toString(o.getRolesTree().getTree().size())));
 			line.put("rGoals", (Integer.toString(numberOfAssignedGoals)));
@@ -93,6 +97,8 @@ public class OrganisationStatistics {
 			line.put("DataLoads", (Integer.toString(numberOfDataLoads)));
 			line.put("bGoals", (Integer.toString(numberOfBrokenGoals)));
 			line.put("bDataLoads", (Integer.toString(numberOfBrokenDataLoads)));
+			line.put("minIdle", (Double.toString(minIdle)));
+			line.put("Idleness", (Double.toString(o.getRolesTree().getTree().size() * Parameters.getMaxWorkload() - sumEfforts)));
 			line.put("bgTree", bgTree);
 			
 			out.print("\n");
@@ -124,7 +130,9 @@ public class OrganisationStatistics {
 			this.numberOfBrokenDataLoads += g.getDataLoads().size();
         }
 
-		this.sumEfforts = gTree.getSumEfforts();
+		Parameters.getInstance();
+		sumEfforts = gTree.getSumEfforts();
+		minIdle = Parameters.getMaxWorkload() - (sumEfforts % Parameters.getMaxWorkload());
 	}
 	
     private void createOutPutFolders() {
