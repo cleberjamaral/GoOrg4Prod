@@ -215,19 +215,12 @@ public class RoleNode {
 				//signatureByGoals.add(n.getGoalName());
 				if (n.getGoalName().indexOf('$') > 0)
 					signatureByGoals.add(n.getGoalName().substring(0, n.getGoalName().lastIndexOf('$')));
+				else
+					signatureByGoals.add(n.getGoalName());
 			}
+			Collections.sort(signatureByGoals);
 		}
-		Collections.sort(signatureByGoals);
 		r += "G{" + signatureByGoals + "}";
-
-		//r += "W{" + getWorkloads() + "}";
-		
-		//Example of signatures: g0g0g0g1, g0g1, g0g0g0
-		//r += "G{" + signatureByGoals + "}";
-		
-		// dataloads cannot be part of signature because assigning more goals may
-		// make this role with circular dataloads which will be removed
-		//r += "T{" + getDataLoads() + "}";
 
 		if (getParent() != null) {
 			r += "^";
