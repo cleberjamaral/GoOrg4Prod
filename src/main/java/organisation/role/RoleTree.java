@@ -117,11 +117,7 @@ public class RoleTree {
 			}
 			if (!circularDataload) role.addDataLoad(d.clone());
 		}
-
-/*		// changes on content may change role signature, its children must be updated
-		for (RoleNode child : role.getDescendants())
-			child.setParentSignature(role.signature());
-*/	}
+	}
 
 	/**
 	 * Give the sum of efforts of the whole tree

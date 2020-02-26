@@ -11,7 +11,6 @@ import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -26,7 +25,6 @@ import guru.nidi.graphviz.parse.Parser;
 import guru.nidi.graphviz.engine.GraphvizV8Engine;
 
 import annotations.DataLoad;
-import annotations.Inform;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.role.RoleNode;

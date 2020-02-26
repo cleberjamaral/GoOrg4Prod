@@ -90,7 +90,7 @@ public class RoleNode {
 	}
 
 	private DataLoad getDataLoad(DataLoad dataload) {
-		for (DataLoad d : this.dataloads) 
+		for (DataLoad d : getDataLoads()) 
 			if (d.equals(dataload)) {
 				return d;
 			}
@@ -98,12 +98,26 @@ public class RoleNode {
 		return null;
 	}
 	
+	private void removeDataLoad(DataLoad dataload) {
+		getDataLoads().remove(dataload);
+	}
+
 	public void addDataLoad(DataLoad dataload) {
-		if (this.dataloads.contains(dataload)) {
-			DataLoad d = getDataLoad(dataload);
-			d.setValue((double) d.getValue() + (double) dataload.getValue());
-		} else {
-			this.dataloads.add(dataload);
+		// in roles getSender() always return null it must be done by getSenderName()
+		boolean circularDataload = false;
+		for (GoalNode g : getAssignedGoals()) {
+			if (g.getGoalName().equals(dataload.getSenderName())) {
+				circularDataload = true;
+			}
+		}
+		// Do not add "circular" dataloads
+		if (!circularDataload) {
+			if (this.dataloads.contains(dataload)) {
+				DataLoad d = getDataLoad(dataload);
+				d.setValue((double) d.getValue() + (double) dataload.getValue());
+			} else {
+				this.dataloads.add(dataload);
+			}
 		}
 	}
 	
@@ -139,6 +153,15 @@ public class RoleNode {
 	}
 	
 	public void assignGoal(GoalNode g) {
+		// on assigning a goal a dataload may become circular
+		List<DataLoad> toRemove = new ArrayList<>();
+		for (DataLoad d : getDataLoads()) {
+			if (d.getSenderName().equals(g.getGoalName()))
+				toRemove.add(d);
+		}
+		
+		toRemove.forEach(dl -> {removeDataLoad(dl);}); 
+		
 		this.assignedGoals.add(g);
 	}
 
@@ -236,12 +259,12 @@ public class RoleNode {
 		// parent is resolved by its cloned source parent's name
 		clone.setParentName(getParentName());
 
-		for (Workload w : this.workloads) 
+		for (Workload w : getWorkloads()) 
 			clone.addWorkload(w.clone());
 
-		for (GoalNode goal : this.assignedGoals) 
-			if (!clone.assignedGoals.contains(goal)) 
-				clone.assignedGoals.add(goal);
+		for (GoalNode goal : getAssignedGoals()) 
+			if (!clone.getAssignedGoals().contains(goal)) 
+				clone.getAssignedGoals().add(goal);
 
 		// Copy all "non-circular" dataloads to new role (informs are not used for roles)
 		for (DataLoad d : this.getDataLoads()) {
@@ -249,8 +272,6 @@ public class RoleNode {
 			for (GoalNode g : clone.getAssignedGoals()) {
 				if (g.getGoalName().equals(d.getSenderName())) {
 					circularDataload = true;
-				} else {
-					
 				}
 			}
 			if (!circularDataload) clone.addDataLoad(d.clone());
@@ -263,7 +284,7 @@ public class RoleNode {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.assignedGoals == null) ? 0 : this.assignedGoals.hashCode());
+		result = prime * result + ((getAssignedGoals() == null) ? 0 : getAssignedGoals().hashCode());
 		return result;
 	}
 
@@ -276,10 +297,10 @@ public class RoleNode {
 		if (getClass() != obj.getClass())
 			return false;
 		RoleNode other = (RoleNode) obj;
-		if (this.assignedGoals == null) {
-			if (other.assignedGoals != null)
+		if (this.getAssignedGoals() == null) {
+			if (other.getAssignedGoals() != null)
 				return false;
-		} else if (!assignedGoals.equals(other.assignedGoals))
+		} else if (!getAssignedGoals().equals(other.getAssignedGoals()))
 			return false;
 		return true;
 	}
