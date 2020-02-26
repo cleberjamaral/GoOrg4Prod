@@ -133,12 +133,24 @@ public class Organisation implements Estado, Antecessor {
 
 	public boolean validateOutput() throws OutputDoesNotMatchWithInput {
 		
+		matchSumWorkload();
+		
+		checkNumberOfWorkloads();
+
+		matchNumberOfGoals();
+		
+		return true;
+	}
+
+	private void matchSumWorkload() throws OutputDoesNotMatchWithInput {
 		// checking if sum of efforts match
 		if (Math.abs(goalsTree.getSumEfforts() - rolesTree.getSumWorkload()) > 0.01) {
 			throw new OutputDoesNotMatchWithInput(
 					"The sum of efforts of the goals tree and the created organisation does not match!");
 		}
-		
+	}
+
+	private void checkNumberOfWorkloads() throws OutputDoesNotMatchWithInput {
 		// number of workloads must be equal or lower (similar workloads can be joined)
 		int goalsTreeNumberOfWorkloads = 0;
 		for (GoalNode g : goalsTree.getTree())
@@ -148,15 +160,15 @@ public class Organisation implements Estado, Antecessor {
 			goalsTreeNumberOfWorkloads += r.getWorkloads().size();
 		if (organisationNumberOfWorkloads > goalsTreeNumberOfWorkloads)
 			throw new OutputDoesNotMatchWithInput("There are more workloads in the output than in the input!");
+	}
 
+	private void matchNumberOfGoals() throws OutputDoesNotMatchWithInput {
 		// number of goals in the goals tree must be same as the allocated ones
 		int nAssignedGoals = 0;
 		for (final RoleNode or : this.getRolesTree().getTree()) nAssignedGoals += or.getAssignedGoals().size();
 		GoalTree gTree = GoalTree.getInstance();
 		if (nAssignedGoals != gTree.getTree().size())
 			throw new OutputDoesNotMatchWithInput("There are more workloads in the output than in the input!");
-		
-		return true;
 	}
 
 	public int custo() {
