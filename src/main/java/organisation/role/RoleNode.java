@@ -199,38 +199,34 @@ public class RoleNode {
 	public boolean hasParentGoal(GoalNode g) {
 		return getAssignedGoals().contains(g.getParent());
 	}
-	
+
 	/**
-	 * Signature makes this role unique in a tree
-	 * It differs from toString because signature has no reference to other nodes
-	 * 
-	 * @return an unique string
+	 * Generate a signature of this role which will be used to make a signature of
+	 * the tree which makes a search state unique
 	 */
-	public String signature() {
+	public String toString() {
 		String r = "";
 
-		List<String> assignedGoals = new ArrayList<>();
+		List<String> signatureByGoals = new ArrayList<>();
 		if ((getAssignedGoals() != null) && (!getAssignedGoals().isEmpty())) {
 			Iterator<GoalNode> iterator = getAssignedGoals().iterator(); 
 			while (iterator.hasNext()) {
 				GoalNode n = iterator.next(); 
-				assignedGoals.add(n.getGoalName());
+				//signatureByGoals.add(n.getGoalName());
+				signatureByGoals.add(n.getGoalName().substring(0, n.getGoalName().lastIndexOf('$')));
 			}
 		}
-		Collections.sort(assignedGoals);
-		r += "G{" + assignedGoals + "}";
+		Collections.sort(signatureByGoals);
+		r += "G{" + signatureByGoals + "}";
 
-		r += "W{" + getWorkloads() + "}";
+		//r += "W{" + getWorkloads() + "}";
+		
+		//Example of signatures: g0g0g0g1, g0g1, g0g0g0
+		//r += "G{" + signatureByGoals + "}";
 		
 		// dataloads cannot be part of signature because assigning more goals may
 		// make this role with circular dataloads which will be removed
 		//r += "T{" + getDataLoads() + "}";
-
-		return r;
-	}
-	
-	public String toString() {
-		String r = signature();
 
 		if (getParent() != null) {
 			r += "^";
