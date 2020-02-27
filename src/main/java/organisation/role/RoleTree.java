@@ -34,23 +34,22 @@ public class RoleTree {
 	}
 
 	public void addRoleToTree(RoleNode role) {
-		int countLevels = countLevels(role);
-		if (countLevels > getNumberOfLevels())
-			setNumberOfLevels(countLevels);
+		updateNumberOfLevels(role);
 		
 		tree.add(role);
 	}
 
-	private int countLevels(RoleNode role) {
+	private void updateNumberOfLevels(RoleNode role) {
 		int levels = 1;
 		while (role.getParent() != null) {
 			role = role.getParent();
 			levels++;
 		}
-		
-		return levels;
+
+		if (levels > getNumberOfLevels())
+			setNumberOfLevels(levels);
 	}
-	
+
 	public RoleNode createRole(RoleNode parent, String name, GoalNode g) {
 		RoleNode nr = new RoleNode(parent, name);
 
@@ -74,23 +73,25 @@ public class RoleTree {
 		// first clone all roles
 		for (RoleNode or : this.tree) {
 			RoleNode nnewS = or.cloneContent();
-			clonedTree.addRoleToTree(nnewS);
+			// not using addRoleToTree because parent is still unknown
+			clonedTree.getTree().add(nnewS);
 		}
 
-		int rootNodesFound = 0;
 		// finding right parents in the new tree
 		for (RoleNode or : clonedTree.getTree()) {
 
 			// it is not the root role
 			if (!or.getParentName().equals("")) {
 				or.setParent(clonedTree.findRoleByRoleName(or.getParentName()));
-			} else {
-				rootNodesFound++;
 			}
-			if (rootNodesFound > 1)
-				throw new DuplicatedRootRole(
-						"More than one root role found in this tree! Tree signature: " + clonedTree.getTree());
 		}
+		
+		// update number of levels after knowning parents
+		clonedTree.setNumberOfLevels(1);
+		for (RoleNode or : clonedTree.getTree()) {
+			clonedTree.updateNumberOfLevels(or);
+		}
+		
 		return clonedTree;
 	}
 

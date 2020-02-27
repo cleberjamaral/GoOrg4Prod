@@ -47,11 +47,13 @@ public class OrganisationStatistics {
 		this.fields.add("Roles");
 		this.fields.add("%DataLoads");
 		this.fields.add("%IdleAdded");
+		this.fields.add("Levels");
 		this.fields.add("genStates");
 		this.fields.add("bDataLoads");
 		this.fields.add("rDataLoads");
 		this.fields.add("minIdle");
 		this.fields.add("Idleness");
+		this.fields.add("rTree");
 		this.fields.add("bgTree");
 	}
 	
@@ -92,8 +94,10 @@ public class OrganisationStatistics {
 			double idleness = o.getRolesTree().getTree().size() * Parameters.getMaxWorkload() - sumEfforts;
 			line.put("Idleness", (Double.toString(idleness)));
 			line.put("%IdleAdded", (String.format("%.0f%%", 100 * (idleness - minIdle) / minIdle)));
+			line.put("rTree", o.getRolesTree().toString());
 			line.put("bgTree", bgTree);
 			line.put("genStates", (Integer.toString(o.getGeneratedStates())));
+			line.put("Levels", (Integer.toString(o.getRolesTree().getNumberOfLevels())));
 			
 			out.print("\n");
 			for (int i = 0; i < fields.size(); i++) {
