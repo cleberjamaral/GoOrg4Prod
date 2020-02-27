@@ -30,7 +30,21 @@ public class OrganisationGenerator {
 			p.saveDotAsPNG(name + "_broken_gdt", p.plotGoalTree(name + "_broken_gdt", gTree));
 			s.saveDataOfBrokenTree();
 			
+			int openedStates = 0;
+			int nStates = 0;
+			for (int i = 0; i < 7; i++) {
+				if (i == 0) {
+					openedStates = 1;
+				} else {
+					openedStates = (openedStates * i) * 3;
+				}
+				nStates += openedStates;
+			}
+			
+			System.out.println("\n\nEstimated number of states to visit:" + nStates);
+
 			inicial = new Organisation(name, gTree, c, oneSolution);
+			
 
 			if (search.equals("BFS")) {
 				BuscaLargura busca = new BuscaLargura();
