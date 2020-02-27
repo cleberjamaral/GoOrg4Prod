@@ -4,7 +4,6 @@ import busca.BuscaLargura;
 import busca.Nodo;
 import organisation.OrganisationStatistics;
 import organisation.Parameters;
-import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.search.Organisation;
@@ -34,7 +33,7 @@ public class OrganisationTest {
 	}
 
 	@Test
-	public void testOrgSingleGoals() {
+	public void testOrgWithNoWorkload() {
 		System.out.println("\n\ntestOrgSingleGoals");
 		
 		//parameters
@@ -70,12 +69,11 @@ public class OrganisationTest {
 			final Nodo n = new BuscaLargura().busca(o);
 
 			try {
-				System.out.println("Organisation with all cost functions must have only one role.");
-				//System.out.println("rTree:" + ((Organisation) n.getEstado()).getRolesTree().getTree() + ":" + c.name());
-				assertEquals(1, ((Organisation) n.getEstado()).getRolesTree().getTree().size());
-
-				assertTrue(((Organisation) n.getEstado()).validateOutput());
-			} catch (OutputDoesNotMatchWithInput e) {
+				System.out.println("All goals without workload results in an empty organsiation, there is nothing to do!");
+				System.out.println("rTree:" + c.name());
+				
+				assertNull((Organisation) n.getEstado());
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
