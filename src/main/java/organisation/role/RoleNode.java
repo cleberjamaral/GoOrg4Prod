@@ -280,6 +280,19 @@ public class RoleNode {
 	    return clone;
 	}
 	
+	public double calculateAddedDataLoad(GoalNode goal) {
+		double addedDataLoad = 0;
+		// Considering only "non-circular" dataloads to new role (informs are not used for roles)
+		for (DataLoad d : goal.getDataLoads()) {
+			for (GoalNode g : this.getAssignedGoals()) {
+				if (!g.getGoalName().equals(d.getSenderName())) {
+					addedDataLoad += (double) d.getValue();
+				}
+			}
+		}
+		return addedDataLoad;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

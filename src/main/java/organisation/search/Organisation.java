@@ -185,18 +185,17 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public void addRootRole(List<Estado> suc, GoalNode goalToAssign) {
-
 		try {
+			// Prune states with effort equal to 0
+			if (goalToAssign.getSumWorkload() == 0) {
+				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#1: "
+						+ goalToAssign.getSumWorkload());
+				return;
+			}
+
 			Organisation newState = (Organisation) createState(goalToAssign);
 
 			RoleNode nr = newState.rolesTree.createRole(null, "r" + newState.rolesTree.size(), goalToAssign);
-			
-			// Prune states with effort equal to 0
-			if (nr.getSumWorkload() == 0) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#1: " + nr.getAssignedGoals()
-						+ ", efforts: " + nr.getSumWorkload() + " = 0");
-				return;
-			}
 
 			newState.cost = penalty.getAddRootRolePenalty(goalToAssign, this.getRolesTree(), newState.getRolesTree());
 			newState.accCost = this.accCost + newState.cost;
@@ -214,8 +213,6 @@ public class Organisation implements Estado, Antecessor {
 	public void addRole(RoleNode aGivenRole, List<Estado> suc, GoalNode goalToAssign) {
 
 		try {
-			Organisation newState = (Organisation) createState(goalToAssign);
-
 			// cannot create add a role without a root
 			if (this.rolesTree.size() < 1) {
 				LOG.debug(
@@ -223,22 +220,29 @@ public class Organisation implements Estado, Antecessor {
 				return;
 			}
 
-			RoleNode nr = newState.rolesTree.createRole(newState.rolesTree.findRoleByRoleName(aGivenRole.getRoleName()),
-					"r" + newState.rolesTree.size(), goalToAssign);
-			
 			// Prune states with effort equal to 0
-			if (nr.getSumWorkload() == 0) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#1: " + nr.getAssignedGoals()
-						+ ", efforts: " + nr.getSumWorkload() + " = 0");
+			if (goalToAssign.getSumWorkload() == 0) {
+				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#1");
 				return;
 			}
 
-			// Prune states which parent cannot afford data amount 
-			if (nr.getParentSumDataAmount() > Parameters.getMaxDataLoad()) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#2: " + nr.getAssignedGoals()
-						+ ", amount: " + nr.getParentSumDataAmount() + " > " + Parameters.getMaxDataLoad());
+			// Prune states with effort greater than max (should never happen if the goals were broken properly)
+			if (goalToAssign.getSumWorkload() > Parameters.getMaxWorkload()) {
+				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#2");
 				return;
 			}
+
+			// Prune states which parent cannot afford data amount
+			if (aGivenRole.getParentSumDataAmount() + aGivenRole.calculateAddedDataLoad(goalToAssign) > Parameters.getMaxDataLoad()) {
+				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#3");
+				return;
+			}
+
+			Organisation newState = (Organisation) createState(goalToAssign);
+
+			RoleNode nr = newState.rolesTree.createRole(newState.rolesTree.findRoleByRoleName(aGivenRole.getRoleName()),
+					"r" + newState.rolesTree.size(), goalToAssign);
+			
 
 			newState.cost = penalty.getAddRolePenalty(aGivenRole, goalToAssign, this.getRolesTree(), newState.getRolesTree());
 			newState.accCost = this.accCost + newState.cost;
@@ -255,8 +259,6 @@ public class Organisation implements Estado, Antecessor {
 	public void joinRole(RoleNode hostRole, List<Estado> suc, GoalNode goalToAssign) {
 
 		try {
-			Organisation newState = (Organisation) createState(goalToAssign);
-
 			// cannot create add a role without a root
 			if (this.rolesTree.size() < 1) {
 				LOG.debug(
@@ -264,21 +266,27 @@ public class Organisation implements Estado, Antecessor {
 				return;
 			}
 
-			RoleNode jr = newState.rolesTree.assignGoalToRoleByRoleName(hostRole.getRoleName(), goalToAssign);
-
+			// Prune states with effort equal to 0 (should never happen since a role without effort should not be created)
+			if (hostRole.getSumWorkload() + goalToAssign.getSumWorkload() == 0) {
+				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#1");
+				return;
+			}
+			
 			// Prune states with effort greater than max
-			if (jr.getSumWorkload() > Parameters.getMaxWorkload()) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") joinRole pruned#1: " + jr.getSumWorkload()
-						+ " > " + Parameters.getMaxWorkload());
+			if (hostRole.getSumWorkload() + goalToAssign.getSumWorkload() > Parameters.getMaxWorkload()) {
+				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") joinRole pruned#2");
 				return;
 			}
 
 			// Prune states which parent cannot afford data amount 
-			if (jr.getParentSumDataAmount() > Parameters.getMaxDataLoad()) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") joinRole pruned#2: " + jr.getAssignedGoals()
-						+ ", amount: " + jr.getParentSumDataAmount() + " > " + Parameters.getMaxDataLoad());
+			if (hostRole.getParentSumDataAmount() + hostRole.calculateAddedDataLoad(goalToAssign) > Parameters.getMaxDataLoad()) {
+				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") joinRole pruned#3");
 				return;
 			}
+
+			Organisation newState = (Organisation) createState(goalToAssign);
+
+			RoleNode jr = newState.rolesTree.assignGoalToRoleByRoleName(hostRole.getRoleName(), goalToAssign);
 
 			newState.cost = penalty.getJoinRolePenalty(hostRole, goalToAssign, this.getRolesTree(), newState.getRolesTree());
 			newState.accCost = this.accCost + newState.cost;
