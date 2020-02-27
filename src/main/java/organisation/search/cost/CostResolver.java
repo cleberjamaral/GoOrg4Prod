@@ -41,23 +41,34 @@ public class CostResolver {
 		
 	}
 
-	public int getNonKinshipPenalty(RoleNode role, GoalNode goal) {
-		return Parameters.getMinimalPenalty();
-/*		// the given role has goal's parent associated?
-		if (role.hasParentGoal(goal))
-			return Parameters.getMinimalPenalty();
+	public int getAddRootRolePenalty(GoalNode goal, RoleTree oldTree, RoleTree newTree) throws RoleNotFound {
+		int cost = Parameters.getMinimalPenalty();
 
-		// the given role has a goal which is sibling of the given goal?
-		if (role.hasSiblingGoal(goal))
-			return Parameters.getMinimalPenalty();
+		// High punishment when another role could receive the workload making the tree more generalist
+		if (costFunction == Cost.GENERALIST) {
+			
+			// publish if it is creating more roles than the ideal
+			if (oldTree.getTree().size() >= GoalTree.getInstance().idealNumberOfRoles()) {
+				return cost + Parameters.getExtraPenalty();
+			}
 
-		// Punish association of goals with no kinship
-		return Parameters.getDefaultPenalty();*/
+			// check if another role should receive this workload to become generalist
+			for (RoleNode r : oldTree.getTree()) {
+				// no cost: If there is a role that does not have the workloads and could receive it
+				if ((r.getWorkloads().containsAll(goal.getWorkloads()))
+						&& (r.getSumWorkload() + goal.getSumWorkload() <= Parameters.getMaxWorkload())) {
+
+					return cost + Parameters.getExtraPenalty();
+				}
+			}
+		}
+
+		return cost;
 	}
 	
 	public int getAddRolePenalty(RoleNode role, GoalNode goal, RoleTree oldTree, RoleTree newTree) throws RoleNotFound {
 
-		int cost = getNonKinshipPenalty(role, goal);
+		int cost = Parameters.getMinimalPenalty();
 
 		// High punishment when another role could receive the workload making the tree more generalist
 		if (costFunction == Cost.GENERALIST) {
@@ -116,7 +127,7 @@ public class CostResolver {
 
 	public int getJoinRolePenalty(RoleNode role, GoalNode goal, RoleTree oldTree, RoleTree newTree) throws RoleNotFound {
 
-		int cost = getNonKinshipPenalty(role, goal);
+		int cost = Parameters.getMinimalPenalty();
 		// Punish when workload already exists, trying to put it to another generalist role
 		if (costFunction == Cost.GENERALIST) {
 

@@ -78,23 +78,12 @@ public class Organisation implements Estado, Antecessor {
 		Organisation.generatedStates = 0;
 
 		goalsTree = gTree;
-		goalsTree.addSuccessorsToList(goalSuccessors, goalsTree.getRootNode());
+		this.goalSuccessors.add(goalsTree.getRootNode());
+		goalsTree.addSuccessorsToList(this.goalSuccessors, goalsTree.getRootNode());
 		
 		// Used to infer a bad decision on the search
 		Parameters.setDefaultPenalty(this.goalSuccessors.size() + 1);
 		penalty = new CostResolver(costFunction);
-		
-		// do create root role transformation once
-		addFirstRootRole(goalsTree.getRootNode());
-	}
-
-	private void addFirstRootRole(GoalNode goalToAssign) {
-		// It is the first state that is going to be created
-		generatedStates++;
-
-		RoleNode root = this.rolesTree.createRole(null, "r" + this.rolesTree.size(), goalToAssign);
-
-		logTransformation("addFirstRootRole", this, root);
 	}
 
 	public boolean ehMeta() {
@@ -182,9 +171,11 @@ public class Organisation implements Estado, Antecessor {
 		// add all possible successors
 		for (GoalNode goalToBeAssociated : goalSuccessors) {
 
+			// add each goal as root
+			addRootRole(suc, goalToBeAssociated);
+
 			// add all children as possible successors
 			for (RoleNode role : rolesTree.getTree()) {
-				addRootRole(role, suc, goalToBeAssociated);
 				addRole(role, suc, goalToBeAssociated);
 				joinRole(role, suc, goalToBeAssociated);
 			}
@@ -193,7 +184,7 @@ public class Organisation implements Estado, Antecessor {
 		return suc;
 	}
 
-	public void addRootRole(RoleNode aGivenRole, List<Estado> suc, GoalNode goalToAssign) {
+	public void addRootRole(List<Estado> suc, GoalNode goalToAssign) {
 
 		try {
 			Organisation newState = (Organisation) createState(goalToAssign);
@@ -207,14 +198,14 @@ public class Organisation implements Estado, Antecessor {
 				return;
 			}
 
-			newState.cost = penalty.getAddRolePenalty(aGivenRole, goalToAssign, this.getRolesTree(), newState.getRolesTree());
+			newState.cost = penalty.getAddRootRolePenalty(goalToAssign, this.getRolesTree(), newState.getRolesTree());
 			newState.accCost = this.accCost + newState.cost;
 
 			suc.add(newState);
 
 			logTransformation("addRootRole", newState, nr);
 
-		} catch (RoleNotFound e) {
+		} catch (Exception e) {
 			LOG.fatal("Fatal error on addRole! " + e.getMessage());
 		}
 	}
@@ -224,6 +215,13 @@ public class Organisation implements Estado, Antecessor {
 
 		try {
 			Organisation newState = (Organisation) createState(goalToAssign);
+
+			// cannot create add a role without a root
+			if (this.rolesTree.size() < 1) {
+				LOG.debug(
+						"#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#0: " + this.rolesTree.size());
+				return;
+			}
 
 			RoleNode nr = newState.rolesTree.createRole(newState.rolesTree.findRoleByRoleName(aGivenRole.getRoleName()),
 					"r" + newState.rolesTree.size(), goalToAssign);
@@ -258,6 +256,13 @@ public class Organisation implements Estado, Antecessor {
 
 		try {
 			Organisation newState = (Organisation) createState(goalToAssign);
+
+			// cannot create add a role without a root
+			if (this.rolesTree.size() < 1) {
+				LOG.debug(
+						"#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#0: " + this.rolesTree.size());
+				return;
+			}
 
 			RoleNode jr = newState.rolesTree.assignGoalToRoleByRoleName(hostRole.getRoleName(), goalToAssign);
 
