@@ -85,16 +85,16 @@ public class Organisation implements Estado, Antecessor {
 		penalty = new CostResolver(costFunction);
 		
 		// do create root role transformation once
-		addRootRole(goalsTree.getRootNode());
+		addFirstRootRole(goalsTree.getRootNode());
 	}
 
-	private void addRootRole(GoalNode goalToAssign) {
+	private void addFirstRootRole(GoalNode goalToAssign) {
 		// It is the first state that is going to be created
 		generatedStates++;
 
 		RoleNode root = this.rolesTree.createRole(null, "r" + this.rolesTree.size(), goalToAssign);
 
-		logTransformation("rootRole", this, root);
+		logTransformation("addFirstRootRole", this, root);
 	}
 
 	public boolean ehMeta() {
@@ -184,6 +184,7 @@ public class Organisation implements Estado, Antecessor {
 
 			// add all children as possible successors
 			for (RoleNode role : rolesTree.getTree()) {
+				addRootRole(role, suc, goalToBeAssociated);
 				addRole(role, suc, goalToBeAssociated);
 				joinRole(role, suc, goalToBeAssociated);
 			}
@@ -192,6 +193,33 @@ public class Organisation implements Estado, Antecessor {
 		return suc;
 	}
 
+	public void addRootRole(RoleNode aGivenRole, List<Estado> suc, GoalNode goalToAssign) {
+
+		try {
+			Organisation newState = (Organisation) createState(goalToAssign);
+
+			RoleNode nr = newState.rolesTree.createRole(null, "r" + newState.rolesTree.size(), goalToAssign);
+			
+			// Prune states with effort equal to 0
+			if (nr.getSumWorkload() == 0) {
+				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#1: " + nr.getAssignedGoals()
+						+ ", efforts: " + nr.getSumWorkload() + " = 0");
+				return;
+			}
+
+			newState.cost = penalty.getAddRolePenalty(aGivenRole, goalToAssign, this.getRolesTree(), newState.getRolesTree());
+			newState.accCost = this.accCost + newState.cost;
+
+			suc.add(newState);
+
+			logTransformation("addRootRole", newState, nr);
+
+		} catch (RoleNotFound e) {
+			LOG.fatal("Fatal error on addRole! " + e.getMessage());
+		}
+	}
+
+	
 	public void addRole(RoleNode aGivenRole, List<Estado> suc, GoalNode goalToAssign) {
 
 		try {
