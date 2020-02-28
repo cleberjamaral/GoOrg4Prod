@@ -389,7 +389,7 @@ public class Organisation implements Estado, Antecessor {
 	 * 
 	 * @return an integer of worst case number organisations that will be created 
 	 */
-	public int getNumberOfOrganisationsEstimation() {
+	public int getEstimatedNumberOfOrganisations() {
 		int openedStates = 0;
 		int nStates = 1;
 		for (int i = 0; i < goalsTree.getTree().size(); i++) {
