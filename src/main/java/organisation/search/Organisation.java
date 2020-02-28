@@ -170,14 +170,16 @@ public class Organisation implements Estado, Antecessor {
 
 		// add all possible successors
 		for (GoalNode goalToBeAssociated : goalSuccessors) {
-
 			// add each goal as root
-			addRootRole(suc, goalToBeAssociated);
-
-			// add all children as possible successors
-			for (RoleNode role : rolesTree.getTree()) {
-				addRole(role, suc, goalToBeAssociated);
-				joinRole(role, suc, goalToBeAssociated);
+			if (rolesTree.getTree().size() == 0) {
+				addRootRole(suc, goalToBeAssociated);
+			} else {
+				// add all children as possible successors
+				for (RoleNode role : rolesTree.getTree()) {
+					addRootRole(suc, goalToBeAssociated);
+					addRole(role, suc, goalToBeAssociated);
+					joinRole(role, suc, goalToBeAssociated);
+				}
 			}
 		}
 
@@ -216,7 +218,7 @@ public class Organisation implements Estado, Antecessor {
 			// cannot create add a role without a root
 			if (this.rolesTree.size() < 1) {
 				LOG.debug(
-						"#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#0: " + this.rolesTree.size());
+						"#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#0");
 				return;
 			}
 
@@ -261,8 +263,7 @@ public class Organisation implements Estado, Antecessor {
 		try {
 			// cannot create add a role without a root
 			if (this.rolesTree.size() < 1) {
-				LOG.debug(
-						"#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#0: " + this.rolesTree.size());
+				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#0");
 				return;
 			}
 
@@ -381,4 +382,27 @@ public class Organisation implements Estado, Antecessor {
 		return Organisation.generatedStates;
 	}
 
+	/**
+	 * This is the worst case scenario of created states in the search tree
+	 * It is not considering any possible pruning, even the ones that occurred
+	 * without constraints 
+	 * 
+	 * @return an integer of worst case number organisations that will be created 
+	 */
+	public int getNumberOfOrganisationsEstimation() {
+		int openedStates = 0;
+		int nStates = 1;
+		for (int i = 0; i < goalsTree.getTree().size(); i++) {
+			if (i == 0) {
+				openedStates = goalsTree.getTree().size();
+			} else {
+				int lastOpenedStates = openedStates;
+				openedStates = lastOpenedStates * i * 3;
+			}
+			nStates += openedStates;
+		}
+		return nStates;
+	}
+
+	
 }
