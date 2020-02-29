@@ -9,9 +9,11 @@ import organisation.exception.GoalNotFound;
 import organisation.goal.GoalTree;
 import organisation.search.Organisation;
 import organisation.search.cost.Cost;
+import simplelogger.SimpleLogger;
 
 public class OrganisationGenerator {
     Organisation inicial;
+    private SimpleLogger LOG = SimpleLogger.getInstance();
 
 	public void generateOrganisationFromTree(String name, Cost c, String search, boolean oneSolution) {
 		try {
@@ -31,7 +33,7 @@ public class OrganisationGenerator {
 			s.saveDataOfBrokenTree();
 			
 			inicial = new Organisation(name, gTree, c, oneSolution);
-			System.out.println("\n\nEstimated number of states to visit (worst case): "
+			LOG.info("\n\nEstimated number of states to visit (worst case): "
 					+ inicial.getEstimatedNumberOfOrganisations());			
 
 			if (search.equals("BFS")) {
