@@ -45,14 +45,14 @@ public class OrganisationStatistics {
 		//fields and sequence of columns in the CSV file
 		this.fields.add("id");
 		this.fields.add("Roles");
-		this.fields.add("%DataLoads");
-		this.fields.add("%IdleAdded");
+		this.fields.add("%DL+");
+		this.fields.add("%Idle+");
 		this.fields.add("Levels");
-		this.fields.add("genStates");
-		this.fields.add("bDataLoads");
-		this.fields.add("rDataLoads");
-		this.fields.add("minIdle");
-		this.fields.add("Idleness");
+		this.fields.add("States");
+		this.fields.add("bDL");
+		this.fields.add("rDL");
+		this.fields.add("miIdle");
+		this.fields.add("Idlene");
 		this.fields.add("rTree");
 		this.fields.add("bgTree");
 	}
@@ -87,16 +87,16 @@ public class OrganisationStatistics {
 			Parameters.getInstance();
 			line.put("id", (Integer.toString(++id)));
 			line.put("Roles", (Integer.toString(o.getRolesTree().getTree().size())));
-			line.put("bDataLoads", (String.format("%.2f", originalDataLoad)));
-			line.put("rDataLoads", (String.format("%.2f", assignedDataLoad)));
-			line.put("%DataLoads", (String.format("%.0f%%", 100 * assignedDataLoad / originalDataLoad)));
-			line.put("minIdle", (Double.toString(minIdle)));
+			line.put("bDL", (String.format("%.2f", originalDataLoad)));
+			line.put("rDL", (String.format("%.2f", assignedDataLoad)));
+			line.put("%DL+", (String.format("%.0f%%", 100 * assignedDataLoad / originalDataLoad)));
+			line.put("miIdle", (Double.toString(minIdle)));
 			double idleness = o.getRolesTree().getTree().size() * Parameters.getMaxWorkload() - sumEfforts;
-			line.put("Idleness", (Double.toString(idleness)));
-			line.put("%IdleAdded", (String.format("%.0f%%", 100 * (idleness - minIdle) / minIdle)));
+			line.put("Idlene", (Double.toString(idleness)));
+			line.put("%Idle+", (String.format("%.0f%%", 100 * (idleness - minIdle) / minIdle)));
 			line.put("rTree", o.getRolesTree().toString());
 			line.put("bgTree", bgTree);
-			line.put("genStates", (Integer.toString(o.getGeneratedStates())));
+			line.put("States", (Integer.toString(o.getGeneratedStates())));
 			line.put("Levels", (Integer.toString(o.getRolesTree().getNumberOfLevels())));
 			
 			out.print("\n");
