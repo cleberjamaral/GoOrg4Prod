@@ -27,8 +27,8 @@ public class OrganisationStatistics {
 	
 	int id = 0;
 	double originalDataLoad = 0.0;
+	double originalWorkLoad = 0.0;
 	double minIdle = 0.0;
-	double sumEfforts = 0.0;
 	String bgTree = "";
 	
 	List<String> fields = new ArrayList<>();
@@ -45,14 +45,16 @@ public class OrganisationStatistics {
 		//fields and sequence of columns in the CSV file
 		this.fields.add("id");
 		this.fields.add("Roles");
+		this.fields.add("%WL+");
 		this.fields.add("%DL+");
-		this.fields.add("%Idle+");
 		this.fields.add("Levels");
 		this.fields.add("States");
-		this.fields.add("bDL");
-		this.fields.add("rDL");
 		this.fields.add("miIdle");
 		this.fields.add("Idlene");
+		this.fields.add("bWL");
+		this.fields.add("rWL");
+		this.fields.add("bDL");
+		this.fields.add("rDL");
 		this.fields.add("rTree");
 		this.fields.add("bgTree");
 	}
@@ -77,6 +79,8 @@ public class OrganisationStatistics {
 			
 			Map<String,String> line = new HashMap<>();
 			
+			double assignedWorkLoad = o.getRolesTree().getSumWorkload();
+			
 			double assignedDataLoad = 0.0;
 
 			for (final RoleNode or : o.getRolesTree().getTree()) {
@@ -87,13 +91,26 @@ public class OrganisationStatistics {
 			Parameters.getInstance();
 			line.put("id", (Integer.toString(++id)));
 			line.put("Roles", (Integer.toString(o.getRolesTree().getTree().size())));
+			line.put("bWL", (String.format("%.2f", originalWorkLoad)));
+			line.put("rWL", (String.format("%.2f", assignedWorkLoad)));
 			line.put("bDL", (String.format("%.2f", originalDataLoad)));
 			line.put("rDL", (String.format("%.2f", assignedDataLoad)));
-			line.put("%DL+", (String.format("%.0f%%", 100 * assignedDataLoad / originalDataLoad)));
+			
+			double addedWorkLoad = 0;
+			if (originalWorkLoad > 0) addedWorkLoad = 100 * assignedWorkLoad / originalWorkLoad;
+			line.put("%WL+", (String.format("%.0f%%", addedWorkLoad)));
+
+			double addedDataLoad = 0;
+			if (originalDataLoad > 0) addedDataLoad = 100 * assignedDataLoad / originalDataLoad;
+			line.put("%DL+", (String.format("%.0f%%", addedDataLoad)));
+			
 			line.put("miIdle", (Double.toString(minIdle)));
-			double idleness = o.getRolesTree().getTree().size() * Parameters.getMaxWorkload() - sumEfforts;
+			
+			double idleness = o.getRolesTree().getTree().size() * Parameters.getMaxWorkload() - originalWorkLoad;
 			line.put("Idlene", (Double.toString(idleness)));
+			
 			line.put("%Idle+", (String.format("%.0f%%", 100 * (idleness - minIdle) / minIdle)));
+			
 			line.put("rTree", o.getRolesTree().toString());
 			line.put("bgTree", bgTree);
 			line.put("States", (Integer.toString(o.getGeneratedStates())));
@@ -120,8 +137,8 @@ public class OrganisationStatistics {
         }
 
 		Parameters.getInstance();
-		sumEfforts = gTree.getSumEfforts();
-		minIdle = Parameters.getMaxWorkload() - (sumEfforts % Parameters.getMaxWorkload());
+		originalWorkLoad = gTree.getSumEfforts();
+		minIdle = Parameters.getMaxWorkload() - (originalWorkLoad % Parameters.getMaxWorkload());
 	}
 	
     private void createOutPutFolders() {
