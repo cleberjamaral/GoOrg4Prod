@@ -390,15 +390,12 @@ public class Organisation implements Estado, Antecessor {
 	 * @return an integer of worst case number organisations that will be created 
 	 */
 	public int getEstimatedNumberOfOrganisations() {
-		int openedStates = 0;
-		int nStates = 1;
-		for (int i = 0; i < goalsTree.getTree().size(); i++) {
-			if (i == 0) {
-				openedStates = goalsTree.getTree().size();
-			} else {
-				int lastOpenedStates = openedStates;
-				openedStates = lastOpenedStates * i * 3;
-			}
+        // first transformation creates an empty tree
+        int nStates = 1; 
+        // second transformation makes each goal a root role
+		int openedStates = goalsTree.getTree().size(); 
+		for (int i = 1; i < goalsTree.getTree().size(); i++) {
+			openedStates *= i * 3;
 			nStates += openedStates;
 		}
 		return nStates;
