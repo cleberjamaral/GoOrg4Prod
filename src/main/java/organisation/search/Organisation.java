@@ -29,9 +29,7 @@ public class Organisation implements Estado, Antecessor {
 	// Cost penalty used to infer bad decisions on search
 	private static CostResolver penalty;
 	// Number of generated states
-	private static int generatedStates = 0;
-	// Number of generated states
-	private static int prunedStates = 0;
+	private static int nStatesX2 = 0;
 	// a reference to the goals tree used by all states (static to save memory)
 	private static GoalTree goalsTree;
 	// stop algorithm after finding the first solution
@@ -61,7 +59,7 @@ public class Organisation implements Estado, Antecessor {
 	 * This constructor is used on every new state
 	 */
 	private Organisation() {
-		generatedStates++;
+		
 	}
 
 	/**
@@ -75,7 +73,7 @@ public class Organisation implements Estado, Antecessor {
 	public Organisation(String orgName, GoalTree gTree, Cost costFunction, Boolean oneSolution) {
 		Organisation.orgName = orgName;
 		Organisation.oneSolution = oneSolution;
-		Organisation.generatedStates = 0;
+		Organisation.nStatesX2 = 0;
 
 		goalsTree = gTree;
 		this.goalSuccessors.add(goalsTree.getRootNode());
@@ -87,11 +85,12 @@ public class Organisation implements Estado, Antecessor {
 	}
 
 	public boolean ehMeta() {
+		Organisation.nStatesX2++;
 		if (this.goalSuccessors.size() <= 0) {
 			
 			if (!isGoalList.contains(this)) {
 				isGoalList.add(this);
-				LOG.info("#(" + generatedStates + "/" + prunedStates + ") Solution #" + isGoalList.size() + ", "
+				LOG.info("Visited #" + getNStates() + " Solution #" + isGoalList.size() + ", "
 						+ this.toString() + ", Hash: " + this.hashCode() + ", Cost: " + this.accCost + "/" + this.cost);
 		
 				OrganisationPlot p = new OrganisationPlot();
@@ -113,7 +112,7 @@ public class Organisation implements Estado, Antecessor {
 					return false;
 				}
 			} else {
-				LOG.debug("#(" + generatedStates + "/" + prunedStates + ") Duplicated solution!" + ", Hash: "
+				LOG.debug("Visited #" + getNStates() + " Duplicated solution!" + ", Hash: "
 						+ this.hashCode());
 			}
 		}
@@ -190,7 +189,7 @@ public class Organisation implements Estado, Antecessor {
 		try {
 			// Prune states with effort equal to 0
 			if (goalToAssign.getSumWorkload() == 0) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#1: "
+				LOG.debug("Visited #" + getNStates() + " addRole pruned#1: "
 						+ goalToAssign.getSumWorkload());
 				return;
 			}
@@ -217,26 +216,25 @@ public class Organisation implements Estado, Antecessor {
 		try {
 			// cannot create add a role without a root
 			if (this.rolesTree.size() < 1) {
-				LOG.debug(
-						"#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#0");
+				LOG.debug("Visited #" + getNStates() + "  addRole pruned#0");
 				return;
 			}
 
 			// Prune states with effort equal to 0
 			if (goalToAssign.getSumWorkload() == 0) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#1");
+				LOG.debug("Visited #" + getNStates() + " addRole pruned#1");
 				return;
 			}
 
 			// Prune states with effort greater than max (should never happen if the goals were broken properly)
 			if (goalToAssign.getSumWorkload() > Parameters.getMaxWorkload()) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#2");
+				LOG.debug("Visited #" + getNStates() + " addRole pruned#2");
 				return;
 			}
 
 			// Prune states which parent cannot afford data amount
 			if (aGivenRole.getParentSumDataAmount() + aGivenRole.calculateAddedDataLoad(goalToAssign) > Parameters.getMaxDataLoad()) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#3");
+				LOG.debug("Visited #" + getNStates() + " addRole pruned#3");
 				return;
 			}
 
@@ -263,25 +261,25 @@ public class Organisation implements Estado, Antecessor {
 		try {
 			// cannot create add a role without a root
 			if (this.rolesTree.size() < 1) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#0");
+				LOG.debug("Visited #" + getNStates() + " addRole pruned#0");
 				return;
 			}
 
 			// Prune states with effort equal to 0 (should never happen since a role without effort should not be created)
 			if (hostRole.getSumWorkload() + goalToAssign.getSumWorkload() == 0) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") addRole pruned#1");
+				LOG.debug("Visited #" + getNStates() + " addRole pruned#1");
 				return;
 			}
 			
 			// Prune states with effort greater than max
 			if (hostRole.getSumWorkload() + goalToAssign.getSumWorkload() > Parameters.getMaxWorkload()) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") joinRole pruned#2");
+				LOG.debug("Visited #" + getNStates() + " joinRole pruned#2");
 				return;
 			}
 
 			// Prune states which parent cannot afford data amount 
 			if (hostRole.getParentSumDataAmount() + hostRole.calculateAddedDataLoad(goalToAssign) > Parameters.getMaxDataLoad()) {
-				LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") joinRole pruned#3");
+				LOG.debug("Visited #" + getNStates() + " joinRole pruned#3");
 				return;
 			}
 
@@ -317,7 +315,7 @@ public class Organisation implements Estado, Antecessor {
 		try {
 			if (o instanceof Organisation) {
 				if (this.toString().equals(((Organisation) o).toString())) {
-					LOG.debug("#(" + generatedStates + "/" + ++prunedStates + ") Pruned" + this.toString() + ", Hash: "
+					LOG.debug("Visited #" + getNStates() + " Pruned" + this.toString() + ", Hash: "
 							+ o.hashCode());
 					return true;
 				}
@@ -349,6 +347,7 @@ public class Organisation implements Estado, Antecessor {
 	public Organisation createState(GoalNode gn) {
 
 		Organisation newState = new Organisation();
+
 		try {
 			newState.rolesTree = rolesTree.cloneContent();
 
@@ -373,13 +372,19 @@ public class Organisation implements Estado, Antecessor {
 		String parent = "__";
 		if (role.getParent() != null)
 			parent = role.getParent().getRoleName();
-		LOG.trace("#(" + generatedStates + "/" + prunedStates + ") " + transformation + ": " + role.getRoleName() + "^"
+		LOG.trace("Visited #" + getNStates() + " " + transformation + ": " + role.getRoleName() + "^"
 				+ parent + " " + state.rolesTree + ", nSucc: " + state.goalSuccessors + ", Hash: " + state.hashCode()
 				+ ", Cost: " + state.accCost + "/" + state.cost);
 	}
 	
-	public int getGeneratedStates() {
-		return Organisation.generatedStates;
+	/**
+	 * Return the number of visited states
+	 * @return an integer
+	 */
+	public int getNStates() {
+		// visited states is incremented in EhMeta which is visited twice for each state
+		// TODO: check if EhMeta is visited twice for any search algorithm
+		return Organisation.nStatesX2 / 2 + 1;
 	}
 
 	/**

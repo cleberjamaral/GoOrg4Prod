@@ -113,7 +113,7 @@ public class OrganisationStatistics {
 			
 			line.put("rTree", o.getRolesTree().toString());
 			line.put("bgTree", bgTree);
-			line.put("States", (Integer.toString(o.getGeneratedStates())));
+			line.put("States", (Integer.toString(o.getNStates())));
 			line.put("Levels", (Integer.toString(o.getRolesTree().getNumberOfLevels())));
 			
 			out.print("\n");
