@@ -8,6 +8,13 @@
 	xsi:schemaLocation='http://moise.sourceforge.net/os
                         http://moise.sourceforge.net/xml/os.xsd'>
 
+	<automated-design-parameters>
+		<parameter id="maxWorkload" value="8.0"/>
+		<parameter id="maxDataLoad" value="8.0"/>
+		<parameter id="workloadGrain" value="8.0"/>
+		<parameter id="DataLoadGrain" value="8.0"/>
+	</automated-design-parameters>
+
 	<functional-specification>
 		<scheme id="scheme">
 			<goal id="PaintHouse">
