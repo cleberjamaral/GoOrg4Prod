@@ -2,6 +2,7 @@ package organisation;
 
 import java.io.File;
 
+import busca.AEstrela;
 import busca.BuscaLargura;
 import busca.BuscaProfundidade;
 import busca.MostraStatusConsole;
@@ -34,7 +35,7 @@ public class OrganisationGenerator {
 			
 			inicial = new Organisation(name, gTree, c, oneSolution);
 			LOG.info("\n\nEstimated number of states to visit (worst case): "
-					+ inicial.getEstimatedNumberOfOrganisations());			
+					+ inicial.getEstimatedNumberOfOrganisations());
 
 			if (search.equals("BFS")) {
 				BuscaLargura busca = new BuscaLargura();
@@ -50,6 +51,13 @@ public class OrganisationGenerator {
 				status.para();
 			}
 			
+			if (search.equals("A*")) {
+				AEstrela busca = new AEstrela();
+				MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
+				busca.busca(inicial);
+				status.para();
+			}
+
 		} catch (GoalNotFound e) {
 			e.printStackTrace();
 		}

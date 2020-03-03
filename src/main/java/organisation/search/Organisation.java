@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import busca.Antecessor;
 import busca.Estado;
+import busca.Heuristica;
 import organisation.OrganisationPlot;
 import organisation.OrganisationStatistics;
 import organisation.Parameters;
@@ -20,7 +20,7 @@ import organisation.search.cost.Cost;
 import organisation.search.cost.CostResolver;
 import simplelogger.SimpleLogger;
 
-public class Organisation implements Estado, Antecessor {
+public class Organisation implements Estado, Heuristica {
 
 	/*** STATIC ***/
 	private static SimpleLogger LOG = SimpleLogger.getInstance();
@@ -158,11 +158,7 @@ public class Organisation implements Estado, Antecessor {
 		if (nAssignedGoals != gTree.getTree().size())
 			throw new OutputDoesNotMatchWithInput("There are more workloads in the output than in the input!");
 	}
-
-	public int custo() {
-		return cost;
-	}
-
+	
 	/** Lista de sucessores */
 	public List<Estado> sucessores() {
 		List<Estado> suc = new LinkedList<Estado>(); // Lista de sucessores
@@ -298,11 +294,10 @@ public class Organisation implements Estado, Antecessor {
 		}
 	}
 
-	/** Lista de antecessores, para busca bidirecional */
-	public List<Estado> antecessores() {
-		return sucessores();
-	}
-
+	/**
+	 * This is the signature of an organisation. Two organsiations are considered
+	 * equal if they have the same name and exactly same roles tree
+	 */
 	public String toString() {
 		return getOrgName() + rolesTree.toString();
 	}
@@ -337,6 +332,20 @@ public class Organisation implements Estado, Antecessor {
 			return -1;
 	}
 
+	/**
+	 * The cost to generate the individual state
+	 */
+	public int custo() {
+		return cost;
+	}
+
+	/**
+	 * Heuristic, the predicted cost to achieve the target state
+	 */
+	public int h() {
+		return 0;
+	}
+	
 	/**
 	 * Custo acumulado g
 	 */
