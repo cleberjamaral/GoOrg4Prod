@@ -58,9 +58,7 @@ public class Organisation implements Estado, Heuristica {
 	/**
 	 * This constructor is used on every new state
 	 */
-	private Organisation() {
-		
-	}
+	private Organisation() {}
 
 	/**
 	 * This constructor should be used only once for generating the root role
@@ -185,8 +183,7 @@ public class Organisation implements Estado, Heuristica {
 		try {
 			// Prune states with effort equal to 0
 			if (goalToAssign.getSumWorkload() == 0) {
-				LOG.debug("Visited #" + getNStates() + " addRole pruned#1: "
-						+ goalToAssign.getSumWorkload());
+				LOG.debug("Visited #" + getNStates() + " addRole pruned#1");
 				return;
 			}
 
@@ -229,7 +226,7 @@ public class Organisation implements Estado, Heuristica {
 			}
 
 			// Prune states which parent cannot afford data amount
-			if (aGivenRole.getParentSumDataAmount() + aGivenRole.calculateAddedDataLoad(goalToAssign) > Parameters.getMaxDataLoad()) {
+			if ((aGivenRole.getParentSumDataAmount() + aGivenRole.calculateAddedDataLoad(goalToAssign)) > Parameters.getMaxDataLoad()) {
 				LOG.debug("Visited #" + getNStates() + " addRole pruned#3");
 				return;
 			}
@@ -255,7 +252,7 @@ public class Organisation implements Estado, Heuristica {
 	public void joinRole(RoleNode hostRole, List<Estado> suc, GoalNode goalToAssign) {
 
 		try {
-			// cannot create add a role without a root
+			// cannot join a role of an empty tree
 			if (this.rolesTree.size() < 1) {
 				LOG.debug("Visited #" + getNStates() + " addRole pruned#0");
 				return;
@@ -268,13 +265,13 @@ public class Organisation implements Estado, Heuristica {
 			}
 			
 			// Prune states with effort greater than max
-			if (hostRole.getSumWorkload() + goalToAssign.getSumWorkload() > Parameters.getMaxWorkload()) {
+			if ((hostRole.getSumWorkload() + goalToAssign.getSumWorkload()) > Parameters.getMaxWorkload()) {
 				LOG.debug("Visited #" + getNStates() + " joinRole pruned#2");
 				return;
 			}
 
 			// Prune states which parent cannot afford data amount 
-			if (hostRole.getParentSumDataAmount() + hostRole.calculateAddedDataLoad(goalToAssign) > Parameters.getMaxDataLoad()) {
+			if ((hostRole.getParentSumDataAmount() + hostRole.calculateAddedDataLoad(goalToAssign)) > Parameters.getMaxDataLoad()) {
 				LOG.debug("Visited #" + getNStates() + " joinRole pruned#3");
 				return;
 			}
