@@ -18,6 +18,7 @@ import organisation.role.RoleNode;
 import organisation.role.RoleTree;
 import organisation.search.cost.Cost;
 import organisation.search.cost.CostResolver;
+import organisation.search.cost.HeuristicResolver;
 import simplelogger.SimpleLogger;
 
 public class Organisation implements Estado, Heuristica {
@@ -28,6 +29,8 @@ public class Organisation implements Estado, Heuristica {
 	private static List<Organisation> isGoalList = new ArrayList<Organisation>();
 	// Cost penalty used to infer bad decisions on search
 	private static CostResolver penalty;
+	// Heuristic used to infer bad decisions on search
+	private static HeuristicResolver heuristic;
 	// Number of generated states
 	private static int nStatesX2 = 0;
 	// a reference to the goals tree used by all states (static to save memory)
@@ -80,6 +83,7 @@ public class Organisation implements Estado, Heuristica {
 		// Used to infer a bad decision on the search
 		Parameters.setDefaultPenalty(this.goalSuccessors.size() + 1);
 		penalty = new CostResolver(costFunction);
+		heuristic = new HeuristicResolver(costFunction);
 	}
 
 	public boolean ehMeta() {
@@ -340,6 +344,11 @@ public class Organisation implements Estado, Heuristica {
 	 * Heuristic, the predicted cost to achieve the target state
 	 */
 	public int h() {
+		try {
+			return heuristic.getPedictedCost(this.goalSuccessors, this.rolesTree);
+		} catch (RoleNotFound e) {
+			e.printStackTrace();
+		}
 		return 0;
 	}
 	
