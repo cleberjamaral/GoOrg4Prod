@@ -12,7 +12,8 @@
 		<parameter id="maxWorkload" value="8.0"/>
 		<parameter id="maxDataLoad" value="8.0"/>
 		<parameter id="workloadGrain" value="8.0"/>
-		<parameter id="DataLoadGrain" value="8.0"/>
+		<parameter id="dataLoadGrain" value="8.0"/>
+		<parameter id="oneSolution" value="true"/>
 	</automated-design-parameters>
 
 	<functional-specification>

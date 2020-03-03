@@ -75,8 +75,10 @@ public class OrganisationXMLParser {
                 			Parameters.setMaxDataLoad(Double.parseDouble(eParameter.getAttribute("value")));
                 		if (eParameter.getAttribute("id").equals("workloadGrain")) 
                 			Parameters.setWorkloadGrain(Double.parseDouble(eParameter.getAttribute("value")));
-                		if (eParameter.getAttribute("id").equals("DataLoadGrain")) 
+                		if (eParameter.getAttribute("id").equals("dataLoadGrain")) 
                 			Parameters.setDataLoadGrain(Double.parseDouble(eParameter.getAttribute("value")));
+                		if (eParameter.getAttribute("id").equals("oneSolution")) 
+                			Parameters.setOneSolution(Boolean.parseBoolean(eParameter.getAttribute("value")));
             		}
             	}
             }

@@ -4,6 +4,9 @@ public class Parameters {
 
 	private static Parameters instance = null;
 	
+	// stop search after finding one solution
+	private static boolean oneSolution = false;
+
 	// max dataload allowed, in case of excess it must go to another role
 	private static double maxDataLoad = 8;
 	// max workload allowed, in case of excess it must go to another role 
@@ -29,6 +32,15 @@ public class Parameters {
   
         return instance; 
     }
+
+	
+	public static boolean isOneSolution() {
+		return oneSolution;
+	}
+
+	public static void setOneSolution(boolean oneSolution) {
+		Parameters.oneSolution = oneSolution;
+	}
 
 	public static double getDataLoadGrain() {
 		return dataLoadGrain;
