@@ -5,8 +5,11 @@ import organisation.exception.GoalNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.search.cost.Cost;
+import simplelogger.SimpleLogger;
 
 public class OrganisationApp {
+
+	private static SimpleLogger LOG = SimpleLogger.getInstance();
 
 	public static void main(String[] args) {
 
@@ -27,12 +30,13 @@ public class OrganisationApp {
 				Parameters.getInstance();
 				Parameters.setMaxWorkload(8.0);
 				Parameters.setWorkloadGrain(4.0);
-				System.out.println("Max workload is 8");
-				System.out.println("workload grain is 4");
 				Parameters.setMaxDataLoad(8.0);
 				Parameters.setDataLoadGrain(2.0);
-				System.out.println("Max dataload is 8");
-				System.out.println("dataloadgrain is 2");
+
+				LOG.info("Max Workload  : "+ Parameters.getMaxWorkload());
+				LOG.info("Workload grain: "+ Parameters.getWorkloadGrain());
+				LOG.info("Max DataLoad  : "+ Parameters.getMaxDataLoad());
+				LOG.info("DataLoad grain: "+ Parameters.getDataLoadGrain());
 
 				GoalNode g0 = new GoalNode(null, "g0");
 				GoalTree gTree = GoalTree.getInstance();
@@ -50,16 +54,15 @@ public class OrganisationApp {
 		} else {
 			// Expected input example:
 			// ./gradlew run --args="examples/Full_Link_ultramegasimple.xml GENERALIST BFS"
-
-			// parameters
-			Parameters.getInstance();
-			Parameters.setMaxWorkload(8.0);
-			Parameters.setMaxDataLoad(8.0);
-			Parameters.setWorkloadGrain(4.0);
-			Parameters.setDataLoadGrain(4.0);
-
 			OrganisationXMLParser parser = new OrganisationXMLParser();
-			parser.parseXMLFile(args[0]);
+			parser.parseOrganisationSpecification(args[0]);
+			parser.parseDesignParameters(args[0]);
+			
+			Parameters.getInstance();
+			LOG.info("Max Workload  : "+ Parameters.getMaxWorkload());
+			LOG.info("Workload grain: "+ Parameters.getWorkloadGrain());
+			LOG.info("Max DataLoad  : "+ Parameters.getMaxDataLoad());
+			LOG.info("DataLoad grain: "+ Parameters.getDataLoadGrain());
 
 			String path[] = args[0].split("/");
 			String name = path[path.length - 1];

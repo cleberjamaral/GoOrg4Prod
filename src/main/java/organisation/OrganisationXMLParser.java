@@ -20,7 +20,7 @@ import simplelogger.SimpleLogger;
 
 public class OrganisationXMLParser {
 
-    public void parseXMLFile(final String file) {
+    public void parseOrganisationSpecification(final String file) {
         try {
             final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             final DocumentBuilder builder = factory.newDocumentBuilder();
@@ -41,6 +41,45 @@ public class OrganisationXMLParser {
 
             gTree.addAllDescendants(gTree.getRootNode());
             gTree.updateInformAndDataLoadReferences(gTree.getRootNode());
+
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void parseDesignParameters(final String file) {
+        try {
+            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            final DocumentBuilder builder = factory.newDocumentBuilder();
+            final Document document = builder.parse(new File(file));
+
+            if (!document.getDocumentElement().getNodeName().equals("organisational-specification"))
+                throw new IllegalArgumentException(
+                        "Error! It is expected an 'automated-design-parameters' XML structure");
+
+            document.getDocumentElement().normalize();
+
+			
+            // get list of automated-design-parameters nodes
+            final NodeList nList = document.getElementsByTagName("automated-design-parameters");
+            // it is supposed to have only one automated-design-parameters node
+            final Node nParameters = nList.item(0);
+            for (int temp = 0; temp < nParameters.getChildNodes().getLength(); temp++) {
+            	final Node node = nParameters.getChildNodes().item(temp);
+            	if (node.getNodeType() == Node.ELEMENT_NODE) {
+            		final Element eParameter = (Element) node;
+            		if (node.getNodeName().equals("parameter")) {
+                		if (eParameter.getAttribute("id").equals("maxWorkload")) 
+                			Parameters.setMaxWorkload(Double.parseDouble(eParameter.getAttribute("value")));
+                		if (eParameter.getAttribute("id").equals("maxDataLoad")) 
+                			Parameters.setMaxDataLoad(Double.parseDouble(eParameter.getAttribute("value")));
+                		if (eParameter.getAttribute("id").equals("workloadGrain")) 
+                			Parameters.setWorkloadGrain(Double.parseDouble(eParameter.getAttribute("value")));
+                		if (eParameter.getAttribute("id").equals("DataLoadGrain")) 
+                			Parameters.setDataLoadGrain(Double.parseDouble(eParameter.getAttribute("value")));
+            		}
+            	}
+            }
 
         } catch (final Exception e) {
             e.printStackTrace();
