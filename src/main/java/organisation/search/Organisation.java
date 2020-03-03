@@ -296,7 +296,7 @@ public class Organisation implements Estado, Heuristica {
 	 * equal if they have the same name and exactly same roles tree
 	 */
 	public String toString() {
-		return getOrgName() + rolesTree.toString();
+		return getOrgName() + rolesTree.toString() + " - " + this.goalSuccessors;
 	}
 
 	/**
