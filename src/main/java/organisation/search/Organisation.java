@@ -27,7 +27,7 @@ public class Organisation implements Estado, Heuristica, Aleatorio {
 	/*** STATIC ***/
 	private static SimpleLogger LOG = SimpleLogger.getInstance();
 	// list of target states, i.e., complete charts
-	private static List<Organisation> isGoalList = new ArrayList<Organisation>();
+	private static List<Organisation> isGoalList;
 	// Cost penalty used to infer bad decisions on search
 	private static CostResolver penalty;
 	// Heuristic used to infer bad decisions on search
@@ -85,6 +85,11 @@ public class Organisation implements Estado, Heuristica, Aleatorio {
 		Parameters.setDefaultPenalty(this.goalSuccessors.size() + 1);
 		penalty = new CostResolver(costFunction);
 		heuristic = new HeuristicResolver(costFunction);
+		isGoalList = new ArrayList<Organisation>();
+	}
+
+	public List<Organisation> getGoalList() {
+		return isGoalList;
 	}
 
 	public boolean ehMeta() {
