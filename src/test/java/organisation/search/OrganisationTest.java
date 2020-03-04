@@ -8,10 +8,13 @@ import organisation.Parameters;
 import organisation.exception.GoalNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
+import organisation.role.RoleNode;
 import organisation.search.Organisation;
 import organisation.search.cost.Cost;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -193,6 +196,61 @@ public class OrganisationTest {
 			System.out.println("Estimated worst case: " + o.getEstimatedNumberOfOrganisations() + " (visited must be less or equal)");
 			System.out.println("Visited nodes       : " + status.getStatus().getVisitados());
 			assertTrue(o.getEstimatedNumberOfOrganisations() >= status.getStatus().getVisitados());
+		} catch (GoalNotFound e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testAllCreatedOrgs2Goals() {
+		System.out.println("\n\ntestAllCreatedOrgs2Goals");
+
+		// parameters
+		Parameters.getInstance();
+		Parameters.setMaxWorkload(8.0);
+		Parameters.setWorkloadGrain(8.0);
+		Parameters.setMaxDataLoad(8.0);
+		Parameters.setDataLoadGrain(8.0);
+		System.out.println("Parameters should not affect");
+
+		try {
+			GoalNode g0 = new GoalNode(null, "g0");
+			GoalTree gTree = GoalTree.getInstance();
+			gTree.setRootNode(g0);
+			gTree.addGoal("g1", "g0");
+			gTree.addWorkload("g0", "w0", 1);
+			gTree.addWorkload("g1", "w1", 1);
+
+			final Organisation o = new Organisation("AllCreatedOrgs2Goals", gTree, Cost.GENERALIST, false);
+
+			BuscaLargura busca = new BuscaLargura();
+			MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
+			busca.busca(o);
+			status.para();
+			
+			System.out.println("Number of possible organisations is: 4 "+o.getGoalList());
+			assertEquals(4, o.getGoalList().size());
+			
+			int orgsWith2Roots = 0;
+			int orgsWith2Levels = 0;
+			int orgsWith1Role = 0;
+			for (Organisation org : o.getGoalList()) {
+				if (org.getRolesTree().size() == 1) orgsWith1Role++;
+				if (org.getRolesTree().size() == 2) {
+					List<RoleNode> roles = new ArrayList<>(org.getRolesTree().getTree());
+					if ((roles.get(0).getParent() == null) && (roles.get(1).getParent() == null)) 
+						orgsWith2Roots++;
+					if (((roles.get(0).getParent() == null) && (roles.get(1).getParent() != null)) || 
+						((roles.get(0).getParent() != null) && (roles.get(1).getParent() == null)))
+						orgsWith2Levels++;
+				}
+			}
+			System.out.println("Number of possible organisations with 2 roots is: 1");
+			assertEquals(1, orgsWith2Roots);
+			System.out.println("Number of possible organisations with 2 levels is: 2");
+			assertEquals(2, orgsWith2Levels);
+			System.out.println("Number of possible organisations with 1 role is: 1");
+			assertEquals(1, orgsWith1Role);
 		} catch (GoalNotFound e) {
 			e.printStackTrace();
 		}
