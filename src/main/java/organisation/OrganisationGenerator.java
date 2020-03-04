@@ -6,6 +6,7 @@ import busca.AEstrela;
 import busca.BuscaLargura;
 import busca.BuscaProfundidade;
 import busca.MostraStatusConsole;
+import busca.SubidaMontanha;
 import organisation.exception.GoalNotFound;
 import organisation.goal.GoalTree;
 import organisation.search.Organisation;
@@ -53,6 +54,13 @@ public class OrganisationGenerator {
 			
 			if (search.equals("A*")) {
 				AEstrela busca = new AEstrela();
+				MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
+				busca.busca(inicial);
+				status.para();
+			}
+
+			if (search.equals("HC")) {
+				SubidaMontanha busca = new SubidaMontanha();
 				MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
 				busca.busca(inicial);
 				status.para();

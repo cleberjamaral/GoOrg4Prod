@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import busca.Aleatorio;
 import busca.Estado;
 import busca.Heuristica;
 import organisation.OrganisationPlot;
@@ -21,7 +22,7 @@ import organisation.search.cost.CostResolver;
 import organisation.search.cost.HeuristicResolver;
 import simplelogger.SimpleLogger;
 
-public class Organisation implements Estado, Heuristica {
+public class Organisation implements Estado, Heuristica, Aleatorio {
 
 	/*** STATIC ***/
 	private static SimpleLogger LOG = SimpleLogger.getInstance();
@@ -162,20 +163,23 @@ public class Organisation implements Estado, Heuristica {
 	}
 	
 	/** Lista de sucessores */
+	@SuppressWarnings("unchecked")
 	public List<Estado> sucessores() {
-		List<Estado> suc = new LinkedList<Estado>(); // Lista de sucessores
+		List<Estado> suc = new LinkedList<>(); // Lista de sucessores
 
-		// add all possible successors
-		for (GoalNode goalToBeAssociated : goalSuccessors) {
-			// add each goal as root
-			if (rolesTree.getTree().size() == 0) {
-				addRootRole(suc, goalToBeAssociated);
-			} else {
+		// add each goal as root
+		if (rolesTree.getTree().size() == 0) {
+			// add all possible successors as root
+			for (GoalNode goalToBeAssociated : goalSuccessors) {
+				addNotNull((List<Object>) (List<?>) suc, addRootRole(goalToBeAssociated));
+			}
+		} else {
+			for (GoalNode goalToBeAssociated : goalSuccessors) {
 				// add all children as possible successors
 				for (RoleNode role : rolesTree.getTree()) {
-					addRootRole(suc, goalToBeAssociated);
-					addRole(role, suc, goalToBeAssociated);
-					joinRole(role, suc, goalToBeAssociated);
+					addNotNull((List<Object>) (List<?>) suc, addRootRole(goalToBeAssociated));
+					addNotNull((List<Object>) (List<?>) suc, addRole(role, goalToBeAssociated));
+					addNotNull((List<Object>) (List<?>) suc, joinRole(role, goalToBeAssociated));
 				}
 			}
 		}
@@ -183,12 +187,16 @@ public class Organisation implements Estado, Heuristica {
 		return suc;
 	}
 
-	public void addRootRole(List<Estado> suc, GoalNode goalToAssign) {
+	private void addNotNull(List<Object> l, Object e) {
+		if (e != null) l.add(e);		
+	}
+	
+	public Organisation addRootRole(GoalNode goalToAssign) {
 		try {
 			// Prune states with effort equal to 0
 			if (goalToAssign.getSumWorkload() == 0) {
-				LOG.debug("Visited #" + getNStates() + " addRole pruned#1");
-				return;
+				LOG.debug("Visited #" + getNStates() + " addRootRole pruned#1 " + this.toString());
+				return null;
 			}
 
 			Organisation newState = (Organisation) createState(goalToAssign);
@@ -198,41 +206,42 @@ public class Organisation implements Estado, Heuristica {
 			newState.cost = penalty.getAddRootRolePenalty(goalToAssign, this.getRolesTree(), newState.getRolesTree());
 			newState.accCost = this.accCost + newState.cost;
 
-			suc.add(newState);
-
 			logTransformation("addRootRole", newState, nr);
+			
+			return newState;
 
 		} catch (Exception e) {
 			LOG.fatal("Fatal error on addRole! " + e.getMessage());
 		}
+		return null;
 	}
 
 	
-	public void addRole(RoleNode aGivenRole, List<Estado> suc, GoalNode goalToAssign) {
+	public Organisation addRole(RoleNode aGivenRole, GoalNode goalToAssign) {
 
 		try {
 			// cannot create add a role without a root
 			if (this.rolesTree.size() < 1) {
-				LOG.debug("Visited #" + getNStates() + "  addRole pruned#0");
-				return;
+				LOG.debug("Visited #" + getNStates() + "  addRole pruned#0 " + this.toString());
+				return null;
 			}
 
 			// Prune states with effort equal to 0
 			if (goalToAssign.getSumWorkload() == 0) {
-				LOG.debug("Visited #" + getNStates() + " addRole pruned#1");
-				return;
+				LOG.debug("Visited #" + getNStates() + " addRole pruned#1 " + this.toString());
+				return null;
 			}
 
 			// Prune states with effort greater than max (should never happen if the goals were broken properly)
 			if (goalToAssign.getSumWorkload() > Parameters.getMaxWorkload()) {
-				LOG.debug("Visited #" + getNStates() + " addRole pruned#2");
-				return;
+				LOG.debug("Visited #" + getNStates() + " addRole pruned#2 " + this.toString());
+				return null;
 			}
 
 			// Prune states which parent cannot afford data amount
 			if ((aGivenRole.getParentSumDataAmount() + aGivenRole.calculateAddedDataLoad(goalToAssign)) > Parameters.getMaxDataLoad()) {
-				LOG.debug("Visited #" + getNStates() + " addRole pruned#3");
-				return;
+				LOG.debug("Visited #" + getNStates() + " addRole pruned#3 " + this.toString());
+				return null;
 			}
 
 			Organisation newState = (Organisation) createState(goalToAssign);
@@ -244,40 +253,41 @@ public class Organisation implements Estado, Heuristica {
 			newState.cost = penalty.getAddRolePenalty(aGivenRole, goalToAssign, this.getRolesTree(), newState.getRolesTree());
 			newState.accCost = this.accCost + newState.cost;
 
-			suc.add(newState);
-
 			logTransformation("addRole", newState, nr);
+			
+			return newState;
 
 		} catch (RoleNotFound e) {
 			LOG.fatal("Fatal error on addRole! " + e.getMessage());
 		}
+		return null;
 	}
 
-	public void joinRole(RoleNode hostRole, List<Estado> suc, GoalNode goalToAssign) {
+	public Organisation joinRole(RoleNode hostRole, GoalNode goalToAssign) {
 
 		try {
 			// cannot join a role of an empty tree
 			if (this.rolesTree.size() < 1) {
-				LOG.debug("Visited #" + getNStates() + " addRole pruned#0");
-				return;
+				LOG.debug("Visited #" + getNStates() + " joinRole pruned#0 " + this.toString());
+				return null;
 			}
 
 			// Prune states with effort equal to 0 (should never happen since a role without effort should not be created)
 			if (hostRole.getSumWorkload() + goalToAssign.getSumWorkload() == 0) {
-				LOG.debug("Visited #" + getNStates() + " addRole pruned#1");
-				return;
+				LOG.debug("Visited #" + getNStates() + " joinRole pruned#1 " + this.toString());
+				return null;
 			}
 			
 			// Prune states with effort greater than max
 			if ((hostRole.getSumWorkload() + goalToAssign.getSumWorkload()) > Parameters.getMaxWorkload()) {
-				LOG.debug("Visited #" + getNStates() + " joinRole pruned#2");
-				return;
+				LOG.debug("Visited #" + getNStates() + " joinRole pruned#2 " + this.toString());
+				return null;
 			}
 
 			// Prune states which parent cannot afford data amount 
 			if ((hostRole.getParentSumDataAmount() + hostRole.calculateAddedDataLoad(goalToAssign)) > Parameters.getMaxDataLoad()) {
-				LOG.debug("Visited #" + getNStates() + " joinRole pruned#3");
-				return;
+				LOG.debug("Visited #" + getNStates() + " joinRole pruned#3 " + this.toString());
+				return null;
 			}
 
 			Organisation newState = (Organisation) createState(goalToAssign);
@@ -289,10 +299,11 @@ public class Organisation implements Estado, Heuristica {
 
 			logTransformation("joinRole", newState, jr);
 
-			suc.add(newState);
+			return newState;
 		} catch (RoleNotFound e) {
 			LOG.fatal("Fatal error on joinRole! " + e.getMessage());
 		}
+		return null;
 	}
 
 	/**
@@ -474,6 +485,38 @@ public class Organisation implements Estado, Heuristica {
 	 */
 	public int getApproximationOfNumberOfOrganisations() {
 		return (int) (0.0121226 * Math.exp(2.65818 * goalsTree.getTree().size()));
+	}
+
+	@Override
+	public Estado geraAleatorio() {
+		try {
+			if (goalSuccessors.size() > 0) {
+				int randomGoalIndex = (int) (Math.random() * goalSuccessors.size());
+
+				if (rolesTree.getTree().size() == 0) {
+					addRootRole(goalSuccessors.get(randomGoalIndex));
+				} else {
+					int randomTransf = (int) (Math.random() * 3);
+					if (randomTransf == 0) {
+						addRootRole(goalSuccessors.get(randomGoalIndex));
+					} else if (randomTransf == 1) {
+						int randomRoleIndex = (int) (Math.random() * rolesTree.getTree().size());
+						List<RoleNode> roles = new ArrayList<>(rolesTree.getTree());
+						addRole(roles.get(randomRoleIndex), goalSuccessors.get(randomGoalIndex));
+					} else if (randomTransf == 2) {
+						int randomRoleIndex = (int) (Math.random() * rolesTree.getTree().size());
+						List<RoleNode> roles = new ArrayList<>(rolesTree.getTree());
+						joinRole(roles.get(randomRoleIndex), goalSuccessors.get(randomGoalIndex));
+					} else {
+						throw new Exception("Un unexpected transformation was suggested!");
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 	
 }
