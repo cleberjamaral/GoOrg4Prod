@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import busca.Aleatorio;
 import busca.Estado;
 import busca.Heuristica;
 import organisation.OrganisationPlot;
@@ -22,7 +21,7 @@ import organisation.search.cost.CostResolver;
 import organisation.search.cost.HeuristicResolver;
 import simplelogger.SimpleLogger;
 
-public class Organisation implements Estado, Heuristica, Aleatorio {
+public class Organisation implements Estado, Heuristica {
 
 	/*** STATIC ***/
 	private static SimpleLogger LOG = SimpleLogger.getInstance();
@@ -91,7 +90,7 @@ public class Organisation implements Estado, Heuristica, Aleatorio {
 	public List<Organisation> getGoalList() {
 		return isGoalList;
 	}
-
+	
 	public boolean ehMeta() {
 		Organisation.nStatesX2++;
 		if (this.goalSuccessors.size() <= 0) {
@@ -490,38 +489,6 @@ public class Organisation implements Estado, Heuristica, Aleatorio {
 	 */
 	public int getApproximationOfNumberOfOrganisations() {
 		return (int) (0.0121226 * Math.exp(2.65818 * goalsTree.getTree().size()));
-	}
-
-	@Override
-	public Estado geraAleatorio() {
-		try {
-			if (goalSuccessors.size() > 0) {
-				int randomGoalIndex = (int) (Math.random() * goalSuccessors.size());
-
-				if (rolesTree.getTree().size() == 0) {
-					addRootRole(goalSuccessors.get(randomGoalIndex));
-				} else {
-					int randomTransf = (int) (Math.random() * 3);
-					if (randomTransf == 0) {
-						addRootRole(goalSuccessors.get(randomGoalIndex));
-					} else if (randomTransf == 1) {
-						int randomRoleIndex = (int) (Math.random() * rolesTree.getTree().size());
-						List<RoleNode> roles = new ArrayList<>(rolesTree.getTree());
-						addRole(roles.get(randomRoleIndex), goalSuccessors.get(randomGoalIndex));
-					} else if (randomTransf == 2) {
-						int randomRoleIndex = (int) (Math.random() * rolesTree.getTree().size());
-						List<RoleNode> roles = new ArrayList<>(rolesTree.getTree());
-						joinRole(roles.get(randomRoleIndex), goalSuccessors.get(randomGoalIndex));
-					} else {
-						throw new Exception("Un unexpected transformation was suggested!");
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return null;
 	}
 	
 }
