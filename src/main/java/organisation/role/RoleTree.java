@@ -1,6 +1,10 @@
 package organisation.role;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import annotations.DataLoad;
@@ -137,7 +141,16 @@ public class RoleTree {
 
 	@Override
 	public String toString() {
-		return tree.toString();
+		List<String> signatureByRoles = new ArrayList<>();
+		if ((getTree() != null) && (!getTree().isEmpty())) {
+			Iterator<RoleNode> iterator = getTree().iterator();
+			while (iterator.hasNext()) {
+				RoleNode n = iterator.next();
+				signatureByRoles.add(n.toString());
+			}
+			Collections.sort(signatureByRoles);
+		}
+		return signatureByRoles.toString();
 	}
 
 	@Override
