@@ -468,4 +468,28 @@ public class GoalTreeTest {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void testRoleNotFound() {
+		System.out.println("\n\ntestRoleNotFound");
+		
+        Throwable e = null;
+        try {
+    		// Sample organization
+    		GoalNode g1 = new GoalNode(null, "g1");
+    		GoalTree gTree = GoalTree.getInstance();
+    		gTree.setRootNode(g1);
+    		System.out.println("Goals Tree:" + gTree.getTree());
+    		
+    		System.out.println("adding a workload to g1, which really exists");
+    		gTree.addWorkload("g1", "w1", 1);
+    		
+    		System.out.println("adding a workload to g2 which does not exist, must throw an exception");
+    		gTree.addWorkload("g2", "w2", 1);
+        } catch(Throwable ex) {
+            e = ex;
+        }
+        assertTrue(e instanceof GoalNotFound);
+	}
+
 }
