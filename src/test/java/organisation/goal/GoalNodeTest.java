@@ -3,11 +3,13 @@ package organisation.goal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 import annotations.Workload;
+import organisation.exception.CircularReference;
 import organisation.goal.GoalNode;
 
 public class GoalNodeTest {
@@ -79,5 +81,20 @@ public class GoalNodeTest {
 		assertNotEquals(g00.getWorkloads(), g10.getWorkloads());
 		assertFalse(g00.getWorkloads().containsAll(g10.getWorkloads()));
 		assertTrue(g10.getWorkloads().containsAll(g00.getWorkloads()));	
+	}
+	
+	@Test
+	public void testCircularReference() {
+		System.out.println("\n\ntestOutputDoesNotMatchWithInput");
+
+		GoalNode g0 = new GoalNode(null, "g0");
+		GoalTree gTree = GoalTree.getInstance();
+		gTree.setRootNode(g0);
+
+		System.out.println("Adding a circular inform");
+
+		assertThrows(CircularReference.class, () -> {
+			gTree.addInform("g0", "i0", "g0", 1);
+		});
 	}
 }
