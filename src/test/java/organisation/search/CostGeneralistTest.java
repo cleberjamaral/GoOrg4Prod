@@ -240,4 +240,30 @@ public class CostGeneralistTest {
 		}
 	}
 
+	@Test
+    public void testOutputDoesNotMatchWithInput() {
+		System.out.println("\n\ntestOutputDoesNotMatchWithInput");
+
+		Throwable e = null;
+    	try {
+			GoalNode g0 = new GoalNode(null, "g0");
+			GoalTree gTree = GoalTree.getInstance();
+			gTree.setRootNode(g0);
+			gTree.addWorkload("g0", "w0", 1);
+			
+			Organisation o = new Organisation("testOutputDoesNotMatchWithInput", gTree, Cost.GENERALIST, true);
+			Nodo n = new BuscaLargura().busca(o);
+			
+			System.out.println("Validate original gdt workloads with organisations' workloads (must be ok)");
+			assertTrue(((Organisation) n.getEstado()).validateOutput());
+
+			System.out.println("Force a wrong validation, which must throw an exception");
+			gTree.addWorkload("g0", "w1", 1);
+			assertTrue(((Organisation) n.getEstado()).validateOutput());
+		
+        } catch(Throwable ex) {
+            e = ex;
+        }
+        assertTrue(e instanceof OutputDoesNotMatchWithInput);
+    }
 }
