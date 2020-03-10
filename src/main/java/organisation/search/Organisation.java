@@ -9,7 +9,6 @@ import busca.Heuristica;
 import organisation.OrganisationPlot;
 import organisation.OrganisationStatistics;
 import organisation.Parameters;
-import organisation.exception.DuplicatedRootRole;
 import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
@@ -387,7 +386,7 @@ public class Organisation implements Estado, Heuristica {
 				if (goal != gn)
 					newState.goalSuccessors.add(goal);
 			}
-		} catch (DuplicatedRootRole | RoleNotFound e) {
+		} catch (RoleNotFound e) {
 			e.printStackTrace();
 		}
 

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import annotations.Workload;
-import organisation.exception.DuplicatedRootRole;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
 import organisation.role.RoleNode;
@@ -59,7 +58,7 @@ public class RoleTreeTest {
 			System.out.println("rolesTree : " + rolesTree);
 			System.out.println("clonedTree: " + clonedTree);
 			assertEquals(rolesTree.toString(), clonedTree.toString());
-		} catch (DuplicatedRootRole | RoleNotFound e) {
+		} catch (RoleNotFound e) {
 			e.printStackTrace();
 		}
 	}

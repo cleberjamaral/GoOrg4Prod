@@ -9,7 +9,6 @@ import java.util.Set;
 
 import annotations.DataLoad;
 import annotations.Workload;
-import organisation.exception.DuplicatedRootRole;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
 
@@ -71,7 +70,7 @@ public class RoleTree {
 		throw new RoleNotFound("There is no role with signature = '" + roleName + "'!");
 	}
 
-	public RoleTree cloneContent() throws DuplicatedRootRole, RoleNotFound {
+	public RoleTree cloneContent() throws RoleNotFound {
 		RoleTree clonedTree = new RoleTree();
 
 		// first clone all roles
