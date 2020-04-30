@@ -47,14 +47,33 @@ public class CostResolver {
 		// High punishment when another role could receive the workload making the tree more generalist
 		if (costFunction == Cost.GENERALIST) {
 			
-			// publish if it is creating more roles than the ideal
+			// punish if it is creating more roles than the ideal
 			if (oldTree.getTree().size() >= GoalTree.getInstance().idealNumberOfRoles()) {
 				return cost + Parameters.getExtraPenalty();
 			}
 
 			// check if another role should receive this workload to become generalist
 			for (RoleNode r : oldTree.getTree()) {
-				// no cost: If there is a role that does not have the workloads and could receive it
+				// If there is a role that has the workloads and could receive the new ones
+				if ((r.getWorkloads().containsAll(goal.getWorkloads()))
+						&& (r.getSumWorkload() + goal.getSumWorkload() <= Parameters.getMaxWorkload())) {
+					
+					return cost + Parameters.getExtraPenalty();
+				}
+			}
+		}
+
+		// High punishment when another role could receive the workload avoiding creating a new one
+		if (costFunction == Cost.SPECIALIST) {
+			
+			// punish if it is creating more roles than the ideal
+			if (oldTree.getTree().size() >= GoalTree.getInstance().idealNumberOfRoles()) {
+				return cost + Parameters.getExtraPenalty();
+			}
+
+			// check if another role should receive this workload adding it to its existing workload
+			for (RoleNode r : oldTree.getTree()) {
+				// If there is a role that has the workloads and could receive the new ones
 				if ((r.getWorkloads().containsAll(goal.getWorkloads()))
 						&& (r.getSumWorkload() + goal.getSumWorkload() <= Parameters.getMaxWorkload())) {
 
@@ -99,27 +118,23 @@ public class CostResolver {
 		if ((costFunction == Cost.TALLER) && (!role.hasParentGoal(goal)))
 			return cost + Parameters.getDefaultPenalty();
 
-		// TODO: check if it is creating a sibling with same skills, punishing it
-		// Preferring specialist structure potentially punish the creation of roles
-		RoleNode old = oldTree.findRoleByRoleName(role.getRoleName());
+		// High punishment when another role could receive the workload avoiding creating a new one
 		if (costFunction == Cost.SPECIALIST) {
 			
-			// Punish when it would be possible to join with the give role
-			if ((old.getWorkloads().containsAll(goal.getWorkloads()))
-					&& (old.getSumWorkload() + goal.getSumWorkload() <= Parameters.getMaxWorkload())) {
-
+			// punish if it is creating more roles than the ideal
+			if (oldTree.getTree().size() >= GoalTree.getInstance().idealNumberOfRoles()) {
 				return cost + Parameters.getExtraPenalty();
 			}
 
-			// Punish when it would be possible to join with any sibling role
-			for (RoleNode r : old.getDescendants()) {
+			// check if another role should receive this workload adding it to its existing workload
+			for (RoleNode r : oldTree.getTree()) {
+				// If there is a role that has the workloads and could receive the new ones
 				if ((r.getWorkloads().containsAll(goal.getWorkloads()))
 						&& (r.getSumWorkload() + goal.getSumWorkload() <= Parameters.getMaxWorkload())) {
 
 					return cost + Parameters.getExtraPenalty();
 				}
 			}
-
 		}
 
 		return cost;
@@ -148,10 +163,18 @@ public class CostResolver {
 		if (costFunction == Cost.TALLER)
 			return cost + Parameters.getDefaultPenalty();
 
-		// Punish when an extra workload is added incrementing setup costs
+		// Preferring specialist structure potentially punish the creation of roles
 		if (costFunction == Cost.SPECIALIST) {
-			return cost + getSetupPenalty(role, goal);
+			RoleNode old = oldTree.findRoleByRoleName(role.getRoleName());
+			
+			// Punish when joining with the given role is adding new workloads to it
+			if ((!old.getWorkloads().containsAll(goal.getWorkloads()))
+					&& (old.getSumWorkload() + goal.getSumWorkload() <= Parameters.getMaxWorkload())) {
+
+				return cost + Parameters.getDefaultPenalty();
+			}
 		}
+
 
 		return cost;
 	}
