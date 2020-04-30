@@ -47,6 +47,7 @@ public class OrganisationStatistics {
 		this.fields.add("Roles");
 		this.fields.add("%WL+");
 		this.fields.add("%DL+");
+		this.fields.add("%Idle+");
 		this.fields.add("Levels");
 		this.fields.add("States");
 		this.fields.add("miIdle");
