@@ -17,6 +17,7 @@ public class GoalTree {
 	private static GoalTree instance = null;
     private GoalNode rootNode;
     private Set<GoalNode> tree = new HashSet<>();
+    Set<Workload> allDiffWorkloads = new HashSet<>();
 
     private GoalTree() {}
     
@@ -204,7 +205,9 @@ public class GoalTree {
         if (g == null) 
         	throw new GoalNotFound("Goal '"+goal+"' not found!");
         
-        g.addWorkload(new Workload(workload, effort));
+        Workload w = new Workload(workload, effort);
+        g.addWorkload(w);
+        allDiffWorkloads.add(w);
     }
 
     /**
@@ -410,6 +413,10 @@ public class GoalTree {
 		return Math.max(
 				(int) Math.ceil(getSumEfforts() / Parameters.getMaxWorkload()),
 				(int) Math.ceil(getSumDataLoad() / Parameters.getMaxDataLoad()));
+	}
+	
+	public int getNumberDiffWorkloads() {
+		return allDiffWorkloads.size();
 	}
 
 }

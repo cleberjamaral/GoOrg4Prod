@@ -187,18 +187,14 @@ public class RoleTree {
 		int nRoles = this.tree.size();
 		int nAllWorkloads = 0;
 		
-		Set<Workload> allDiffWorkloads = new HashSet<>();
 		for (RoleNode or : this.tree) {
 			//RoleNode.getWorkloads() is a hashset returning only unique workloads
 			nAllWorkloads += or.getWorkloads().size();
-			
-			//sumOfDiffWL is going to contain all unique workloads
-			for (Workload w : or.getWorkloads()) allDiffWorkloads.add(w);
 		}
 		
 		// the most generalist roles tree must have all workload on each role
 		// sumOfDiffWL.size() represents all unique workloads quantity
-		int nMaxWorkloads = nRoles * allDiffWorkloads.size();
+		int nMaxWorkloads = nRoles * GoalTree.getInstance().getNumberDiffWorkloads();
 		
 		return (double) nAllWorkloads / (double) nMaxWorkloads;
 	}
@@ -206,19 +202,16 @@ public class RoleTree {
 	public double getSpecificness() {
 		int nAllWorkloads = 0;
 		
-		Set<Workload> allDiffWorkloads = new HashSet<>();
 		for (RoleNode or : this.tree) {
 			//RoleNode.getWorkloads() is a hashset returning only unique workloads
 			nAllWorkloads += or.getWorkloads().size();
-			
-			//sumOfDiffWL is going to contain all unique workloads
-			for (Workload w : or.getWorkloads()) allDiffWorkloads.add(w);
 		}
 		
 		// the most specialist roles tree must have all workloads distributed
 		// without splitting them (if may be impossible if the sumofefforts if higher
-		// than maxWorkload
-		int nMinWorkloads = Math.min(allDiffWorkloads.size(), GoalTree.getInstance().idealNumberOfRoles());
+		// than maxWorkload, but efficiency/idleness concerns should be taken into account
+		// by other functions
+		int nMinWorkloads = GoalTree.getInstance().getNumberDiffWorkloads();
 		
 		return (double) nMinWorkloads / (double) nAllWorkloads;
 	}
