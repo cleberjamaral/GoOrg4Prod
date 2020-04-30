@@ -49,6 +49,7 @@ public class OrganisationStatistics {
 		this.fields.add("%DL+");
 		this.fields.add("%Idle+"); //Idleness %
 		this.fields.add("%Geral"); //Generalness %
+		this.fields.add("%Speci"); //Specificness %
 		this.fields.add("Levels");
 		this.fields.add("States");
 		this.fields.add("miIdle");
@@ -83,6 +84,7 @@ public class OrganisationStatistics {
 			
 			double assignedWorkLoad = o.getRolesTree().getSumWorkload();
 			double treeGeneralness = o.getRolesTree().getGeneralness();
+			double treeSpecificness = o.getRolesTree().getSpecificness();
 			
 			double assignedDataLoad = 0.0;
 
@@ -115,6 +117,7 @@ public class OrganisationStatistics {
 			line.put("%Idle+", (String.format("%.0f%%", 100 * (idleness - minIdle) / minIdle)));
 
 			line.put("%Geral", (String.format("%.0f%%", 100 * treeGeneralness)));
+			line.put("%Speci", (String.format("%.0f%%", 100 * treeSpecificness)));
 
 			line.put("rTree", o.getRolesTree().toString());
 			line.put("bgTree", bgTree);

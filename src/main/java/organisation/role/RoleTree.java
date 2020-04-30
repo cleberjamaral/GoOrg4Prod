@@ -9,8 +9,10 @@ import java.util.Set;
 
 import annotations.DataLoad;
 import annotations.Workload;
+import organisation.Parameters;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
+import organisation.goal.GoalTree;
 
 public class RoleTree {
 
@@ -199,5 +201,25 @@ public class RoleTree {
 		int nMaxWorkloads = nRoles * allDiffWorkloads.size();
 		
 		return (double) nAllWorkloads / (double) nMaxWorkloads;
+	}
+	
+	public double getSpecificness() {
+		int nAllWorkloads = 0;
+		
+		Set<Workload> allDiffWorkloads = new HashSet<>();
+		for (RoleNode or : this.tree) {
+			//RoleNode.getWorkloads() is a hashset returning only unique workloads
+			nAllWorkloads += or.getWorkloads().size();
+			
+			//sumOfDiffWL is going to contain all unique workloads
+			for (Workload w : or.getWorkloads()) allDiffWorkloads.add(w);
+		}
+		
+		// the most specialist roles tree must have all workloads distributed
+		// without splitting them (if may be impossible if the sumofefforts if higher
+		// than maxWorkload
+		int nMinWorkloads = Math.min(allDiffWorkloads.size(), GoalTree.getInstance().idealNumberOfRoles());
+		
+		return (double) nMinWorkloads / (double) nAllWorkloads;
 	}
 }
