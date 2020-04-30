@@ -47,11 +47,12 @@ public class OrganisationStatistics {
 		this.fields.add("Roles");
 		this.fields.add("%WL+");
 		this.fields.add("%DL+");
-		this.fields.add("%Idle+");
+		this.fields.add("%Idle+"); //Idleness %
+		this.fields.add("%Geral"); //Generalness %
 		this.fields.add("Levels");
 		this.fields.add("States");
 		this.fields.add("miIdle");
-		this.fields.add("Idlene");
+		this.fields.add("Idlene"); //Idleness
 		this.fields.add("bWL");
 		this.fields.add("rWL");
 		this.fields.add("bDL");
@@ -81,6 +82,7 @@ public class OrganisationStatistics {
 			Map<String,String> line = new HashMap<>();
 			
 			double assignedWorkLoad = o.getRolesTree().getSumWorkload();
+			double treeGeneralness = o.getRolesTree().getGeneralness();
 			
 			double assignedDataLoad = 0.0;
 
@@ -111,7 +113,9 @@ public class OrganisationStatistics {
 			line.put("Idlene", (Double.toString(idleness)));
 			
 			line.put("%Idle+", (String.format("%.0f%%", 100 * (idleness - minIdle) / minIdle)));
-			
+
+			line.put("%Geral", (String.format("%.0f%%", 100 * treeGeneralness)));
+
 			line.put("rTree", o.getRolesTree().toString());
 			line.put("bgTree", bgTree);
 			line.put("States", (Integer.toString(o.getNStates())));

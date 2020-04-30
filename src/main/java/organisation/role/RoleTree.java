@@ -173,4 +173,31 @@ public class RoleTree {
 			return false;
 		return true;
 	}
+	
+	/**
+	 * Generalness is about how workloads are distributed across roles. When all
+	 * roles have all given workloads it means all agents must have all those skills
+	 * and can play any role in the organisation, i.e., maximum generalness.
+	 * 
+	 * @return generalness index from 0 to 1 (less to maximum generalness possible)
+	 */
+	public double getGeneralness() {
+		int nRoles = this.tree.size();
+		int nAllWorkloads = 0;
+		
+		Set<Workload> allDiffWorkloads = new HashSet<>();
+		for (RoleNode or : this.tree) {
+			//RoleNode.getWorkloads() is a hashset returning only unique workloads
+			nAllWorkloads += or.getWorkloads().size();
+			
+			//sumOfDiffWL is going to contain all unique workloads
+			for (Workload w : or.getWorkloads()) allDiffWorkloads.add(w);
+		}
+		
+		// the most generalist roles tree must have all workload on each role
+		// sumOfDiffWL.size() represents all unique workloads quantity
+		int nMaxWorkloads = nRoles * allDiffWorkloads.size();
+		
+		return (double) nAllWorkloads / (double) nMaxWorkloads;
+	}
 }
