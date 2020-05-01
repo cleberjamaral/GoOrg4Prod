@@ -52,7 +52,6 @@ public class OrganisationStatistics {
 		this.fields.add("%Speci"); //Specificness %
 		this.fields.add("Levels");
 		this.fields.add("States");
-		this.fields.add("miIdle");
 		this.fields.add("Idlene"); //Idleness
 		this.fields.add("bWL");
 		this.fields.add("rWL");
@@ -68,7 +67,7 @@ public class OrganisationStatistics {
 		try (FileWriter fw = new FileWriter("output/statistics/" + orgName + ".csv", false);
 				BufferedWriter bw = new BufferedWriter(fw);
 				PrintWriter out = new PrintWriter(bw)) {
-			out.print(StringUtils.join(this.fields, ",\t"));
+			out.print(StringUtils.join(this.fields, "\t"));
 	
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -85,6 +84,7 @@ public class OrganisationStatistics {
 			double assignedWorkLoad = o.getRolesTree().getSumWorkload();
 			double treeGeneralness = o.getRolesTree().getGeneralness();
 			double treeSpecificness = o.getRolesTree().getSpecificness();
+			double treeIdleness = o.getRolesTree().getAbsoluteIdleness();
 			
 			double assignedDataLoad = 0.0;
 
@@ -109,13 +109,12 @@ public class OrganisationStatistics {
 			if (originalDataLoad > 0) addedDataLoad = 100 * assignedDataLoad / originalDataLoad;
 			line.put("%DL+", (String.format("%.0f%%", addedDataLoad)));
 			
-			line.put("miIdle", (Double.toString(minIdle)));
-			
 			double idleness = o.getRolesTree().getTree().size() * Parameters.getMaxWorkload() - originalWorkLoad;
 			line.put("Idlene", (Double.toString(idleness)));
 			
-			line.put("%Idle+", (String.format("%.0f%%", 100 * (idleness - minIdle) / minIdle)));
-
+			//line.put("%Idle+", (String.format("%.0f%%", 100 * (idleness - minIdle) / minIdle)));
+			
+			line.put("%Idle+", (String.format("%.0f%%", 100 * treeIdleness)));
 			line.put("%Geral", (String.format("%.0f%%", 100 * treeGeneralness)));
 			line.put("%Speci", (String.format("%.0f%%", 100 * treeSpecificness)));
 
@@ -127,7 +126,7 @@ public class OrganisationStatistics {
 			out.print("\n");
 			for (int i = 0; i < fields.size(); i++) {
 				out.print(line.get(fields.get(i)));
-				if (i != fields.size()-1) out.print(",\t");
+				if (i != fields.size()-1) out.print("\t");
 			}
 	
 		} catch (IOException e) {
@@ -146,7 +145,6 @@ public class OrganisationStatistics {
 
 		Parameters.getInstance();
 		originalWorkLoad = gTree.getSumEfforts();
-		minIdle = Parameters.getMaxWorkload() - (originalWorkLoad % Parameters.getMaxWorkload());
 	}
 	
     private void createOutPutFolders() {

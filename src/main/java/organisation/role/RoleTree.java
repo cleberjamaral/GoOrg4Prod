@@ -181,6 +181,11 @@ public class RoleTree {
 	 * roles have all given workloads it means all agents must have all those skills
 	 * and can play any role in the organisation, i.e., maximum generalness.
 	 * 
+	 * For instance, for a GDT with a set of goals that together have 3 different
+	 * workloads the RolesTree should prefer structures in which all roles have
+	 * those 3 workloads. So, the 3 agents that will plays those roles can be
+	 * actually allocated in any one of those
+	 * 
 	 * @return generalness index from 0 to 1 (less to maximum generalness possible)
 	 */
 	public double getGeneralness() {
@@ -199,6 +204,21 @@ public class RoleTree {
 		return (double) nAllWorkloads / (double) nMaxWorkloads;
 	}
 	
+	/**
+	 * Specificness like generalness is about how workloads are distributed across
+	 * roles. In case of specificness, it would be ideal to do not split workloads,
+	 * since splitting means sharing this workload what makes necessary more skills
+	 * to the other agent.
+	 * 
+	 * For instance, for a GDT with a set of goals that together have 3 different
+	 * workloads the RolesTree should prefer structure in which each roles has only
+	 * 1 workload ideally In this case, it would need less skills from each agent.
+	 * 
+	 * Efficiency/idleness is not being taken into account here
+	 * 
+	 * @return specificness index from 0 to 1 (less to maximum specificness
+	 *         possible)
+	 */
 	public double getSpecificness() {
 		int nAllWorkloads = 0;
 		
@@ -214,5 +234,37 @@ public class RoleTree {
 		int nMinWorkloads = GoalTree.getInstance().getNumberDiffWorkloads();
 		
 		return (double) nMinWorkloads / (double) nAllWorkloads;
+	}
+	
+	/**
+	 * Idleness is about total workload split into roles. It considers the ideal
+	 * number of roles according to maximum workload per role. In case of relative
+	 * idleness, the idleness is ZERO if the goals tree has the minimum idleness that
+	 * the GDT and max workload allows.
+	 * 
+	 * @return idleness relative to the minimum idleness which is possibly achieved.
+	 *         Varies from 0 to 1.
+	 */
+	public double getRelativeIdleness() {
+		double minIdleness = Parameters.getMaxWorkload()
+				- (GoalTree.getInstance().getSumEfforts() % Parameters.getMaxWorkload());
+
+		double idleness = this.tree.size() * Parameters.getMaxWorkload() - GoalTree.getInstance().getSumEfforts();
+
+		return (idleness - minIdleness) / minIdleness;
+	}
+	
+	/**
+	 * Idleness is about total workload split into roles. It considers the ideal
+	 * number of roles according to maximum workload per role. In case of absolute
+	 * idleness, the idleness is the real one, no matter if it is possible to do a perfect split or not, i.e., idleness is ZERO only if the goals tree has reached no idle at all.
+	 * 
+	 * @return absolute idleness achieved, varies from 0 to 1.
+	 */
+	public double getAbsoluteIdleness() {
+		double capacity = this.tree.size() * Parameters.getMaxWorkload();
+		double occupancy = capacity - GoalTree.getInstance().getSumEfforts();
+
+		return occupancy / capacity;
 	}
 }
