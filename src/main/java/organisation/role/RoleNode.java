@@ -2,6 +2,7 @@ package organisation.role;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -313,4 +314,14 @@ public class RoleNode {
 			return false;
 		return true;
 	}
+	
+	public boolean containsGoalByOriginalName(GoalNode g1) {
+		Iterator<GoalNode> i = assignedGoals.iterator();
+		while (i.hasNext()) {
+			GoalNode g2 = i.next();
+			if (g2.getOriginalName().equals(g1.getOriginalName()))
+				return true;
+		}
+		return false;
+    }
 }
