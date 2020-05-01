@@ -10,6 +10,7 @@ import organisation.exception.CircularReference;
 
 public class GoalNode {
 	private String goalName;
+	private String originalName;
 	private GoalNode parent;
 	private String operator;
 	private List<GoalNode> descendants = new ArrayList<>();
@@ -19,6 +20,10 @@ public class GoalNode {
 
 	public GoalNode(GoalNode p, String name) {
 		goalName = name;
+		if (name.indexOf('$') > 0)
+			originalName = name.substring(0, name.lastIndexOf('$'));
+		else
+			originalName = name;
 		parent = p;
 		operator = "sequence";
 		if (parent != null) {
@@ -107,10 +112,17 @@ public class GoalNode {
 		return goalName;
 	}
 
-	public void setGoalName(String goalName) {
-		this.goalName = goalName;
+	public void setGoalName(String name) {
+		this.goalName = name;
+		if (name.indexOf('$') > 0)
+			originalName = name.substring(0, name.lastIndexOf('$'));
+		else
+			originalName = name;
 	} 
 	
+	public String getOriginalName() {
+		return originalName;
+	}
 	public GoalNode getParent() {
 		return parent;
 	}
