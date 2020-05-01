@@ -1,4 +1,4 @@
-Paint_House.xml[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/cleberjamaral/autoOrgDesignProject) 
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/cleberjamaral/autoOrgDesignProject) 
 
 # GoOrg - From Goals to Organisations: automated organisation design method (Project)
 
