@@ -1,7 +1,5 @@
 package organisation.search.cost;
 
-import java.util.Comparator;
-
 import organisation.Parameters;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
@@ -152,7 +150,7 @@ public class CostResolver {
 				return true;
 			}
 			
-			// CHeck if there is a role that has the workloads and could receive this other one
+			// Check if there is a role that has the workloads and could receive this other one
 			if ((r.getWorkloads().containsAll(goal.getWorkloads()))
 					&& (r.getSumWorkload() + goal.getSumWorkload() <= Parameters.getMaxWorkload())) {
 				
