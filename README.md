@@ -14,17 +14,23 @@ In the class SimpleLogger there is a setting for printing output to standard con
 
 To run the simple embedded example with other cost functions and search approaches leave the first argument as "0" and use the second argument to select a cost function (see cost enumeration in javadocs for details) and the third argument to the search approach (BFS for Breadth First Search, DFS for Depth First Search or A*). Examples:
 
-`./gradlew run --args="0 GENERALIST"`
-`./gradlew run --args="0 SPECIALIST DFS"`
+```
+$ ./gradlew run --args="0 GENERALIST"
+$ ./gradlew run --args="0 SPECIALIST DFS"
+```
 
 To run other examples just refer to the corresponding moise organisational description file, choosing cost function and search approach. Examples: 
 
-`./gradlew run --args="examples/Paint_House.xml FLATTER BFS"`
-`./gradlew run --args="examples/Full_Link.xml TALLER DFS"`
+```
+$ ./gradlew run --args="examples/Paint_House.xml FLATTER BFS"
+$ ./gradlew run --args="examples/Full_Link.xml TALLER DFS"
+```
 
 It is available an integrated test of all cost functions among other unit tests. For running these tests getting text output, execute:
 
-`gradle test -i`
+```
+$ ./gradlew test -i
+```
 
 ## Project status and roadmap
 
