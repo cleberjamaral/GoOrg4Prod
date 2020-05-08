@@ -48,12 +48,8 @@ public class CostGeneralistTest {
     		Parameters.getInstance();
     		Parameters.setMaxWorkload(8.0);
     		Parameters.setWorkloadGrain(2.0);
-    		System.out.println("Max workload is 8");
-    		System.out.println("workload grain is 2");
     		Parameters.setMaxDataLoad(8.0);
     		Parameters.setDataLoadGrain(2.0);
-    		System.out.println("Max dataload is 8");
-    		System.out.println("dataloadgrain is 2");
     		
 			GoalNode g0 = new GoalNode(null, "g0");
 			GoalTree gTree = GoalTree.getInstance();
@@ -109,6 +105,7 @@ public class CostGeneralistTest {
 			}
 			
 			assertTrue(((Organisation) n.getEstado()).validateOutput());
+			assertEquals(1.0, ((Organisation) n.getEstado()).getRolesTree().getGeneralness(), 0);
 
 			System.out.println("The hierarchy is not being checked.");
 			
@@ -129,20 +126,16 @@ public class CostGeneralistTest {
 			Parameters.getInstance();
 			Parameters.setMaxWorkload(8.0);
 			Parameters.setWorkloadGrain(4.0);
-			System.out.println("Max workload is 8");
-			System.out.println("workload grain is 4");
 			Parameters.setMaxDataLoad(8.0);
 			Parameters.setDataLoadGrain(2.0);
-			System.out.println("Max dataload is 8");
-			System.out.println("dataloadgrain is 2");
 
 			GoalNode g0 = new GoalNode(null, "g0");
 			GoalTree gTree = GoalTree.getInstance();
 			gTree.setRootNode(g0);
 			gTree.addGoal("g1", "g0");
-			System.out.println("g1 must be split into three goals with 3.33 of workload each");
+			System.out.println("g1 must be split into two goals with 2.5 of workload each");
+			gTree.addWorkload("g0", "w0", 5);
 			gTree.addWorkload("g1", "w1", 5);
-			gTree.addWorkload("g1", "w2", 5);
 			System.out.println("g0 must be split into four goals with 1.75 of dataload each");
 			gTree.addInform("g1", "i1", "g0", 7);
 			
@@ -160,15 +153,16 @@ public class CostGeneralistTest {
 			System.out.println("Generated rolesTree: " + ((Organisation)n.getEstado()).getRolesTree().getTree());
 			for (RoleNode r : ((Organisation)n.getEstado()).getRolesTree().getTree()) {
 				System.out.println("Role: " + r + ", workloads: "+r.getWorkloads() + ", informs: "+r.getInforms());
-				assertTrue(r.getWorkloads().size() >= 1);
-				assertTrue(r.getSumWorkload() >= 3.33);
+				assertTrue(r.getWorkloads().size() >= 2);
+				assertTrue(r.getSumWorkload() == 5);
 				// workload equals only checks the id of the workload
-				assertTrue(r.getWorkloads().contains((new Workload("w1",0)))); 
-				assertTrue(r.getWorkloads().contains((new Workload("w2",0))));
+				assertTrue(r.getWorkloads().contains((new Workload("w0",0)))); 
+				assertTrue(r.getWorkloads().contains((new Workload("w1",0))));
 			}
 			System.out.println("In generalist case, if granularity allows, each role must receive at least one workload w1 and one w2.");
 			
 			assertTrue(((Organisation) n.getEstado()).validateOutput());
+			assertEquals(1.0, ((Organisation) n.getEstado()).getRolesTree().getGeneralness(), 0);
 			
 			System.out.println("The hierarchy is not being checked.");
 			
@@ -189,12 +183,8 @@ public class CostGeneralistTest {
 			Parameters.getInstance();
 			Parameters.setMaxWorkload(8.0);
 			Parameters.setWorkloadGrain(4.0);
-			System.out.println("Max workload is 8");
-			System.out.println("workload grain is 4");
 			Parameters.setMaxDataLoad(8.0);
 			Parameters.setDataLoadGrain(2.0);
-			System.out.println("Max dataload is 8");
-			System.out.println("dataloadgrain is 2");
 
 			GoalNode g0 = new GoalNode(null, "g0");
 			GoalTree gTree = GoalTree.getInstance();
@@ -228,6 +218,7 @@ public class CostGeneralistTest {
 			System.out.println("In generalist case, if granularity allows, each role must receive at least one workload w1 and one w2.");
 			
 			assertTrue(((Organisation) n.getEstado()).validateOutput());
+			assertEquals(1.0, ((Organisation) n.getEstado()).getRolesTree().getGeneralness(), 0);
 
 			System.out.println("The hierarchy is not being checked.");
 			
