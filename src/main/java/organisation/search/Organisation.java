@@ -84,6 +84,14 @@ public class Organisation implements Estado, Heuristica {
 		penalty = new CostResolver(costFunction);
 		heuristic = new HeuristicResolver(costFunction);
 		isGoalList = new ArrayList<Organisation>();
+		
+		Parameters.getInstance();
+		LOG.info("Max Workload  : "+ Parameters.getMaxWorkload());
+		LOG.info("Workload grain: "+ Parameters.getWorkloadGrain());
+		LOG.info("Max DataLoad  : "+ Parameters.getMaxDataLoad());
+		LOG.info("DataLoad grain: "+ Parameters.getDataLoadGrain());
+		LOG.info("Cost function : "+ costFunction);
+		LOG.info("One solution? : "+ Parameters.isOneSolution());
 	}
 
 	public List<Organisation> getGoalList() {
