@@ -173,4 +173,61 @@ public class CostSpecialistTest {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void testThreeRolesSpecialistOrg() {
+		try {
+			System.out.println("\n\ntestThreeRolesSpecialistOrg");
+
+			Parameters.getInstance();
+			Parameters.setMaxWorkload(8.0);
+			Parameters.setWorkloadGrain(4.0);
+			Parameters.setMaxDataLoad(8.0);
+			Parameters.setDataLoadGrain(2.0);
+
+			GoalNode g0 = new GoalNode(null, "g0");
+			GoalTree gTree = GoalTree.getInstance();
+			gTree.setRootNode(g0);
+			gTree.addGoal("g1", "g0");
+			gTree.addWorkload("g1", "w1", 13);
+			gTree.addGoal("g2", "g0");
+			gTree.addWorkload("g2", "w2", 8);
+			gTree.addInform("g1", "i1", "g2", 1);
+			
+			gTree.brakeGoalTree();
+
+			OrganisationStatistics s = OrganisationStatistics.getInstance();
+			s.prepareStatisticsFile("testThreeRolesSpecialistOrg");
+
+			System.out.println("Total workload is 21 -> goals must be assigned to three roles.");
+			Organisation o = new Organisation("testThreeRolesSpecialistOrg", gTree, Cost.SPECIALIST, true);
+			Nodo n = new BuscaLargura().busca(o);
+
+			assertEquals(3, ((Organisation) n.getEstado()).getRolesTree().getTree().size());
+			assertEquals(21, ((Organisation) n.getEstado()).getRolesTree().getSumWorkload(), 0);
+			System.out.println("Generated rolesTree: " + ((Organisation)n.getEstado()).getRolesTree().getTree());
+			for (RoleNode r : ((Organisation)n.getEstado()).getRolesTree().getTree()) {
+				System.out.println("Role: " + r + ", workloads: "+r.getWorkloads() + ", informs: "+r.getInforms());
+				assertEquals(1, r.getWorkloads().size(), 0);
+				assertTrue(r.getSumWorkload() == 6.5 ^ r.getSumWorkload() == 8);
+				// workload equals only checks the id of the workload
+				assertTrue(r.getWorkloads().contains((new Workload("w2",0))) ^ r.getWorkloads().contains((new Workload("w1",0))));
+			}
+			System.out.println("In specialist case, if granularity allows, each role must receive only one workload w1 XOR w2.");
+			
+			assertTrue(((Organisation) n.getEstado()).validateOutput());
+			
+			// Specificness = nMinWorkloads / nAllWorkloads = 2 / 3 = 0.6667
+			assertTrue(((Organisation) n.getEstado()).getRolesTree().getSpecificness() > 0.6);
+
+			System.out.println("The hierarchy is not being checked.");
+			
+		} catch (CircularReference e) {
+			e.printStackTrace();
+		} catch (GoalNotFound e) {
+			e.printStackTrace();
+		} catch (OutputDoesNotMatchWithInput e) {
+			e.printStackTrace();
+		}
+	}
 }
