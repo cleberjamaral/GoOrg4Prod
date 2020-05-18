@@ -16,7 +16,7 @@ public class OrganisationGenerator {
     Organisation inicial;
     private SimpleLogger LOG = SimpleLogger.getInstance();
 
-	public void generateOrganisationFromTree(String name, Cost c, String search, boolean oneSolution) {
+	public Organisation generateOrganisationFromTree(String name, Cost c, String search, boolean oneSolution) {
 		try {
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.deleteExistingStatistics();
@@ -58,9 +58,11 @@ public class OrganisationGenerator {
 				status.para();
 			}
 
+			return inicial;
 		} catch (GoalNotFound e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
     public void createOutPutFolders() {

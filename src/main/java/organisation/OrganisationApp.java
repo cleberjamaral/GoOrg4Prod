@@ -5,6 +5,7 @@ import organisation.exception.GoalNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.resource.AgentSet;
+import organisation.search.Organisation;
 import organisation.search.cost.Cost;
 import simplelogger.SimpleLogger;
 
@@ -53,7 +54,8 @@ public class OrganisationApp {
 				agents.addAgent("alice", new String[]{"w2"});
 				System.out.println(agents.getAvailableAgents());
 
-				orgGen.generateOrganisationFromTree("sample", c, search, Parameters.isOneSolution());
+				Organisation org = orgGen.generateOrganisationFromTree("sample", c, search, Parameters.isOneSolution());
+				org.getGoalList().forEach(o -> {System.out.println(o.toString());});
 			} catch (GoalNotFound | CircularReference e) {
 				e.printStackTrace();
 			}
