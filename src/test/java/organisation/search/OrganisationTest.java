@@ -68,7 +68,7 @@ public class OrganisationTest {
 		for (final Cost c : cost) {
 			final String org = "o0" + "_" + c.name();
 
-			s.prepareStatisticsFile(org);
+			s.prepareGenerationStatisticsFile(org);
 			
 			final Organisation o = new Organisation(org, gTree, c, true);
 			final Nodo n = new BuscaLargura().busca(o);

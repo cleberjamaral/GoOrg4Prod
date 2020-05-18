@@ -115,13 +115,13 @@ public class Organisation implements Estado, Heuristica {
                     final String dot = p.plotOrganisation(this, "");
         			p.saveDotAsPNG(this.getOrgName(), dot);
 
-                    s.saveOnStatistics(this);
+                    s.saveGenerationStatistics(this);
                     
                     return true;
 				} else {
                     p.plotOrganisation(this, Integer.toString(isGoalList.size()));
 					
-					s.saveOnStatistics(this);
+					s.saveGenerationStatistics(this);
 
 					return false;
 				}

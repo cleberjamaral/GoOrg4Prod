@@ -85,7 +85,7 @@ public class CostGeneralistTest {
 			//TODO: assert if inform was removed since it is circular
 			
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
-			s.prepareStatisticsFile("testOneRoleGeneralistOrg");
+			s.prepareGenerationStatisticsFile("testOneRoleGeneralistOrg");
 			
 			System.out.println("Total workload is 4 (less than 8 - max) -> goals must be assigned to one role.");
 			Organisation o = new Organisation("testOneRoleGeneralistOrg", gTree, Cost.GENERALIST, true);
@@ -142,7 +142,7 @@ public class CostGeneralistTest {
 			gTree.brakeGoalTree();
 
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
-			s.prepareStatisticsFile("testTwoRolesGeneralistOrg");
+			s.prepareGenerationStatisticsFile("testTwoRolesGeneralistOrg");
 
 			System.out.println("Total workload is 10 -> goals must be assigned to two roles.");
 			Organisation o = new Organisation("testTwoRolesGeneralistOrg", gTree, Cost.GENERALIST, true);
@@ -198,7 +198,7 @@ public class CostGeneralistTest {
 			gTree.brakeGoalTree();
 
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
-			s.prepareStatisticsFile("testThreeRolesGeneralistOrg");
+			s.prepareGenerationStatisticsFile("testThreeRolesGeneralistOrg");
 
 			System.out.println("Total workload is 21 -> goals must be assigned to three roles.");
 			Organisation o = new Organisation("testThreeRolesGeneralistOrg", gTree, Cost.GENERALIST, true);
