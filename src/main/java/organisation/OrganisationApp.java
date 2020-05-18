@@ -19,6 +19,7 @@ public class OrganisationApp {
 		String search = "BFS";
 
 		OrganisationGenerator orgGen = new OrganisationGenerator();
+		OrganisationBinder orgBin = new OrganisationBinder();
 
 		// if an argument to choose a cost function was given
 		if (args.length >= 2)
@@ -48,14 +49,18 @@ public class OrganisationApp {
 				gTree.addWorkload("g0", "w1", 5);
 				gTree.addWorkload("g1", "w2", 5);
 				gTree.addInform("g1", "i1", "g0", 7);
-				
+
+				// perform organisation generation (free design)
+				Organisation org = orgGen.generateOrganisationFromTree("sample", c, search, Parameters.isOneSolution());
+
+				// perorm binding process
 				AgentSet agents = AgentSet.getInstance();
 				agents.addAgent("bob", new String[]{"w1"});
 				agents.addAgent("alice", new String[]{"w2"});
 				System.out.println(agents.getAvailableAgents());
 
-				Organisation org = orgGen.generateOrganisationFromTree("sample", c, search, Parameters.isOneSolution());
-				org.getGoalList().forEach(o -> {System.out.println(o.toString());});
+				orgBin.bindOrganisations(org, agents);
+				
 			} catch (GoalNotFound | CircularReference e) {
 				e.printStackTrace();
 			}
