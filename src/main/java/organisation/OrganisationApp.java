@@ -4,6 +4,7 @@ import organisation.exception.CircularReference;
 import organisation.exception.GoalNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
+import organisation.resource.AgentSet;
 import organisation.search.cost.Cost;
 import simplelogger.SimpleLogger;
 
@@ -46,6 +47,11 @@ public class OrganisationApp {
 				gTree.addWorkload("g0", "w1", 5);
 				gTree.addWorkload("g1", "w2", 5);
 				gTree.addInform("g1", "i1", "g0", 7);
+				
+				AgentSet agents = AgentSet.getInstance();
+				agents.addAgent("bob", new String[]{"w1"});
+				agents.addAgent("alice", new String[]{"w2"});
+				System.out.println(agents.getAvailableAgents());
 
 				orgGen.generateOrganisationFromTree("sample", c, search, Parameters.isOneSolution());
 			} catch (GoalNotFound | CircularReference e) {
