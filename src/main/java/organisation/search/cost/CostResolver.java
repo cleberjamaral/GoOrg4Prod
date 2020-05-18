@@ -135,7 +135,7 @@ public class CostResolver {
 	}
 
 	private boolean isDecreasingEfficiency(RoleTree oldTree) {
-		if (oldTree.getTree().size() >= GoalTree.getInstance().idealNumberOfRoles())
+		if (oldTree.getTree().size() >= GoalTree.getInstance().getBestNumberOfRoles())
 			return true;
 		
 		return false;

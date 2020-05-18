@@ -32,7 +32,7 @@ public class HeuristicResolver {
 		if (costFunction == Cost.GENERALIST) {
 			
 			// publish if it is creating more roles than the ideal
-			if (rTree.getTree().size() >= GoalTree.getInstance().idealNumberOfRoles()) {
+			if (rTree.getTree().size() >= GoalTree.getInstance().getBestNumberOfRoles()) {
 				return gSuc.size() * Parameters.getExtraPenalty();
 			} else {
 				return gSuc.size() * Parameters.getMinimalPenalty();

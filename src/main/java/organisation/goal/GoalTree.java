@@ -409,7 +409,12 @@ public class GoalTree {
 		return sumDataLoad;
 	}
 
-	public int idealNumberOfRoles() {
+	/**
+	 * This is the lower bound of number of roles according to max workloads
+	 * 
+	 * @return integer representing bet number of roles (lower bound)
+	 */
+	public int getBestNumberOfRoles() {
 		return Math.max(
 				(int) Math.ceil(getSumEfforts() / Parameters.getMaxWorkload()),
 				(int) Math.ceil(getSumDataLoad() / Parameters.getMaxDataLoad()));
