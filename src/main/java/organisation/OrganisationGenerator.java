@@ -6,6 +6,7 @@ import busca.AEstrela;
 import busca.BuscaLargura;
 import busca.BuscaProfundidade;
 import busca.MostraStatusConsole;
+import busca.Nodo;
 import organisation.exception.GoalNotFound;
 import organisation.goal.GoalTree;
 import organisation.search.Organisation;
@@ -20,7 +21,7 @@ public class OrganisationGenerator {
 		try {
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.deleteExistingStatistics();
-            s.prepareStatisticsFile(name);
+            s.prepareGenerationStatisticsFile(name);
 
             OrganisationPlot p = new OrganisationPlot();
 			p.deleteExistingDiagrams();
@@ -37,28 +38,34 @@ public class OrganisationGenerator {
 			LOG.info("\n\nEstimated number of states to visit (worst case): "
 					+ inicial.getEstimatedNumberOfOrganisations());
 
+			Nodo n = null;
 			if (search.equals("BFS")) {
 				BuscaLargura busca = new BuscaLargura();
 				MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
-				busca.busca(inicial);
+				n = busca.busca(inicial);
 				status.para();
 			}
 
 			if (search.equals("DFS")) {
 				BuscaProfundidade busca = new BuscaProfundidade();
 				MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
-				busca.busca(inicial);
+				n = busca.busca(inicial);
 				status.para();
 			}
 			
 			if (search.equals("A*")) {
 				AEstrela busca = new AEstrela();
 				MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
-				busca.busca(inicial);
+				n = busca.busca(inicial);
 				status.para();
 			}
 
-			return inicial;
+			// In case of multiple solutions n is null, initial state can be consulted to
+			// get list of generated organisations
+			if (n != null)
+				return ((Organisation)n.getEstado());
+			else
+				return inicial;
 		} catch (GoalNotFound e) {
 			e.printStackTrace();
 		}
