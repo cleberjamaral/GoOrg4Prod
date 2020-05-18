@@ -3,6 +3,8 @@ package organisation.resource;
 import java.util.HashSet;
 import java.util.Set;
 
+import annotations.Skill;
+
 public class AgentSet {
 
 	private static AgentSet instance = null;
@@ -19,6 +21,16 @@ public class AgentSet {
     }
 	
 	public void addAgent(Agent agent) {
+		availableAgents.add(agent);
+	}
+	
+	public void addAgent(String name, String[] skills) {
+		Agent agent = new Agent(name);
+		for (int i = 0; i < skills.length; i++) {
+			Skill skill = new Skill(skills[i]);
+			agent.addSkill(skill);
+		}
+		
 		availableAgents.add(agent);
 	}
 	
