@@ -33,7 +33,7 @@ public class OrganisationException {
 
 		System.out.println("Validate original gdt workloads with organisations' workloads (must be ok)");
 		try {
-			assertTrue(((Organisation) n.getEstado()).validateOutput());
+			assertTrue(((Organisation) n.getEstado()).isValid());
 		} catch (Exception ex) {
 			System.out.println("Exception catched: " + ex.getMessage());
 		}
@@ -46,7 +46,7 @@ public class OrganisationException {
 			System.out.println("Exception catched: " + ex.getMessage());
 		}
 		assertThrows(OutputDoesNotMatchWithInput.class, () -> {
-			((Organisation) n.getEstado()).validateOutput();
+			((Organisation) n.getEstado()).isValid();
 		});
 	}
 

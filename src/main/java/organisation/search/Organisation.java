@@ -32,7 +32,7 @@ public class Organisation implements Estado, Heuristica {
 	private static HeuristicResolver heuristic;
 	// Number of generated states
 	private static int nStatesX2 = 0;
-	// a reference to the goals tree used by all states (static to save memory)
+	// a reference to the goals tree (static)
 	private static GoalTree goalsTree;
 	// stop algorithm after finding the first solution
 	private static boolean oneSolution = true;
@@ -133,17 +133,14 @@ public class Organisation implements Estado, Heuristica {
 		return false;
 	}
 
-	public boolean validateOutput() throws OutputDoesNotMatchWithInput {
-		
+	public boolean isValid() throws OutputDoesNotMatchWithInput {
 		matchSumWorkload();
-		
 		checkNumberOfWorkloads();
-
 		matchNumberOfGoals();
-		
+
 		return true;
 	}
-
+	
 	private void matchSumWorkload() throws OutputDoesNotMatchWithInput {
 		// checking if sum of efforts match
 		if (Math.abs(goalsTree.getSumEfforts() - rolesTree.getSumWorkload()) > 0.01) {

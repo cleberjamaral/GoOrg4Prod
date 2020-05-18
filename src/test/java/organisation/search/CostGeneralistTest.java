@@ -104,7 +104,7 @@ public class CostGeneralistTest {
 				assertEquals(4, r.getSumWorkload(), 0);
 			}
 			
-			assertTrue(((Organisation) n.getEstado()).validateOutput());
+			assertTrue(((Organisation) n.getEstado()).isValid());
 			assertEquals(1.0, ((Organisation) n.getEstado()).getRolesTree().getGeneralness(), 0);
 
 			System.out.println("The hierarchy is not being checked.");
@@ -161,7 +161,7 @@ public class CostGeneralistTest {
 			}
 			System.out.println("In generalist case, if granularity allows, each role must receive at least one workload w1 and one w2.");
 			
-			assertTrue(((Organisation) n.getEstado()).validateOutput());
+			assertTrue(((Organisation) n.getEstado()).isValid());
 			assertEquals(1.0, ((Organisation) n.getEstado()).getRolesTree().getGeneralness(), 0);
 			
 			System.out.println("The hierarchy is not being checked.");
@@ -217,7 +217,7 @@ public class CostGeneralistTest {
 			}
 			System.out.println("In generalist case, if granularity allows, each role must receive at least one workload w1 and one w2.");
 			
-			assertTrue(((Organisation) n.getEstado()).validateOutput());
+			assertTrue(((Organisation) n.getEstado()).isValid());
 			assertEquals(1.0, ((Organisation) n.getEstado()).getRolesTree().getGeneralness(), 0);
 
 			System.out.println("The hierarchy is not being checked.");

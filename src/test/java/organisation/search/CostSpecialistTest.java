@@ -103,7 +103,7 @@ public class CostSpecialistTest {
 				assertEquals(4, r.getSumWorkload(), 0);
 			}
 			
-			assertTrue(((Organisation) n.getEstado()).validateOutput());
+			assertTrue(((Organisation) n.getEstado()).isValid());
 			assertEquals(1.0, ((Organisation) n.getEstado()).getRolesTree().getSpecificness(), 0);
 
 			System.out.println("The hierarchy is not being checked.");
@@ -160,7 +160,7 @@ public class CostSpecialistTest {
 			}
 			System.out.println("In specialist case, if granularity allows, different workloads should be concentrated in different roles.");
 			
-			assertTrue(((Organisation) n.getEstado()).validateOutput());
+			assertTrue(((Organisation) n.getEstado()).isValid());
 			assertEquals(1.0, ((Organisation) n.getEstado()).getRolesTree().getSpecificness(), 0);
 			
 			System.out.println("The hierarchy is not being checked.");
@@ -215,7 +215,7 @@ public class CostSpecialistTest {
 			}
 			System.out.println("In specialist case, if granularity allows, each role must receive only one workload w1 XOR w2.");
 			
-			assertTrue(((Organisation) n.getEstado()).validateOutput());
+			assertTrue(((Organisation) n.getEstado()).isValid());
 			
 			// Specificness = nMinWorkloads / nAllWorkloads = 2 / 3 = 0.6667
 			assertTrue(((Organisation) n.getEstado()).getRolesTree().getSpecificness() > 0.6);
