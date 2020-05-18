@@ -4,8 +4,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import annotations.Skill;
+import fit.Resource;
+import fit.ResourceSet;
 
-public class AgentSet {
+public class AgentSet implements ResourceSet {
 
 	private static AgentSet instance = null;
 	private Set<Agent> availableAgents = new HashSet<>();
@@ -36,5 +38,13 @@ public class AgentSet {
 	
 	public Set<Agent> getAvailableAgents() {
 		return availableAgents;
+	}
+
+	@Override
+	public Set<Resource> getResources() {
+		// TODO (Set<Resource>) availableAgents; should work!!!
+		Set<Resource> resources = new HashSet<>();
+		availableAgents.forEach(a -> {resources.add(a);});
+		return resources;
 	}
 }

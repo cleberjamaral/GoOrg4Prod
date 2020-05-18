@@ -2,7 +2,6 @@ package organisation.role;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -11,13 +10,14 @@ import java.util.Set;
 import annotations.DataLoad;
 import annotations.Inform;
 import annotations.Workload;
+import fit.Requirement;
 import organisation.goal.GoalNode;
 
 /**
  * @author cleber
  *
  */
-public class RoleNode {
+public class RoleNode implements Requirement {
 	// roleName and parentName are unique names for this role and its parent in this tree (ex: r0, r1...)
 	private String roleName;
 	private String parentName;
@@ -324,4 +324,11 @@ public class RoleNode {
 		}
 		return false;
     }
+
+	@Override
+	public Set<String> getFeatures() {
+		Set<String> features = new HashSet<>();
+		getWorkloads().forEach(w -> {features.add(w.getId());});
+		return features;
+	}
 }

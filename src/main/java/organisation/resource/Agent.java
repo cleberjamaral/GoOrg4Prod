@@ -4,8 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import annotations.Skill;
+import fit.Resource;
 
-public class Agent {
+public class Agent implements Resource {
 	private String name;
 	private Set<Skill> skills = new HashSet<>();
 
@@ -56,6 +57,13 @@ public class Agent {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	@Override
+	public Set<String> getFeatures() {
+		Set<String> features = new HashSet<>();
+		skills.forEach(s -> {features.add(s.getId());});
+		return features;
 	}
 
 }

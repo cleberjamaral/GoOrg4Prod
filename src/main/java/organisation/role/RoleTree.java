@@ -9,12 +9,14 @@ import java.util.Set;
 
 import annotations.DataLoad;
 import annotations.Workload;
+import fit.Requirement;
+import fit.RequirementSet;
 import organisation.Parameters;
 import organisation.exception.RoleNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 
-public class RoleTree {
+public class RoleTree implements RequirementSet {
 
 	private int numberOfLevels = 0;
 	private Set<RoleNode> tree = new HashSet<>();
@@ -266,5 +268,13 @@ public class RoleTree {
 		double occupancy = capacity - GoalTree.getInstance().getSumEfforts();
 
 		return occupancy / capacity;
+	}
+
+	@Override
+	public Set<Requirement> getRequirements() {
+		//TODO: (Set<Requirement>) tree should work!!!
+		Set<Requirement> requirements = new HashSet<>();
+		tree.forEach(r -> {requirements.add(r);});
+		return requirements;
 	}
 }
