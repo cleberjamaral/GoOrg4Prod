@@ -5,6 +5,13 @@ import java.util.Set;
 public interface Resource {
 
 	/**
+	 * An identification to the resource
+	 * @return a string
+	 */
+	public String getResource();
+
+	
+	/**
 	 * Return strings representing items that it is able to do
 	 * @return Set of strings
 	 */

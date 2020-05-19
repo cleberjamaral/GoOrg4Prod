@@ -5,6 +5,12 @@ import java.util.Set;
 public interface Requirement {
 
 	/**
+	 * An identification to the requirement
+	 * @return a string
+	 */
+	public String getRequirement();
+	
+	/**
 	 * Return strings representing items that must be fulfilled
 	 * @return Set of strings
 	 */

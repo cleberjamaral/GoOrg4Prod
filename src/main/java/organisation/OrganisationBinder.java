@@ -9,29 +9,31 @@ public class OrganisationBinder {
     private SimpleLogger LOG = SimpleLogger.getInstance();
 
 	public void bindOrganisations(Organisation org, AgentSet agents) {
-		//TODO: pass list of organisations to binder
-		LOG.info("Here the code to bind organiations with available agents");
+		
+		LOG.info("Binding organisations and available agents...");
+		LOG.info("Available agents: "+agents.getResources());
+		
 		OrganisationStatistics s = OrganisationStatistics.getInstance();
 		s.prepareBindingStatisticsFile(org.getOrgName());
 		
-		LOG.info("List of generated organisations: ");
+		double match = 0;
 		if (org.getGoalList().isEmpty()) {
-			LOG.info("Org: "+org.getRolesTree());
+			LOG.info("Organisation: "+org.getOrgName());
 			FirstFit fit = new FirstFit();
-			fit.fitRequirements(org.getOrgName(), org.getRolesTree().getRequirements(), agents.getResources());
-			s.saveBindingStatistics(org);
+			match = fit.fitRequirements(org.getOrgName(), org.getRolesTree().getRequirements(), agents.getResources());
+			s.saveBindingStatistics(org, agents, match);
 		} else {
+			LOG.info("Number of organisations to bind: "+org.getGoalList().size());
 			for (int i = 0; i < org.getGoalList().size(); i++) {
-				LOG.info("Org: "+org.getGoalList().get(i));
 				FirstFit fit = new FirstFit();
-				fit.fitRequirements(
+				match = fit.fitRequirements(
 						org.getGoalList().get(i).getOrgName()+"_"+(i+1), 
 						org.getGoalList().get(i).getRolesTree().getRequirements(), 
 						agents.getResources()
 				);
-				s.saveBindingStatistics(org.getGoalList().get(i));
+				s.saveBindingStatistics(org.getGoalList().get(i), agents, match);
 			}
 		}
-		LOG.info("List of available agents: "+agents.getAvailableAgents());
+		LOG.info("End of binding process");
 	}
 }

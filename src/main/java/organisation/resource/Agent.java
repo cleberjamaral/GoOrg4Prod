@@ -66,4 +66,9 @@ public class Agent implements Resource {
 		return features;
 	}
 
+	@Override
+	public String getResource() {
+		return getName();
+	}
+
 }

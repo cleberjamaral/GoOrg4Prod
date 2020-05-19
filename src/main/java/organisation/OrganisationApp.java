@@ -48,7 +48,7 @@ public class OrganisationApp {
 				gTree.addGoal("g1", "g0");
 				gTree.addWorkload("g0", "w1", 5);
 				gTree.addWorkload("g1", "w2", 5);
-				gTree.addInform("g1", "i1", "g0", 7);
+				gTree.addInform("g1", "i1", "g0", 1);
 
 				// perform organisation generation (free design)
 				Organisation org = orgGen.generateOrganisationFromTree("sample", c, search, Parameters.isOneSolution());
@@ -57,7 +57,7 @@ public class OrganisationApp {
 				AgentSet agents = AgentSet.getInstance();
 				agents.addAgent("bob", new String[]{"w1"});
 				agents.addAgent("alice", new String[]{"w2"});
-				System.out.println(agents.getAvailableAgents());
+				agents.addAgent("tom", new String[]{"w2"});
 
 				orgBin.bindOrganisations(org, agents);
 				

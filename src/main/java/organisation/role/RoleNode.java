@@ -331,4 +331,9 @@ public class RoleNode implements Requirement {
 		getWorkloads().forEach(w -> {features.add(w.getId());});
 		return features;
 	}
+
+	@Override
+	public String getRequirement() {
+		return getRoleName();
+	}
 }

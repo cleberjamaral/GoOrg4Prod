@@ -18,6 +18,7 @@ import org.apache.commons.io.FileUtils;
 
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
+import organisation.resource.AgentSet;
 import organisation.role.RoleNode;
 import organisation.search.Organisation;
 
@@ -50,6 +51,7 @@ public class OrganisationStatistics {
 		this.fields.add("%Idle+"); //Absolute Idleness %
 		this.fields.add("%Geral"); //Generalness %
 		this.fields.add("%Speci"); //Specificness %
+		this.fields.add("%Feasi"); //Feasible % matching requirements and resources
 		this.fields.add("Levels");
 		this.fields.add("States");
 		this.fields.add("Idlene"); //Idleness
@@ -59,6 +61,7 @@ public class OrganisationStatistics {
 		this.fields.add("rDL");
 		this.fields.add("rTree");
 		this.fields.add("bgTree");
+		this.fields.add("agents");
 	}
 	
 	public void prepareGenerationStatisticsFile(final String orgName) {
@@ -81,7 +84,7 @@ public class OrganisationStatistics {
 				BufferedWriter bw = new BufferedWriter(fw);
 				PrintWriter out = new PrintWriter(bw)) {
 			
-			Map<String, String> line = writeLine(o);
+			Map<String, String> line = writeLine(o, null, 0);
 			
 			out.print("\n");
 			for (int i = 0; i < fields.size(); i++) {
@@ -109,12 +112,12 @@ public class OrganisationStatistics {
 		}
 	}
 	
-	public void saveBindingStatistics(final Organisation o) {
+	public void saveBindingStatistics(final Organisation o, AgentSet agents, double matchRate) {
 		try (FileWriter fw = new FileWriter("output/statistics/" + o.getOrgName() + "_binding.csv", true);
 				BufferedWriter bw = new BufferedWriter(fw);
 				PrintWriter out = new PrintWriter(bw)) {
 			
-			Map<String, String> line = writeLine(o);
+			Map<String, String> line = writeLine(o, agents, matchRate);
 			
 			out.print("\n");
 			for (int i = 0; i < fields.size(); i++) {
@@ -127,7 +130,7 @@ public class OrganisationStatistics {
 		}
 	}
 
-	private Map<String, String> writeLine(final Organisation o) {
+	private Map<String, String> writeLine(final Organisation o, final AgentSet a, final double matchRate) {
 		Map<String,String> line = new HashMap<>();
 		
 		double assignedWorkLoad = o.getRolesTree().getSumWorkload();
@@ -169,6 +172,13 @@ public class OrganisationStatistics {
 		line.put("bgTree", bgTree);
 		line.put("States", (Integer.toString(o.getNStates())));
 		line.put("Levels", (Integer.toString(o.getRolesTree().getNumberOfLevels())));
+
+		// Only the binding process sends a set of agents
+		if (a != null) {
+			line.put("%Feasi", (String.format("%.0f%%", 100 * matchRate)));
+			line.put("agents", a.getResources().toString());
+		}
+	
 		return line;
 	}
 
