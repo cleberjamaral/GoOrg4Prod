@@ -1,6 +1,12 @@
 package organisation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import fit.FirstFit;
+import fit.Requirement;
+import fit.Resource;
+import organisation.binder.Binding;
 import organisation.resource.AgentSet;
 import organisation.search.Organisation;
 import simplelogger.SimpleLogger;
@@ -16,22 +22,18 @@ public class OrganisationBinder {
 		OrganisationStatistics s = OrganisationStatistics.getInstance();
 		s.prepareBindingStatisticsFile(org.getOrgName());
 		
-		double match = 0;
+		
 		if (org.getGoalList().isEmpty()) {
 			LOG.info("Organisation: "+org.getOrgName());
-			FirstFit fit = new FirstFit();
-			match = fit.fitRequirements(org.getOrgName(), org.getRolesTree().getRequirements(), agents.getResources());
-			s.saveBindingStatistics(org, agents, match);
+			Binding binding = new Binding(org, agents);
+			binding.FirstFit();
+			s.saveBindingStatistics(org, binding);
 		} else {
 			LOG.info("Number of organisations to bind: "+org.getGoalList().size());
 			for (int i = 0; i < org.getGoalList().size(); i++) {
-				FirstFit fit = new FirstFit();
-				match = fit.fitRequirements(
-						org.getGoalList().get(i).getOrgName()+"_"+(i+1), 
-						org.getGoalList().get(i).getRolesTree().getRequirements(), 
-						agents.getResources()
-				);
-				s.saveBindingStatistics(org.getGoalList().get(i), agents, match);
+				Binding binding = new Binding(org.getGoalList().get(i), agents);
+				binding.FirstFit();
+				s.saveBindingStatistics(org.getGoalList().get(i), binding);
 			}
 		}
 		LOG.info("End of binding process");

@@ -11,7 +11,7 @@ import java.util.Set;
 public class FirstFit extends Fit {
 
 	@Override
-	public double fitRequirements(String orgName, Set<Requirement> requirements, Set<Resource> resources) {
+	public Map<Requirement,Resource> fitRequirements(String orgName, Set<Requirement> requirements, Set<Resource> resources) {
 		Map<Requirement,Resource> match = new HashMap<>();
 		Set<Resource> availableResources = new HashSet<>(resources);
 		requirements.forEach(req -> {
@@ -30,8 +30,7 @@ public class FirstFit extends Fit {
 			if (toRemove != null)
 				availableResources.remove(toRemove);
 		});
-		
-		return (double) match.keySet().size() / (double) requirements.size();
+		return match;
 	}
 
 }

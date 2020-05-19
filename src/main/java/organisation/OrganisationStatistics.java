@@ -16,6 +16,7 @@ import annotations.DataLoad;
 
 import org.apache.commons.io.FileUtils;
 
+import organisation.binder.Binding;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.resource.AgentSet;
@@ -62,6 +63,7 @@ public class OrganisationStatistics {
 		this.fields.add("rTree");
 		this.fields.add("bgTree");
 		this.fields.add("agents");
+		this.fields.add("matche");
 	}
 	
 	public void prepareGenerationStatisticsFile(final String orgName) {
@@ -84,7 +86,7 @@ public class OrganisationStatistics {
 				BufferedWriter bw = new BufferedWriter(fw);
 				PrintWriter out = new PrintWriter(bw)) {
 			
-			Map<String, String> line = writeLine(o, null, 0);
+			Map<String, String> line = writeLine(o, null);
 			
 			out.print("\n");
 			for (int i = 0; i < fields.size(); i++) {
@@ -112,12 +114,12 @@ public class OrganisationStatistics {
 		}
 	}
 	
-	public void saveBindingStatistics(final Organisation o, AgentSet agents, double matchRate) {
+	public void saveBindingStatistics(final Organisation o, final Binding binding) {
 		try (FileWriter fw = new FileWriter("output/statistics/" + o.getOrgName() + "_binding.csv", true);
 				BufferedWriter bw = new BufferedWriter(fw);
 				PrintWriter out = new PrintWriter(bw)) {
 			
-			Map<String, String> line = writeLine(o, agents, matchRate);
+			Map<String, String> line = writeLine(o, binding);
 			
 			out.print("\n");
 			for (int i = 0; i < fields.size(); i++) {
@@ -130,7 +132,7 @@ public class OrganisationStatistics {
 		}
 	}
 
-	private Map<String, String> writeLine(final Organisation o, final AgentSet a, final double matchRate) {
+	private Map<String, String> writeLine(final Organisation o, final Binding binding) {
 		Map<String,String> line = new HashMap<>();
 		
 		double assignedWorkLoad = o.getRolesTree().getSumWorkload();
@@ -174,9 +176,10 @@ public class OrganisationStatistics {
 		line.put("Levels", (Integer.toString(o.getRolesTree().getNumberOfLevels())));
 
 		// Only the binding process sends a set of agents
-		if (a != null) {
-			line.put("%Feasi", (String.format("%.0f%%", 100 * matchRate)));
-			line.put("agents", a.getResources().toString());
+		if (binding != null) {
+			line.put("%Feasi", (String.format("%.0f%%", 100 * binding.getFeasibily())));
+			line.put("agents", binding.getAgents().toString());
+			line.put("matche", binding.getMatches());
 		}
 	
 		return line;

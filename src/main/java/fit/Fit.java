@@ -1,5 +1,6 @@
 package fit;
 
+import java.util.Map;
 import java.util.Set;
 
 public abstract class Fit {
@@ -13,13 +14,13 @@ public abstract class Fit {
 	 * @param resources are the available agents
 	 * @return % of matches
 	 */
-	public double fitRequirements(String orgName, Set<Requirement> requirements, Set<Resource> resources) {
+	public Map<Requirement,Resource> fitRequirements(String orgName, Set<Requirement> requirements, Set<Resource> resources) {
 		System.out.println("OrgN: "+orgName);
 		System.out.println("Reqs: ");
 		requirements.forEach(r -> {System.out.println(r.getFeatures());});
 		System.out.println("Reso: ");
 		resources.forEach(r -> {System.out.println(r.getFeatures());});
-		return 0;
+		return null;
 	}
-
+	
 }
