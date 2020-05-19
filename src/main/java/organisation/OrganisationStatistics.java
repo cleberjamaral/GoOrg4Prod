@@ -19,7 +19,6 @@ import org.apache.commons.io.FileUtils;
 import organisation.binder.Binding;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
-import organisation.resource.AgentSet;
 import organisation.role.RoleNode;
 import organisation.search.Organisation;
 
