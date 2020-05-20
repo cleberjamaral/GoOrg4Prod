@@ -41,7 +41,7 @@ public class OrganisationPlot {
 	public String plotOrganisation(final Organisation o, final String plotIndex) {
 		final Set<String> links = new HashSet<>();
 
-		createOutPutFolders();
+		createOutputPlotFolders();
 
 		String index = "";
 		if (!plotIndex.equals(""))
@@ -129,7 +129,7 @@ public class OrganisationPlot {
     }
 
 	public String plotGoalTree(final String plotName, final GoalTree gt) {
-        createOutPutFolders();
+        createOutputPlotFolders();
         
 		try (PrintWriter pout = new PrintWriter(new BufferedWriter(new FileWriter("output/diagrams/" + plotName + ".gv", false)))) {
 
@@ -152,7 +152,7 @@ public class OrganisationPlot {
         return null;
 	}
 
-    private void createOutPutFolders() {
+    private void createOutputPlotFolders() {
         // create folders if doesnt exist
 		File file = new File("output/diagrams/tmp");
 		file.getParentFile().mkdirs();

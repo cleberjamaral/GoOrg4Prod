@@ -68,7 +68,7 @@ public class OrganisationStatistics {
 	public void prepareGenerationStatisticsFile(final String orgName) {
 		id = 0;
 		
-		createOutPutFolders();
+		createStatisticsFolders();
 
 		try (FileWriter fw = new FileWriter("output/statistics/" + orgName + "_generation.csv", false);
 				BufferedWriter bw = new BufferedWriter(fw);
@@ -101,7 +101,7 @@ public class OrganisationStatistics {
 	public void prepareBindingStatisticsFile(final String orgName) {
 		id = 0;
 		
-		createOutPutFolders();
+		createStatisticsFolders();
 
 		try (FileWriter fw = new FileWriter("output/statistics/" + orgName + "_binding.csv", false);
 				BufferedWriter bw = new BufferedWriter(fw);
@@ -197,7 +197,7 @@ public class OrganisationStatistics {
 		originalWorkLoad = gTree.getSumEfforts();
 	}
 	
-    private void createOutPutFolders() {
+    private void createStatisticsFolders() {
         // create folders if doesnt exist
 		File file = new File("output/statistics/tmp");
         file.getParentFile().mkdirs();
