@@ -191,6 +191,21 @@ public class GoalTree {
 		}
 	}
 
+	/**
+	 * A recursive function to get unique workloads.
+	 * Number of different workloads is used to calculate generalness
+	 * and other rates. When the tree is build from goals node and later
+	 * imported to the tree it should be calculated.
+	 * 
+	 * @param root goal
+	 */
+	public void updateNumberDiffWorkloads(GoalNode root) {
+        for (Workload w : root.getWorkloads()) 
+    		allDiffWorkloads.add(w);
+        for (GoalNode g : root.getDescendants()) 
+            updateNumberDiffWorkloads(g);
+	}
+	
     /**
      * Add a workload annotation to a given goal
      * 
