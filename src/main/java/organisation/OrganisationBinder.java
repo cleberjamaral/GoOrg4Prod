@@ -1,12 +1,14 @@
 package organisation;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import fit.FirstFit;
 import fit.Requirement;
 import fit.Resource;
 import organisation.binder.Binding;
+import organisation.resource.Agent;
 import organisation.resource.AgentSet;
 import organisation.search.Organisation;
 import simplelogger.SimpleLogger;
@@ -17,7 +19,7 @@ public class OrganisationBinder {
 	public void bindOrganisations(Organisation org, AgentSet agents) {
 		
 		LOG.info("Binding organisations and available agents...");
-		LOG.info("Available agents: "+agents.getResources());
+		LOG.info("Available agents: "+agents.getAvailableAgents());
 		
 		OrganisationStatistics s = OrganisationStatistics.getInstance();
 		s.prepareBindingStatisticsFile(org.getOrgName());

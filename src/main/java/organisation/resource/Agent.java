@@ -31,7 +31,7 @@ public class Agent implements Resource {
 	}
 	
 	public String toString() {
-		return this.name;
+		return this.name + " " + skills;
 	}
 	
 	@Override
