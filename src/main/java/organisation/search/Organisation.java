@@ -6,6 +6,7 @@ import java.util.List;
 
 import busca.Estado;
 import busca.Heuristica;
+import organisation.OrganisationJacamoExport;
 import organisation.OrganisationPlot;
 import organisation.OrganisationStatistics;
 import organisation.Parameters;
@@ -109,17 +110,23 @@ public class Organisation implements Estado, Heuristica {
 		
 				OrganisationPlot p = new OrganisationPlot();
 				OrganisationStatistics s = OrganisationStatistics.getInstance();
+				OrganisationJacamoExport j = new OrganisationJacamoExport();
 				if (oneSolution) {
 					isGoalList.clear();
 					
                     final String dot = p.plotOrganisation(this, "");
-        			p.saveDotAsPNG(this.getOrgName(), dot);
+                    
+                    j.exportOrganisationAsMoiseXML(this, "");
+
+                    p.saveDotAsPNG(this.getOrgName(), dot);
 
                     s.saveGenerationStatistics(this);
                     
                     return true;
 				} else {
                     p.plotOrganisation(this, Integer.toString(isGoalList.size()));
+                    
+                    j.exportOrganisationAsMoiseXML(this, Integer.toString(isGoalList.size()));
 					
 					s.saveGenerationStatistics(this);
 
