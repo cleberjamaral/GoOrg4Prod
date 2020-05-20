@@ -1,6 +1,7 @@
 package organisation.resource;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import annotations.Skill;
@@ -26,6 +27,12 @@ public class AgentSet implements ResourceSet {
 		availableAgents.add(agent);
 	}
 	
+	public void addAgent(String name) {
+		Agent agent = new Agent(name);
+		
+		availableAgents.add(agent);
+	}
+
 	public void addAgent(String name, String[] skills) {
 		Agent agent = new Agent(name);
 		for (int i = 0; i < skills.length; i++) {
@@ -34,6 +41,20 @@ public class AgentSet implements ResourceSet {
 		}
 		
 		availableAgents.add(agent);
+	}
+	
+	public void addSkillsToAgent(String name, String[] skills) {
+		Iterator<Agent> ag = availableAgents.iterator();
+		while (ag.hasNext()) {
+			Agent agent = ag.next();
+			if (agent.getName().equals(name)) {
+				for (int i = 0; i < skills.length; i++) {
+					Skill skill = new Skill(skills[i]);
+					agent.addSkill(skill);
+				}
+				break;
+			}
+		}
 	}
 	
 	public Set<Agent> getAvailableAgents() {

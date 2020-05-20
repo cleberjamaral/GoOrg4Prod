@@ -46,19 +46,20 @@ public class OrganisationApp {
 				GoalTree gTree = GoalTree.getInstance();
 				gTree.setRootNode(g0);
 				gTree.addGoal("g1", "g0");
-				gTree.addWorkload("g0", "w1", 5);
-				gTree.addWorkload("g1", "w2", 5);
+				gTree.addWorkload("g0", "w0", 5);
+				gTree.addWorkload("g1", "w1", 5);
 				gTree.addInform("g1", "i1", "g0", 1);
 
 				// perform organisation generation (free design)
 				Organisation org = orgGen.generateOrganisationFromTree("sample", c, search, Parameters.isOneSolution());
 
-				// perorm binding process
+				// set available agents ofr this example
 				AgentSet agents = AgentSet.getInstance();
-				agents.addAgent("bob", new String[]{"w1"});
-				agents.addAgent("alice", new String[]{"w2"});
-				agents.addAgent("tom", new String[]{"w2"});
+				agents.addAgent("bob", new String[]{"w0"});
+				agents.addAgent("alice", new String[]{"w1"});
+				agents.addAgent("tom", new String[]{"w1"});
 
+				// bind agents and roles
 				orgBin.bindOrganisations(org, agents);
 				
 			} catch (GoalNotFound | CircularReference e) {
@@ -71,6 +72,7 @@ public class OrganisationApp {
 			OrganisationXMLParser parser = new OrganisationXMLParser();
 			parser.parseOrganisationSpecification(args[0]);
 			parser.parseDesignParameters(args[0]);
+			parser.parseAvailableAgents(args[0]);
 			
 			String path[] = args[0].split("/");
 			String name = path[path.length - 1];
@@ -79,7 +81,14 @@ public class OrganisationApp {
 			Parameters.getInstance();
 			LOG.info("Search algorit: "+ search);
 
-			orgGen.generateOrganisationFromTree(name, c, search, Parameters.isOneSolution());
+			// generate organisations
+			Organisation org = orgGen.generateOrganisationFromTree(name, c, search, Parameters.isOneSolution());
+			
+			// get parsed agents set
+			AgentSet agents = AgentSet.getInstance();
+			
+			// perform organisation generation (free design)
+			orgBin.bindOrganisations(org, agents);
 		}
 	}
 }

@@ -16,6 +16,7 @@ import annotations.Workload;
 import organisation.exception.CircularReference;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
+import organisation.resource.AgentSet;
 import simplelogger.SimpleLogger;
 
 public class OrganisationXMLParser {
@@ -41,6 +42,7 @@ public class OrganisationXMLParser {
 
             gTree.addAllDescendants(gTree.getRootNode());
             gTree.updateInformAndDataLoadReferences(gTree.getRootNode());
+            gTree.updateNumberDiffWorkloads(gTree.getRootNode());
 
         } catch (final Exception e) {
             e.printStackTrace();
@@ -88,6 +90,50 @@ public class OrganisationXMLParser {
         }
     }
 
+    public void parseAvailableAgents(final String file) {
+        try {
+            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            final DocumentBuilder builder = factory.newDocumentBuilder();
+            final Document document = builder.parse(new File(file));
+
+            if (!document.getDocumentElement().getNodeName().equals("organisational-specification"))
+                throw new IllegalArgumentException(
+                        "Error! It is expected an 'automated-design-parameters' XML structure");
+
+            document.getDocumentElement().normalize();
+			
+            // get agents set for adding up the given inputs
+			AgentSet agents = AgentSet.getInstance();
+
+			// get list of automated-design-parameters nodes
+			final NodeList nList = document.getElementsByTagName("available-agents");
+			// it is supposed to have only one automated-design-parameters node
+			final Node nAvailableAgents = nList.item(0);
+			for (int temp = 0; temp < nAvailableAgents.getChildNodes().getLength(); temp++) {
+				final Node nAgent = nAvailableAgents.getChildNodes().item(temp);
+				if (nAgent.getNodeType() == Node.ELEMENT_NODE) {
+					final Element eAgent = (Element) nAgent;
+					if (nAgent.getNodeName().equals("agent")) {
+						agents.addAgent(eAgent.getAttribute("id"));
+						for (int j = 0; j < nAgent.getChildNodes().getLength(); j++) {
+							final Node nSkill = nAgent.getChildNodes().item(j);
+							if (nSkill.getNodeType() == Node.ELEMENT_NODE) {
+								final Element eSkill = (Element) nSkill;
+								if (nSkill.getNodeName().equals("skill")) {
+									agents.addSkillsToAgent(eAgent.getAttribute("id"),
+											new String[] { eSkill.getAttribute("id") });
+								}
+							}
+						}
+					}
+				}
+			}
+
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     private void visitNodes(final NodeList nList, final GoalTree gTree, GoalNode referenceGoalNode,
             final Stack<GoalNode> stack) {
         try {
