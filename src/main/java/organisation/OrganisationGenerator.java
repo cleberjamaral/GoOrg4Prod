@@ -71,14 +71,4 @@ public class OrganisationGenerator {
 		}
 		return null;
 	}
-
-    public void createOutPutFolders() {
-        // create folders if does not exist	
-		File file = new File("output/diagrams/tmp");
-		file.getParentFile().mkdirs();
-        file = new File("output/graphs/tmp");
-        file.getParentFile().mkdirs();
-        file = new File("output/statistics/tmp");
-        file.getParentFile().mkdirs();
-    }
 }
