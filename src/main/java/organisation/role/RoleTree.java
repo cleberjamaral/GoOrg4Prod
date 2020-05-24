@@ -231,9 +231,8 @@ public class RoleTree implements RequirementSet {
 		
 		// the most specialist roles tree must have all workloads distributed
 		// without splitting them (if may be impossible if the sumofefforts if higher
-		// than maxWorkload, but efficiency/idleness concerns should be taken into account
-		// by other functions
-		int nMinWorkloads = GoalTree.getInstance().getNumberDiffWorkloads();
+		// than maxWorkload, but efficiency/idleness should not be taken into account
+		int nMinWorkloads = Math.max(GoalTree.getInstance().getNumberDiffWorkloads(), this.tree.size());
 		
 		return (double) nMinWorkloads / (double) nAllWorkloads;
 	}
