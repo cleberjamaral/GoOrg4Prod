@@ -11,6 +11,7 @@ public class CostResolver {
 
 	// static Cost costFunction = Cost.SPECIALIST;
 	private static Cost costFunction = Cost.SPECIALIST;
+	private static boolean searchMostEfficient = true;
 
 	public CostResolver(Cost costFunction) {
 		CostResolver.setCostFunction(costFunction);
@@ -49,11 +50,11 @@ public class CostResolver {
 			
 			// punish if it is creating more roles than the ideal
 			if (isDecreasingEfficiency(oldTree))
-				return cost + Parameters.getDefaultPenalty();
+				cost += Parameters.getDefaultPenalty();
 
 			// check if another role should receive this workload to become more generalist
-			if (isDecreasingEfficiencyForGeneralist(goal, oldTree))
-				return cost + Parameters.getDefaultPenalty();
+			if (isDecreasingGeneralism(goal, oldTree))
+				cost += Parameters.getExtraPenalty();
 		}
 
 		// SPECIALIST
@@ -79,12 +80,12 @@ public class CostResolver {
 		if (costFunction == Cost.GENERALIST) {
 			
 			// punish if it is creating more roles than the ideal
-			if (isDecreasingEfficiency(oldTree))
-				return cost + Parameters.getDefaultPenalty();
+			if ((isDecreasingEfficiency(oldTree)))
+				cost += Parameters.getDefaultPenalty();
 
 			// check if another role should receive this workload to become more generalist
-			if (isDecreasingEfficiencyForGeneralist(goal, oldTree))
-				return cost + Parameters.getDefaultPenalty();
+			if (isDecreasingGeneralism(goal, oldTree))
+				cost += Parameters.getExtraPenalty();
 		}
 
 		// High punishment when it is creating more levels in a preferable flatter
@@ -117,7 +118,7 @@ public class CostResolver {
 
 		// Punish when goal and workloads already exist, better to put it to another role
 		if ((costFunction == Cost.GENERALIST) && (goalsAndWorkloadsAlreadyExist(role, goal, oldTree)))
-			return Parameters.getDefaultPenalty();
+			return Parameters.getExtraPenalty();
 
 		// High punishment when it is preferred taller and the role is not a child
 		if ((costFunction == Cost.TALLER) && (!role.hasParentGoal(goal)))
@@ -135,13 +136,13 @@ public class CostResolver {
 	}
 
 	private boolean isDecreasingEfficiency(RoleTree oldTree) {
-		if (oldTree.getTree().size() >= GoalTree.getInstance().getBestNumberOfRoles())
+		if ((searchMostEfficient) && (oldTree.getTree().size() >= GoalTree.getInstance().getBestNumberOfRoles()))
 			return true;
-		
+
 		return false;
 	}
 
-	private boolean isDecreasingEfficiencyForGeneralist(GoalNode goal, RoleTree oldTree) {
+	private boolean isDecreasingGeneralism(GoalNode goal, RoleTree oldTree) {
 		for (RoleNode r : oldTree.getTree()) {
 			// Check if there is a role that has the same goal and could receive this other one
 			if ((r.containsGoalByOriginalName(goal))
