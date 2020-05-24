@@ -154,7 +154,7 @@ public class CostGeneralistTest {
 			for (RoleNode r : ((Organisation)n.getEstado()).getRolesTree().getTree()) {
 				System.out.println("Role: " + r + ", workloads: "+r.getWorkloads() + ", informs: "+r.getInforms());
 				assertTrue(r.getWorkloads().size() >= 2);
-				assertTrue(r.getSumWorkload() == 5);
+				assertTrue(r.getSumWorkload() >= 3.75);
 				// workload equals only checks the id of the workload
 				assertTrue(r.getWorkloads().contains((new Workload("w0",0)))); 
 				assertTrue(r.getWorkloads().contains((new Workload("w1",0))));
