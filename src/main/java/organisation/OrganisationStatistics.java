@@ -178,7 +178,7 @@ public class OrganisationStatistics {
 		if (binding != null) {
 			line.put("%Feasi", (String.format("%.0f%%", 100 * binding.getFeasibily())));
 			line.put("agents", binding.getAgents().toString());
-			line.put("matche", binding.getMatches());
+			line.put("matche", binding.getMatchesAsString());
 		}
 	
 		return line;

@@ -12,7 +12,7 @@ public class FirstFit extends Fit {
 
 	@Override
 	public Map<Requirement,Resource> fitRequirements(String orgName, Set<Requirement> requirements, Set<Resource> resources) {
-		Map<Requirement,Resource> match = new HashMap<>();
+		Map<Requirement,Resource> matches = new HashMap<>();
 		Set<Resource> availableResources = new HashSet<>(resources);
 		requirements.forEach(req -> {
 			Resource toRemove = null;
@@ -22,7 +22,7 @@ public class FirstFit extends Fit {
 				List<String> rr = new ArrayList<>(req.getFeatures());
 				List<String> rs = new ArrayList<>(res.getFeatures());
 				if (rs.containsAll(rr)) {
-					match.put(req, res);
+					matches.put(req, res);
 					toRemove = res;
 					break;
 				}
@@ -30,7 +30,7 @@ public class FirstFit extends Fit {
 			if (toRemove != null)
 				availableResources.remove(toRemove);
 		});
-		return match;
+		return matches;
 	}
 
 }
