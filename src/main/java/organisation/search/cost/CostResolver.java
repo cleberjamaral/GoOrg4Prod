@@ -13,8 +13,7 @@ import organisation.position.PositionsTree;
  */
 public class CostResolver {
 
-	// static Cost costFunction = Cost.SPECIALIST;
-	private static Cost costFunction = Cost.SPECIALIST;
+	private static Cost costFunction = Cost.GENERALIST;
 	private static boolean searchMostEfficient = true;
 
 	public CostResolver(Cost costFunction) {
@@ -56,9 +55,8 @@ public class CostResolver {
 			if (isDecreasingEfficiency(oldTree))
 				cost += Parameters.getDefaultPenalty();
 
-			// check if another position should receive this workload to become more generalist
-			if (isDecreasingGeneralism(goal, oldTree))
-				cost += Parameters.getExtraPenalty();
+			// penalize according to generalness of the new tree
+			cost += (int) ((1 - newTree.getGeneralness()) * Parameters.getExtraPenalty());
 		}
 
 		// SPECIALIST
@@ -87,9 +85,8 @@ public class CostResolver {
 			if ((isDecreasingEfficiency(oldTree)))
 				cost += Parameters.getDefaultPenalty();
 
-			// check if another position should receive this workload to become more generalist
-			if (isDecreasingGeneralism(goal, oldTree))
-				cost += Parameters.getExtraPenalty();
+			// penalize according to generalness of the new tree
+			cost += (int) ((1 - newTree.getGeneralness()) * Parameters.getExtraPenalty());
 		}
 
 		// High punishment when it is creating more levels in a preferable flatter
@@ -121,8 +118,10 @@ public class CostResolver {
 		int cost = Parameters.getMinimalPenalty();
 
 		// Punish when goal and workloads already exist, better to put it to another position
-		if ((costFunction == Cost.GENERALIST) && (goalsAndWorkloadsAlreadyExist(position, goal, oldTree)))
-			return Parameters.getExtraPenalty();
+		if (costFunction == Cost.GENERALIST) { 
+			// penalize according to generalness of the new tree
+			return (int) ((1 - newTree.getGeneralness()) * Parameters.getExtraPenalty());
+		}
 
 		// High punishment when it is preferred taller and the position is not a child
 		if ((costFunction == Cost.TALLER) && (!position.hasParentGoal(goal)))
