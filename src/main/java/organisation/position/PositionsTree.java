@@ -214,7 +214,7 @@ public class PositionsTree implements RequirementSet {
 
 		// ideal situation: each original goal has a broken part that can be distributed
 		// equally across all positions
-		int nMaxOriginalGoalsSpread = GoalTree.getInstance().getNumberOriginalGoals() * this.tree.size();
+		int nMaxOriginalGoalsSpread = GoalTree.getInstance().getOriginalGoals().size() * this.tree.size();
 
 		// the actual generalness of the current positions tree
 		double generalness = (double) nAllOriginalGoalsAssigned / (double) nMaxOriginalGoalsSpread;

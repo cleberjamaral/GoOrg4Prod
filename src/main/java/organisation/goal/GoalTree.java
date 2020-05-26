@@ -467,7 +467,7 @@ public class GoalTree {
 		return allDiffWorkloads.size();
 	}
 	
-	public int getNumberOriginalGoals() {
-		return allOriginalGoals.size();
+	public Set<String> getOriginalGoals() {
+		return allOriginalGoals;
 	}
 }
