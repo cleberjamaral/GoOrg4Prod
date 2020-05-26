@@ -145,33 +145,4 @@ public class CostResolver {
 		return false;
 	}
 
-	private boolean isDecreasingGeneralism(GoalNode goal, PositionsTree oldTree) {
-		for (PositionNode r : oldTree.getTree()) {
-			// Check if there is a position that has the same goal and could receive this other one
-			if ((r.containsGoalByOriginalName(goal))
-				&& (r.getSumWorkload() + goal.getSumWorkload() <= Parameters.getMaxWorkload())) {
-				
-				return true;
-			}
-			
-			// Check if there is a position that has the workloads and could receive this other one
-			if ((r.getWorkloads().containsAll(goal.getWorkloads()))
-					&& (r.getSumWorkload() + goal.getSumWorkload() <= Parameters.getMaxWorkload())) {
-				
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean goalsAndWorkloadsAlreadyExist(PositionNode position, GoalNode goal, PositionsTree oldTree) throws PositionNotFound {
-		PositionNode old = oldTree.findPositionByName(position.getPositionName());
-		
-		// Punish when it would be possible to join with the give position
-		if (old.getWorkloads().containsAll(goal.getWorkloads()))
-			return true;
-		
-		return false;
-	}
-
 }
