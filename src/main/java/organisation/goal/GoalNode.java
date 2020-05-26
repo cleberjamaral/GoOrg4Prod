@@ -119,7 +119,7 @@ public class GoalNode {
 	public void setGoalName(String name) {
 		this.goalName = name;
 		if (name.indexOf('$') > 0)
-			originalName = name.substring(0, name.lastIndexOf('$'));
+			originalName = name.substring(0, name.indexOf('$'));
 		else
 			originalName = name;
 	} 
