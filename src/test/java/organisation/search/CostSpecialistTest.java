@@ -60,6 +60,9 @@ public class CostSpecialistTest {
 			System.out.println("g2 must be split into two goals with 2 of dataload each");
 			gTree.addInform("g1", "i1", "g2", 4);
 			
+			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
+			assertEquals(3, GoalTree.getInstance().getOriginalGoals().size(), 0);
+			
 			gTree.brakeGoalTree();
 			
 			GoalNode g;
@@ -138,6 +141,9 @@ public class CostSpecialistTest {
 			System.out.println("g0 must be split into four goals with 1.75 of dataload each");
 			gTree.addInform("g1", "i1", "g0", 7);
 			
+			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
+			assertEquals(2, GoalTree.getInstance().getOriginalGoals().size(), 0);
+
 			gTree.brakeGoalTree();
 
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
@@ -195,6 +201,9 @@ public class CostSpecialistTest {
 			gTree.addInform("g1", "i1", "g2", 1);
 			
 			gTree.brakeGoalTree();
+			
+			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
+			assertEquals(3, GoalTree.getInstance().getOriginalGoals().size(), 0);
 
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.prepareGenerationStatisticsFile("testThreePositionsSpecialistOrg");

@@ -63,6 +63,9 @@ public class CostGeneralistTest {
 			
 			gTree.brakeGoalTree();
 			
+			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
+			assertEquals(3, GoalTree.getInstance().getOriginalGoals().size(), 0);
+			
 			GoalNode g;
 			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g0"));
 			System.out.println("g0 has no inform and dataloads: " + g.getInforms() + " - " + g.getDataLoads());
@@ -140,6 +143,9 @@ public class CostGeneralistTest {
 			gTree.addInform("g1", "i1", "g0", 7);
 			
 			gTree.brakeGoalTree();
+			
+			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
+			assertEquals(2, GoalTree.getInstance().getOriginalGoals().size(), 0);
 
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.prepareGenerationStatisticsFile("testTwoPositionsGeneralistOrg");
@@ -196,6 +202,9 @@ public class CostGeneralistTest {
 			gTree.addInform("g1", "i1", "g2", 1);
 			
 			gTree.brakeGoalTree();
+
+			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
+			assertEquals(3, GoalTree.getInstance().getOriginalGoals().size(), 0);
 
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.prepareGenerationStatisticsFile("testThreePositionsGeneralistOrg");

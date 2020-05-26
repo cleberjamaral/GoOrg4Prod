@@ -62,6 +62,9 @@ public class OrganisationTest {
 		gTree.addGoal("g1211", "g121");
 		System.out.println("Goals Tree:" + gTree.getTree());
 		
+		System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
+		assertEquals(7, GoalTree.getInstance().getOriginalGoals().size(), 0);
+
 		OrganisationStatistics s = OrganisationStatistics.getInstance();
 
 		final Cost cost[] = Cost.values();
@@ -103,6 +106,9 @@ public class OrganisationTest {
 			gTree.addGoal("g1", "g0");
 			gTree.addWorkload("g0", "w0", 1);
 			gTree.addWorkload("g1", "w1", 1);
+			
+			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
+			assertEquals(2, GoalTree.getInstance().getOriginalGoals().size(), 0);
 
 			final Organisation o = new Organisation("Estimation2Goals", gTree, Cost.GENERALIST, false);
 
@@ -146,6 +152,9 @@ public class OrganisationTest {
 			gTree.addWorkload("g2", "w2", 1);
 			gTree.brakeGoalTree();
 
+			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
+			assertEquals(3, GoalTree.getInstance().getOriginalGoals().size(), 0);
+
 			final Organisation o = new Organisation("Estimation3Goals", gTree, Cost.GENERALIST, false);
 			
 			BuscaLargura busca = new BuscaLargura();
@@ -185,6 +194,9 @@ public class OrganisationTest {
 			gTree.addWorkload("g2", "w2", 1);
 			gTree.addWorkload("g3", "w3", 1);
 
+			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
+			assertEquals(4, GoalTree.getInstance().getOriginalGoals().size(), 0);
+
 			final Organisation o = new Organisation("Estimation4Goals", gTree, Cost.GENERALIST, false);
 			
 			BuscaLargura busca = new BuscaLargura();
@@ -219,6 +231,9 @@ public class OrganisationTest {
 			gTree.addGoal("g1", "g0");
 			gTree.addWorkload("g0", "w0", 1);
 			gTree.addWorkload("g1", "w1", 1);
+
+			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
+			assertEquals(2, GoalTree.getInstance().getOriginalGoals().size(), 0);
 
 			final Organisation o = new Organisation("AllCreatedOrgs2Goals", gTree, Cost.GENERALIST, false);
 
@@ -277,6 +292,9 @@ public class OrganisationTest {
 			gTree.addWorkload("g1", "w1", 1);
 			gTree.addWorkload("g2", "w2", 1);
 			gTree.brakeGoalTree();
+
+			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
+			assertEquals(3, GoalTree.getInstance().getOriginalGoals().size(), 0);
 
 			final Organisation o = new Organisation("AllCreatedOrgs3Goals", gTree, Cost.GENERALIST, false);
 
