@@ -14,6 +14,10 @@ import organisation.resource.Agent;
 import organisation.resource.AgentSet;
 import organisation.search.Organisation;
 
+/**
+ * @author cleber
+ *
+ */
 public class Binding {
 	private Organisation organisation;
 	private AgentSet agents;
@@ -26,7 +30,7 @@ public class Binding {
 	
 	public void FirstFit() {
 		FirstFit fit = new FirstFit();
-		matches = fit.fitRequirements(organisation.getOrgName(), organisation.getRolesTree().getRequirements(),
+		matches = fit.fitRequirements(organisation.getOrgName(), organisation.getPositionsTree().getRequirements(),
 				agents.getResources());
 	}
 
@@ -56,6 +60,6 @@ public class Binding {
 	}
 
 	public double getFeasibily() {
-		return (double) matches.keySet().size() / (double) organisation.getRolesTree().getRequirements().size();
+		return (double) matches.keySet().size() / (double) organisation.getPositionsTree().getRequirements().size();
 	}
 }

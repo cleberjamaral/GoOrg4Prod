@@ -9,6 +9,10 @@ import organisation.search.Organisation;
 import organisation.search.cost.Cost;
 import simplelogger.SimpleLogger;
 
+/**
+ * @author cleber
+ *
+ */
 public class OrganisationApp {
 
 	private static SimpleLogger LOG = SimpleLogger.getInstance();
@@ -35,7 +39,7 @@ public class OrganisationApp {
 			try {
 				Parameters.getInstance();
 				Parameters.setMaxWorkload(8.0);
-				Parameters.setWorkloadGrain(4.0);
+				Parameters.setWorkloadGrain(2.0);
 				Parameters.setMaxDataLoad(8.0);
 				Parameters.setDataLoadGrain(2.0);
 				Parameters.setOneSolution(false);
@@ -53,13 +57,13 @@ public class OrganisationApp {
 				// perform organisation generation (free design)
 				Organisation org = orgGen.generateOrganisationFromTree("sample", c, search, Parameters.isOneSolution());
 
-				// set available agents ofr this example
+				// set available agents for this example
 				AgentSet agents = AgentSet.getInstance();
 				agents.addAgent("bob", new String[]{"w0"});
 				agents.addAgent("alice", new String[]{"w1"});
 				agents.addAgent("tom", new String[]{"w1"});
 
-				// bind agents and roles
+				// bind agents and positions
 				orgBin.bindOrganisations(org, agents);
 				
 			} catch (GoalNotFound | CircularReference e) {

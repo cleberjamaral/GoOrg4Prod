@@ -1,5 +1,9 @@
 package annotations;
 
+/**
+ * @author cleber
+ *
+ */
 public class Skill extends Annotation {
 
 	public Skill(String id) {

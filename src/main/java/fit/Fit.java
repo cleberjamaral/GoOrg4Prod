@@ -3,6 +3,10 @@ package fit;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * @author cleber
+ *
+ */
 public abstract class Fit {
 	
 	public Fit() {}
@@ -12,7 +16,7 @@ public abstract class Fit {
 	 * @param orgName is the name of the organisation used to refer to the generated ones
 	 * @param requirements are what the necessary things to fill
 	 * @param resources are the available agents
-	 * @return % of matches
+	 * @return matches, i.e., Map<Requirement,Resource>
 	 */
 	public Map<Requirement,Resource> fitRequirements(String orgName, Set<Requirement> requirements, Set<Resource> resources) {
 		System.out.println("OrgN: "+orgName);

@@ -6,6 +6,10 @@ import java.util.Set;
 import annotations.Skill;
 import fit.Resource;
 
+/**
+ * @author cleber
+ *
+ */
 public class Agent implements Resource {
 	private String name;
 	private Set<Skill> skills = new HashSet<>();

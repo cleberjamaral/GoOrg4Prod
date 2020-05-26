@@ -27,9 +27,13 @@ import guru.nidi.graphviz.engine.GraphvizV8Engine;
 import annotations.DataLoad;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
-import organisation.role.RoleNode;
+import organisation.position.PositionNode;
 import organisation.search.Organisation;
 
+/**
+ * @author cleber
+ *
+ */
 public class OrganisationPlot {
 	
 	DecimalFormat df = new DecimalFormat("#.##");
@@ -53,10 +57,10 @@ public class OrganisationPlot {
 			final StringWriter out = new StringWriter();
 			out.write("digraph G {\n");
 
-			for (final RoleNode or : o.getRolesTree().getTree()) {
-				out.write("\t\"" + or.getRoleName() + "\" [ style = \"filled\" fillcolor = \"white\" "
+			for (final PositionNode or : o.getPositionsTree().getTree()) {
+				out.write("\t\"" + or.getPositionName() + "\" [ style = \"filled\" fillcolor = \"white\" "
 						+ "shape = \"Mrecord\" label = <<table border=\"0\" cellborder=\"0\" bgcolor=\"white\">"
-						+ "<tr><td bgcolor=\"black\" align=\"center\"><font color=\"white\">" + or.getRoleName()
+						+ "<tr><td bgcolor=\"black\" align=\"center\"><font color=\"white\">" + or.getPositionName()
 						+ "</font></td></tr><tr><td align=\"center\">" + or.getAssignedGoals() + "</td></tr>");
 
 				for (final Object s : or.getWorkloads())
@@ -71,10 +75,10 @@ public class OrganisationPlot {
 				out.write("</table>> ];\n");
 
 				for (final DataLoad d : or.getDataLoads()) {
-					for (final RoleNode rnn : o.getRolesTree().getTree()) {
+					for (final PositionNode rnn : o.getPositionsTree().getTree()) {
 						for (final GoalNode g : rnn.getAssignedGoals()) {
 							if (g.getGoalName().equals(d.getSenderName())) {
-								out.write("\t\"" + rnn.getRoleName() + "\"->\"" + or.getRoleName() + "\" [label=\""
+								out.write("\t\"" + rnn.getPositionName() + "\"->\"" + or.getPositionName() + "\" [label=\""
 										+ d.getId() + ":" + df.format(d.getValue())
 										+ "\" style=dotted arrowhead=vee fontcolor=grey20 color=grey20];");
 							}
@@ -83,7 +87,7 @@ public class OrganisationPlot {
 				}
 
 				if (or.getParent() != null)
-					links.add("\"" + or.getParent().getRoleName() + "\"->\"" + or.getRoleName() + "\"");
+					links.add("\"" + or.getParent().getPositionName() + "\"->\"" + or.getPositionName() + "\"");
 			}
 
 			for (final String l : links)

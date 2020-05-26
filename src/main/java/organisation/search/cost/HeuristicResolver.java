@@ -3,11 +3,15 @@ package organisation.search.cost;
 import java.util.List;
 
 import organisation.Parameters;
-import organisation.exception.RoleNotFound;
+import organisation.exception.PositionNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
-import organisation.role.RoleTree;
+import organisation.position.PositionsTree;
 
+/**
+ * @author cleber
+ *
+ */
 public class HeuristicResolver {
 
 	// static Cost costFunction = Cost.SPECIALIST;
@@ -25,14 +29,14 @@ public class HeuristicResolver {
 		HeuristicResolver.costFunction = costFunction;
 	}
 
-	public int getPedictedCost(List<GoalNode> gSuc, RoleTree rTree) throws RoleNotFound {
+	public int getPedictedCost(List<GoalNode> gSuc, PositionsTree rTree) throws PositionNotFound {
 		int predictedCost = Parameters.getMinimalPenalty();
 
-		// High punishment when another role could receive the workload making the tree more generalist
+		// High punishment when another position could receive the workload making the tree more generalist
 		if (costFunction == Cost.GENERALIST) {
 			
-			// publish if it is creating more roles than the ideal
-			if (rTree.getTree().size() >= GoalTree.getInstance().getBestNumberOfRoles()) {
+			// publish if it is creating more positions than the ideal
+			if (rTree.getTree().size() >= GoalTree.getInstance().getBestNumberOfPositions()) {
 				return gSuc.size() * Parameters.getExtraPenalty();
 			} else {
 				return gSuc.size() * Parameters.getMinimalPenalty();

@@ -51,8 +51,8 @@ public class OrganisationException {
 	}
 
 	@Test
-	public void testRoleNotFound() {
-		System.out.println("\n\ntestRoleNotFound");
+	public void testPositionNotFound() {
+		System.out.println("\n\ntestPositionNotFound");
 
 		GoalNode g0 = new GoalNode(null, "g0");
 		GoalTree gTree = GoalTree.getInstance();
@@ -64,13 +64,13 @@ public class OrganisationException {
 		}
 
 		System.out.println("GoalsTree: " + gTree.getTree().toString());
-		Organisation o = new Organisation("testRoleNotFound", gTree, Cost.GENERALIST, true);
+		Organisation o = new Organisation("testPositionNotFound", gTree, Cost.GENERALIST, true);
 		Nodo n = new BuscaLargura().busca(o);
 
-		System.out.println("Roles tree: " + ((Organisation) n.getEstado()).getRolesTree());
-		System.out.println("search for a nonexistant rolename");
-		assertThrows(RoleNotFound.class, () -> {
-			((Organisation) n.getEstado()).getRolesTree().findRoleByRoleName("nonexistant");
+		System.out.println("Positions tree: " + ((Organisation) n.getEstado()).getPositionsTree());
+		System.out.println("search for a nonexistant positionname");
+		assertThrows(PositionNotFound.class, () -> {
+			((Organisation) n.getEstado()).getPositionsTree().findPositionByName("nonexistant");
 		});
 
 	}

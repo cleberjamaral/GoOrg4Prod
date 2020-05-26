@@ -1,4 +1,4 @@
-package organisation.role;
+package organisation.position;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,16 +12,20 @@ import annotations.Workload;
 import fit.Requirement;
 import fit.RequirementSet;
 import organisation.Parameters;
-import organisation.exception.RoleNotFound;
+import organisation.exception.PositionNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 
-public class RoleTree implements RequirementSet {
+/**
+ * @author cleber
+ *
+ */
+public class PositionsTree implements RequirementSet {
 
 	private int numberOfLevels = 0;
-	private Set<RoleNode> tree = new HashSet<>();
+	private Set<PositionNode> tree = new HashSet<>();
 
-	public RoleTree() {
+	public PositionsTree() {
 	}
 
 	public int getNumberOfLevels() {
@@ -36,20 +40,20 @@ public class RoleTree implements RequirementSet {
 		return tree.size();
 	}
 
-	public Set<RoleNode> getTree() {
+	public Set<PositionNode> getTree() {
 		return tree;
 	}
 
-	public void addRoleToTree(RoleNode role) {
-		updateNumberOfLevels(role);
+	public void addPositionToTree(PositionNode position) {
+		updateNumberOfLevels(position);
 		
-		tree.add(role);
+		tree.add(position);
 	}
 
-	private void updateNumberOfLevels(RoleNode role) {
+	private void updateNumberOfLevels(PositionNode position) {
 		int levels = 1;
-		while (role.getParent() != null) {
-			role = role.getParent();
+		while (position.getParent() != null) {
+			position = position.getParent();
 			levels++;
 		}
 
@@ -57,73 +61,73 @@ public class RoleTree implements RequirementSet {
 			setNumberOfLevels(levels);
 	}
 
-	public RoleNode createRole(RoleNode parent, String name, GoalNode g) {
-		RoleNode nr = new RoleNode(parent, name);
+	public PositionNode createPosition(PositionNode parent, String name, GoalNode g) {
+		PositionNode nr = new PositionNode(parent, name);
 
-		assignGoalToRole(nr, g);
-		addRoleToTree(nr);
+		assignGoalToPosition(nr, g);
+		addPositionToTree(nr);
 
 		return nr;
 	}
 
-	public RoleNode findRoleByRoleName(String roleName) throws RoleNotFound {
-		for (RoleNode or : this.tree) {
-			if (or.getRoleName().equals(roleName))
+	public PositionNode findPositionByName(String positionName) throws PositionNotFound {
+		for (PositionNode or : this.tree) {
+			if (or.getPositionName().equals(positionName))
 				return or;
 		}
-		throw new RoleNotFound("There is no role with signature = '" + roleName + "'!");
+		throw new PositionNotFound("There is no position with signature = '" + positionName + "'!");
 	}
 
-	public RoleTree cloneContent() throws RoleNotFound {
-		RoleTree clonedTree = new RoleTree();
+	public PositionsTree cloneContent() throws PositionNotFound {
+		PositionsTree clonedTree = new PositionsTree();
 
-		// first clone all roles
-		for (RoleNode or : this.tree) {
-			RoleNode nnewS = or.cloneContent();
-			// not using addRoleToTree because parent is still unknown
+		// first clone all positions
+		for (PositionNode or : this.tree) {
+			PositionNode nnewS = or.cloneContent();
+			// not using addPositionToTree because parent is still unknown
 			clonedTree.getTree().add(nnewS);
 		}
 
 		// finding right parents in the new tree
-		for (RoleNode or : clonedTree.getTree()) {
+		for (PositionNode or : clonedTree.getTree()) {
 
-			// it is not the root role
+			// it is not the root position
 			if (!or.getParentName().equals("")) {
-				or.setParent(clonedTree.findRoleByRoleName(or.getParentName()));
+				or.setParent(clonedTree.findPositionByName(or.getParentName()));
 			}
 		}
 		
 		// update number of levels after knowning parents
 		clonedTree.setNumberOfLevels(1);
-		for (RoleNode or : clonedTree.getTree()) {
+		for (PositionNode or : clonedTree.getTree()) {
 			clonedTree.updateNumberOfLevels(or);
 		}
 		
 		return clonedTree;
 	}
 
-	public RoleNode assignGoalToRoleByRoleName(String roleName, GoalNode newGoal) throws RoleNotFound {
-		RoleNode role = this.findRoleByRoleName(roleName);
+	public PositionNode assignGoalToPositionByPositionName(String positionName, GoalNode newGoal) throws PositionNotFound {
+		PositionNode position = this.findPositionByName(positionName);
 
-		assignGoalToRole(role, newGoal);
+		assignGoalToPosition(position, newGoal);
 
-		return role;
+		return position;
 	}
 
-	public void assignGoalToRole(RoleNode role, GoalNode newGoal) {
-		role.assignGoal(newGoal);
+	public void assignGoalToPosition(PositionNode position, GoalNode newGoal) {
+		position.assignGoal(newGoal);
 
-		// Copy all workloads of the goal to this new role
+		// Copy all workloads of the goal to this new position
 		for (Workload w : newGoal.getWorkloads())
-			role.addWorkload(w.clone());
+			position.addWorkload(w.clone());
 
-		// Copy all "non-circular" dataloads to new role (informs are not used for roles)
+		// Copy all "non-circular" dataloads to new position (informs are not used for positions)
 		for (DataLoad d : newGoal.getDataLoads()) {
 			boolean circularDataload = false;
-			for (GoalNode g : role.getAssignedGoals()) {
+			for (GoalNode g : position.getAssignedGoals()) {
 				if (g.getGoalName().equals(d.getSenderName())) circularDataload = true;
 			}
-			if (!circularDataload) role.addDataLoad(d.clone());
+			if (!circularDataload) position.addDataLoad(d.clone());
 		}
 	}
 
@@ -134,7 +138,7 @@ public class RoleTree implements RequirementSet {
 	 */
 	public double getSumWorkload() {
 		double sumWorkload = 0;
-		for (RoleNode r : this.tree) {
+		for (PositionNode r : this.tree) {
 			for (Workload w : r.getWorkloads()) {
 				sumWorkload += (double) w.getValue();
 			}
@@ -144,16 +148,16 @@ public class RoleTree implements RequirementSet {
 
 	@Override
 	public String toString() {
-		List<String> signatureByRoles = new ArrayList<>();
+		List<String> signatureByPositions = new ArrayList<>();
 		if ((getTree() != null) && (!getTree().isEmpty())) {
-			Iterator<RoleNode> iterator = getTree().iterator();
+			Iterator<PositionNode> iterator = getTree().iterator();
 			while (iterator.hasNext()) {
-				RoleNode n = iterator.next();
-				signatureByRoles.add(n.toString());
+				PositionNode n = iterator.next();
+				signatureByPositions.add(n.toString());
 			}
-			Collections.sort(signatureByRoles);
+			Collections.sort(signatureByPositions);
 		}
-		return signatureByRoles.toString();
+		return signatureByPositions.toString();
 	}
 
 	@Override
@@ -169,7 +173,7 @@ public class RoleTree implements RequirementSet {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RoleTree other = (RoleTree) obj;
+		PositionsTree other = (PositionsTree) obj;
 		if (tree == null) {
 			if (other.tree != null)
 				return false;
@@ -179,41 +183,41 @@ public class RoleTree implements RequirementSet {
 	}
 	
 	/**
-	 * Generalness is about how workloads are distributed across roles. When all
-	 * roles have all given workloads it means all agents must have all those skills
-	 * and can play any role in the organisation, i.e., maximum generalness.
+	 * Generalness is about how workloads are distributed across position. When all
+	 * positions have all given workloads it means all agents must have all those skills
+	 * and can play any position in the organisation, i.e., maximum generalness.
 	 * 
 	 * For instance, for a GDT with a set of goals that together have 3 different
-	 * workloads the RolesTree should prefer structures in which all roles have
-	 * those 3 workloads. So, the 3 agents that will plays those roles can be
+	 * workloads the PositionsTree should prefer structures in which all positions have
+	 * those 3 workloads. So, the 3 agents that will plays those positions can be
 	 * actually allocated in any one of those
 	 * 
 	 * @return generalness index from 0 to 1 (less to maximum generalness possible)
 	 */
 	public double getGeneralness() {
-		int nRoles = this.tree.size();
+		int nPositions = this.tree.size();
 		int nAllWorkloads = 0;
 		
-		for (RoleNode or : this.tree) {
-			//RoleNode.getWorkloads() is a hashset returning only unique workloads
+		for (PositionNode or : this.tree) {
+			// PositionNode.getWorkloads() is a hashset returning only unique workloads
 			nAllWorkloads += or.getWorkloads().size();
 		}
 		
-		// the most generalist roles tree must have all workload on each role
+		// the most generalist positions tree must have all workload on each position
 		// sumOfDiffWL.size() represents all unique workloads quantity
-		int nMaxWorkloads = nRoles * GoalTree.getInstance().getNumberDiffWorkloads();
+		int nMaxWorkloads = nPositions * GoalTree.getInstance().getNumberDiffWorkloads();
 		
 		return (double) nAllWorkloads / (double) nMaxWorkloads;
 	}
 	
 	/**
 	 * Specificness like generalness is about how workloads are distributed across
-	 * roles. In case of specificness, it would be ideal to do not split workloads,
+	 * positions. In case of specificness, it would be ideal to do not split workloads,
 	 * since splitting means sharing this workload what makes necessary more skills
 	 * to the other agent.
 	 * 
 	 * For instance, for a GDT with a set of goals that together have 3 different
-	 * workloads the RolesTree should prefer structure in which each roles has only
+	 * workloads the PositionsTree should prefer structure in which each position has only
 	 * 1 workload ideally In this case, it would need less skills from each agent.
 	 * 
 	 * Efficiency/idleness is not being taken into account here
@@ -224,12 +228,12 @@ public class RoleTree implements RequirementSet {
 	public double getSpecificness() {
 		int nAllWorkloads = 0;
 		
-		for (RoleNode or : this.tree) {
-			//RoleNode.getWorkloads() is a hashset returning only unique workloads
+		for (PositionNode or : this.tree) {
+			// PositionNode.getWorkloads() is a hashset returning only unique workloads
 			nAllWorkloads += or.getWorkloads().size();
 		}
 		
-		// the most specialist roles tree must have all workloads distributed
+		// the most specialist positions tree must have all workloads distributed
 		// without splitting them (if may be impossible if the sumofefforts if higher
 		// than maxWorkload, but efficiency/idleness should not be taken into account
 		int nMinWorkloads = Math.max(GoalTree.getInstance().getNumberDiffWorkloads(), this.tree.size());
@@ -238,8 +242,8 @@ public class RoleTree implements RequirementSet {
 	}
 	
 	/**
-	 * Idleness is about total workload split into roles. It considers the ideal
-	 * number of roles according to maximum workload per role. In case of relative
+	 * Idleness is about total workload split into positions. It considers the ideal
+	 * number of positions according to maximum workload per positions. In case of relative
 	 * idleness, the idleness is ZERO if the goals tree has the minimum idleness that
 	 * the GDT and max workload allows.
 	 * 
@@ -256,9 +260,11 @@ public class RoleTree implements RequirementSet {
 	}
 	
 	/**
-	 * Idleness is about total workload split into roles. It considers the ideal
-	 * number of roles according to maximum workload per role. In case of absolute
-	 * idleness, the idleness is the real one, no matter if it is possible to do a perfect split or not, i.e., idleness is ZERO only if the goals tree has reached no idle at all.
+	 * Idleness is about total workload split into positions. It considers the ideal
+	 * number of positions according to maximum workload per position. In case of absolute
+	 * idleness, the idleness is the real one, no matter if it is possible to do a 
+	 * perfect split or not, i.e., idleness is ZERO only if the goals tree has reached 
+	 * no idle at all.
 	 * 
 	 * @return absolute idleness achieved, varies from 0 to 1.
 	 */

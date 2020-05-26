@@ -20,7 +20,7 @@ import organisation.exception.GoalNotFound;
 import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
-import organisation.role.RoleNode;
+import organisation.position.PositionNode;
 import organisation.search.cost.Cost;
 
 public class CostSpecialistTest {
@@ -39,9 +39,9 @@ public class CostSpecialistTest {
 	}
 	
     @Test
-    public void testOneRoleSpecialistOrg() {
+    public void testOnePositionSpecialistOrg() {
     	try {
-    		System.out.println("\n\ntestOneRoleSpecialistOrg");
+    		System.out.println("\n\ntestOnePositionSpecialistOrg");
 
     		// parameters
     		Parameters.getInstance();
@@ -84,19 +84,19 @@ public class CostSpecialistTest {
 			//TODO: assert if inform was removed since it is circular
 			
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
-			s.prepareGenerationStatisticsFile("testOneRoleSpecialistOrg");
+			s.prepareGenerationStatisticsFile("testOnePositionSpecialistOrg");
 			
-			System.out.println("Total workload is 4 (less than 8 - max) -> goals must be assigned to one role.");
-			Organisation o = new Organisation("testOneRoleSpecialistOrg", gTree, Cost.SPECIALIST, true);
+			System.out.println("Total workload is 4 (less than 8 - max) -> goals must be assigned to one position.");
+			Organisation o = new Organisation("testOnePositionSpecialistOrg", gTree, Cost.SPECIALIST, true);
 			Nodo n = new BuscaLargura().busca(o);
 
-			System.out.println("Generated rolesTree: " + ((Organisation)n.getEstado()).getRolesTree().getTree());
+			System.out.println("Generated tree: " + ((Organisation)n.getEstado()).getPositionsTree().getTree());
 
-			assertEquals(1, ((Organisation)n.getEstado()).getRolesTree().getTree().size());
-			assertEquals(4, ((Organisation)n.getEstado()).getRolesTree().getSumWorkload(), 0);
+			assertEquals(1, ((Organisation)n.getEstado()).getPositionsTree().getTree().size());
+			assertEquals(4, ((Organisation)n.getEstado()).getPositionsTree().getSumWorkload(), 0);
 
-			for (RoleNode r : ((Organisation)n.getEstado()).getRolesTree().getTree()) {
-				System.out.println("Role: " + r + ", workloads: "+r.getWorkloads() + ", informs: "+r.getInforms());
+			for (PositionNode r : ((Organisation)n.getEstado()).getPositionsTree().getTree()) {
+				System.out.println("Position: " + r + ", workloads: "+r.getWorkloads() + ", informs: "+r.getInforms());
 				// workload equals only checks the id of the workload
 				assertTrue(r.getWorkloads().contains((new Workload("w1",0)))); 
 				assertEquals(1, r.getWorkloads().size(), 0);
@@ -104,7 +104,7 @@ public class CostSpecialistTest {
 			}
 			
 			assertTrue(((Organisation) n.getEstado()).isValid());
-			assertEquals(1.0, ((Organisation) n.getEstado()).getRolesTree().getSpecificness(), 0);
+			assertEquals(1.0, ((Organisation) n.getEstado()).getPositionsTree().getSpecificness(), 0);
 
 			System.out.println("The hierarchy is not being checked.");
 			
@@ -118,9 +118,9 @@ public class CostSpecialistTest {
     }  
 
 	@Test
-	public void testTwoRolesSpecialistOrg() {
+	public void testTwoPositionsSpecialistOrg() {
 		try {
-			System.out.println("\n\ntestTwoRolesSpecialistOrg");
+			System.out.println("\n\ntestTwoPositionsSpecialistOrg");
 
 			Parameters.getInstance();
 			Parameters.setMaxWorkload(8.0);
@@ -141,27 +141,27 @@ public class CostSpecialistTest {
 			gTree.brakeGoalTree();
 
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
-			s.prepareGenerationStatisticsFile("testTwoRolesSpecialistOrg");
+			s.prepareGenerationStatisticsFile("testTwoPositionsSpecialistOrg");
 
-			System.out.println("Total workload is 10 -> goals must be assigned to two roles.");
-			Organisation o = new Organisation("testTwoRolesSpecialistOrg", gTree, Cost.SPECIALIST, true);
+			System.out.println("Total workload is 10 -> goals must be assigned to two positions.");
+			Organisation o = new Organisation("testTwoPositionsSpecialistOrg", gTree, Cost.SPECIALIST, true);
 			Nodo n = new BuscaLargura().busca(o);
 
-			assertEquals(2, ((Organisation) n.getEstado()).getRolesTree().getTree().size());
-			assertEquals(10, ((Organisation) n.getEstado()).getRolesTree().getSumWorkload(), 0);
-			System.out.println("Generated rolesTree: " + ((Organisation)n.getEstado()).getRolesTree().getTree());
-			for (RoleNode r : ((Organisation)n.getEstado()).getRolesTree().getTree()) {
-				System.out.println("Role: " + r + ", workloads: "+r.getWorkloads() + ", informs: "+r.getInforms());
+			assertEquals(2, ((Organisation) n.getEstado()).getPositionsTree().getTree().size());
+			assertEquals(10, ((Organisation) n.getEstado()).getPositionsTree().getSumWorkload(), 0);
+			System.out.println("Generated tree: " + ((Organisation)n.getEstado()).getPositionsTree().getTree());
+			for (PositionNode r : ((Organisation)n.getEstado()).getPositionsTree().getTree()) {
+				System.out.println("Position: " + r + ", workloads: "+r.getWorkloads() + ", informs: "+r.getInforms());
 				assertTrue(r.getWorkloads().size() == 1);
 				assertTrue(r.getSumWorkload() >= 3.33);
 				// workload equals only checks the id of the workload
 				assertTrue(r.getWorkloads().contains((new Workload("w0", 0)))
 						|| r.getWorkloads().contains((new Workload("w1", 0))));
 			}
-			System.out.println("In specialist case, if granularity allows, different workloads should be concentrated in different roles.");
+			System.out.println("In specialist case, if granularity allows, different workloads should be concentrated in different positions.");
 			
 			assertTrue(((Organisation) n.getEstado()).isValid());
-			assertEquals(1.0, ((Organisation) n.getEstado()).getRolesTree().getSpecificness(), 0);
+			assertEquals(1.0, ((Organisation) n.getEstado()).getPositionsTree().getSpecificness(), 0);
 			
 			System.out.println("The hierarchy is not being checked.");
 			
@@ -175,9 +175,9 @@ public class CostSpecialistTest {
 	}
 	
 	@Test
-	public void testThreeRolesSpecialistOrg() {
+	public void testThreePositionsSpecialistOrg() {
 		try {
-			System.out.println("\n\ntestThreeRolesSpecialistOrg");
+			System.out.println("\n\ntestThreePositionsSpecialistOrg");
 
 			Parameters.getInstance();
 			Parameters.setMaxWorkload(8.0);
@@ -197,28 +197,28 @@ public class CostSpecialistTest {
 			gTree.brakeGoalTree();
 
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
-			s.prepareGenerationStatisticsFile("testThreeRolesSpecialistOrg");
+			s.prepareGenerationStatisticsFile("testThreePositionsSpecialistOrg");
 
-			System.out.println("Total workload is 21 -> goals must be assigned to three roles.");
-			Organisation o = new Organisation("testThreeRolesSpecialistOrg", gTree, Cost.SPECIALIST, true);
+			System.out.println("Total workload is 21 -> goals must be assigned to three positions.");
+			Organisation o = new Organisation("testThreePositionsSpecialistOrg", gTree, Cost.SPECIALIST, true);
 			Nodo n = new BuscaLargura().busca(o);
 
-			assertEquals(3, ((Organisation) n.getEstado()).getRolesTree().getTree().size());
-			assertEquals(21, ((Organisation) n.getEstado()).getRolesTree().getSumWorkload(), 0);
-			System.out.println("Generated rolesTree: " + ((Organisation)n.getEstado()).getRolesTree().getTree());
-			for (RoleNode r : ((Organisation)n.getEstado()).getRolesTree().getTree()) {
-				System.out.println("Role: " + r + ", workloads: "+r.getWorkloads() + ", informs: "+r.getInforms());
+			assertEquals(3, ((Organisation) n.getEstado()).getPositionsTree().getTree().size());
+			assertEquals(21, ((Organisation) n.getEstado()).getPositionsTree().getSumWorkload(), 0);
+			System.out.println("Generated tree: " + ((Organisation)n.getEstado()).getPositionsTree().getTree());
+			for (PositionNode r : ((Organisation)n.getEstado()).getPositionsTree().getTree()) {
+				System.out.println("Position: " + r + ", workloads: "+r.getWorkloads() + ", informs: "+r.getInforms());
 				assertEquals(1, r.getWorkloads().size(), 0);
 				assertTrue(r.getSumWorkload() == 6.5 ^ r.getSumWorkload() == 8);
 				// workload equals only checks the id of the workload
 				assertTrue(r.getWorkloads().contains((new Workload("w2",0))) ^ r.getWorkloads().contains((new Workload("w1",0))));
 			}
-			System.out.println("In specialist case, if granularity allows, each role must receive only one workload w1 XOR w2.");
+			System.out.println("In specialist case, if granularity allows, each position must receive only one workload w1 XOR w2.");
 			
 			assertTrue(((Organisation) n.getEstado()).isValid());
 			
 			// Specificness = nMinWorkloads / nAllWorkloads = 2 / 3 = 0.6667
-			assertTrue(((Organisation) n.getEstado()).getRolesTree().getSpecificness() > 0.6);
+			assertTrue(((Organisation) n.getEstado()).getPositionsTree().getSpecificness() > 0.6);
 
 			System.out.println("The hierarchy is not being checked.");
 			

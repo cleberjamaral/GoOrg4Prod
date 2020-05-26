@@ -8,7 +8,7 @@ import organisation.Parameters;
 import organisation.exception.GoalNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
-import organisation.role.RoleNode;
+import organisation.position.PositionNode;
 import organisation.search.Organisation;
 import organisation.search.cost.Cost;
 
@@ -230,26 +230,26 @@ public class OrganisationTest {
 			System.out.println("Number of possible organisations is: "+4);
 			assertEquals(4, o.getGoalList().size());
 			
-			int orgsWith2Roots = 0;
+			int orgsWith2Supremes = 0;
 			int orgsWith2Levels = 0;
-			int orgsWith1Role = 0;
+			int orgsWith1Position = 0;
 			for (Organisation org : o.getGoalList()) {
-				if (org.getRolesTree().size() == 1) orgsWith1Role++;
-				if (org.getRolesTree().size() == 2) {
-					List<RoleNode> roles = new ArrayList<>(org.getRolesTree().getTree());
-					if ((roles.get(0).getParent() == null) && (roles.get(1).getParent() == null)) 
-						orgsWith2Roots++;
-					if (((roles.get(0).getParent() == null) && (roles.get(1).getParent() != null)) || 
-						((roles.get(0).getParent() != null) && (roles.get(1).getParent() == null)))
+				if (org.getPositionsTree().size() == 1) orgsWith1Position++;
+				if (org.getPositionsTree().size() == 2) {
+					List<PositionNode> positions = new ArrayList<>(org.getPositionsTree().getTree());
+					if ((positions.get(0).getParent() == null) && (positions.get(1).getParent() == null)) 
+						orgsWith2Supremes++;
+					if (((positions.get(0).getParent() == null) && (positions.get(1).getParent() != null)) || 
+						((positions.get(0).getParent() != null) && (positions.get(1).getParent() == null)))
 						orgsWith2Levels++;
 				}
 			}
 			System.out.println("Number of possible organisations with 2 roots is: 1");
-			assertEquals(1, orgsWith2Roots);
+			assertEquals(1, orgsWith2Supremes);
 			System.out.println("Number of possible organisations with 2 levels is: 2");
 			assertEquals(2, orgsWith2Levels);
-			System.out.println("Number of possible organisations with 1 role is: 1");
-			assertEquals(1, orgsWith1Role);
+			System.out.println("Number of possible organisations with 1 position is: 1");
+			assertEquals(1, orgsWith1Position);
 		} catch (GoalNotFound e) {
 			e.printStackTrace();
 		}
@@ -288,39 +288,39 @@ public class OrganisationTest {
 			System.out.println("Number of possible organisations is: "+26);
 			assertEquals(26, o.getGoalList().size());
 			
-			int orgsWith2Roles = 0;
-			int orgsWith2Roots = 0;
-			int orgsWith3Roles = 0;
-			int orgsWith3Roots = 0;
-			int orgsWith1Role = 0;
+			int orgsWith2Positions = 0;
+			int orgsWith2Supremes = 0;
+			int orgsWith3Positions = 0;
+			int orgsWith3Supremes = 0;
+			int orgsWith1Position = 0;
 			for (Organisation org : o.getGoalList()) {
-				if (org.getRolesTree().size() == 1) orgsWith1Role++;
-				if (org.getRolesTree().size() == 3) {
-					orgsWith3Roles++;
-					List<RoleNode> roles = new ArrayList<>(org.getRolesTree().getTree());
-					if ((roles.get(0).getParent() == null) && (roles.get(1).getParent() == null) && (roles.get(2).getParent() == null)) 
-						orgsWith3Roots++;
+				if (org.getPositionsTree().size() == 1) orgsWith1Position++;
+				if (org.getPositionsTree().size() == 3) {
+					orgsWith3Positions++;
+					List<PositionNode> positions = new ArrayList<>(org.getPositionsTree().getTree());
+					if ((positions.get(0).getParent() == null) && (positions.get(1).getParent() == null) && (positions.get(2).getParent() == null)) 
+						orgsWith3Supremes++;
 				}
-				if (org.getRolesTree().size() == 2) {
-					orgsWith2Roles++;
-					List<RoleNode> roles = new ArrayList<>(org.getRolesTree().getTree());
-					if ((roles.get(0).getParent() == null) && (roles.get(1).getParent() == null)) 
-						orgsWith2Roots++;
+				if (org.getPositionsTree().size() == 2) {
+					orgsWith2Positions++;
+					List<PositionNode> positions = new ArrayList<>(org.getPositionsTree().getTree());
+					if ((positions.get(0).getParent() == null) && (positions.get(1).getParent() == null)) 
+						orgsWith2Supremes++;
 				}
 			}
 			System.out.println("Total is 26");
 			System.out.println("Number of possible organisations with 2 levels is: 9");
-			assertEquals(9, orgsWith2Roles);
-			System.out.println("Number of possible organisations with 1 role is: 1");
-			assertEquals(1, orgsWith1Role);
-			System.out.println("Number of possible organisations with 3 roles is: 16");
-			assertEquals(16, orgsWith3Roles);
+			assertEquals(9, orgsWith2Positions);
+			System.out.println("Number of possible organisations with 1 position is: 1");
+			assertEquals(1, orgsWith1Position);
+			System.out.println("Number of possible organisations with 3 positions is: 16");
+			assertEquals(16, orgsWith3Positions);
 			
-			System.out.println("Other verification is by number of orgs with root roles");
+			System.out.println("Other verification is by number of orgs with root positions");
 			System.out.println("Number of possible organisations with 2 roots is: 3 (g0 + g1/2, g1 + g0/2 e g2 + g0/1)");
-			assertEquals(3, orgsWith2Roots);
-			System.out.println("Number of possible organisations with 3 root roles is: 1");
-			assertEquals(1, orgsWith3Roots);
+			assertEquals(3, orgsWith2Supremes);
+			System.out.println("Number of possible organisations with 3 root positions is: 1");
+			assertEquals(1, orgsWith3Supremes);
 		} catch (GoalNotFound e) {
 			e.printStackTrace();
 		}

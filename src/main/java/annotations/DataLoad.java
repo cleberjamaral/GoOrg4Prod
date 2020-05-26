@@ -4,6 +4,10 @@ import java.text.DecimalFormat;
 
 import organisation.goal.GoalNode;
 
+/**
+ * @author cleber
+ *
+ */
 public class DataLoad extends Annotation {
 	
 	protected GoalNode sender;

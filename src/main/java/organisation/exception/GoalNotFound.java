@@ -2,6 +2,8 @@ package organisation.exception;
 
 /**
  * A goal with the given name was not found
+ * 
+ * @author cleber
  */
 public class GoalNotFound extends Exception {
 

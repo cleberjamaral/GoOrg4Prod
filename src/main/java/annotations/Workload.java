@@ -2,6 +2,10 @@ package annotations;
 
 import java.text.DecimalFormat;
 
+/**
+ * @author cleber
+ *
+ */
 public class Workload extends Annotation {
 
     protected double value;

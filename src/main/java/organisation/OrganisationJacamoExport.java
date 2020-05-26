@@ -13,6 +13,10 @@ import fit.Resource;
 import organisation.binder.Binding;
 import organisation.search.Organisation;
 
+/**
+ * @author cleber
+ *
+ */
 public class OrganisationJacamoExport {
 	
 	public OrganisationJacamoExport() {}
@@ -37,7 +41,7 @@ public class OrganisationJacamoExport {
 			for (String agent : binding.getAgents()) {
 				stringBuilder.append("\t" + agent + "{\n");
 				stringBuilder.append("\t\tjoin: goorg\n");
-				// One artifact for each created role
+				// One artifact for each created position
 				for (Entry<Requirement, Resource> e : matches.entrySet()) {
 					if (e.getValue().getResource().toString().equals(agent)) {
 						stringBuilder.append("\t\tfocus: goorg." + e.getKey().getRequirement().toString() + "\n");
@@ -72,16 +76,6 @@ public class OrganisationJacamoExport {
 		File file = new File("output/jcm/tmp");
         file.getParentFile().mkdirs();
     }
-
-	public void deleteExistingOrgs() {
-		try {
-			final File filepath = new File("output/org");
-			FileUtils.deleteDirectory(filepath);
-
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-	}
 
     public void deleteExistingJcms() {
 		try {

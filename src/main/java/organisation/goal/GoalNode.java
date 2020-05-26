@@ -8,6 +8,10 @@ import annotations.Inform;
 import annotations.Workload;
 import organisation.exception.CircularReference;
 
+/**
+ * @author cleber
+ *
+ */
 public class GoalNode {
 	private String goalName;
 	private String originalName;

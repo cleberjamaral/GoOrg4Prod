@@ -3,6 +3,10 @@ package simplelogger;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
+/**
+ * @author cleber
+ *
+ */
 public class SimpleLogger {
 	
 	int level = 3; //1 see everything, 2 hide trace, 3 hide trace and debug, 4 hide trace, debug and warn

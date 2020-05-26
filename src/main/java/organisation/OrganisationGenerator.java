@@ -1,7 +1,5 @@
 package organisation;
 
-import java.io.File;
-
 import busca.AEstrela;
 import busca.BuscaLargura;
 import busca.BuscaProfundidade;
@@ -13,6 +11,10 @@ import organisation.search.Organisation;
 import organisation.search.cost.Cost;
 import simplelogger.SimpleLogger;
 
+/**
+ * @author cleber
+ *
+ */
 public class OrganisationGenerator {
     Organisation inicial;
     private SimpleLogger LOG = SimpleLogger.getInstance();

@@ -1,5 +1,9 @@
 package annotations;
 
+/**
+ * @author cleber
+ *
+ */
 public abstract class Annotation {
 
 	protected String id;

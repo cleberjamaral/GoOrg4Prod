@@ -6,6 +6,10 @@ import organisation.search.Organisation;
 import simplelogger.SimpleLogger;
 import organisation.OrganisationJacamoExport;
 
+/**
+ * @author cleber
+ *
+ */
 public class OrganisationBinder {
     private SimpleLogger LOG = SimpleLogger.getInstance();
 

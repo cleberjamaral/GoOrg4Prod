@@ -19,9 +19,13 @@ import org.apache.commons.io.FileUtils;
 import organisation.binder.Binding;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
-import organisation.role.RoleNode;
+import organisation.position.PositionNode;
 import organisation.search.Organisation;
 
+/**
+ * @author cleber
+ *
+ */
 public class OrganisationStatistics {
 	
 	private static OrganisationStatistics instance = null;
@@ -45,7 +49,7 @@ public class OrganisationStatistics {
 	private OrganisationStatistics() {
 		//fields and sequence of columns in the CSV file
 		this.fields.add("id");
-		this.fields.add("Roles");
+		this.fields.add("Positi");
 		this.fields.add("%WL+");
 		this.fields.add("%DL+");
 		this.fields.add("%Idle+"); //Absolute Idleness %
@@ -59,7 +63,7 @@ public class OrganisationStatistics {
 		this.fields.add("rWL");
 		this.fields.add("bDL");
 		this.fields.add("rDL");
-		this.fields.add("rTree");
+		this.fields.add("pTree");
 		this.fields.add("bgTree");
 		this.fields.add("agents");
 		this.fields.add("matche");
@@ -134,21 +138,21 @@ public class OrganisationStatistics {
 	private Map<String, String> writeLine(final Organisation o, final Binding binding) {
 		Map<String,String> line = new HashMap<>();
 		
-		double assignedWorkLoad = o.getRolesTree().getSumWorkload();
-		double treeGeneralness = o.getRolesTree().getGeneralness();
-		double treeSpecificness = o.getRolesTree().getSpecificness();
-		double treeAbsIdleness = o.getRolesTree().getAbsoluteIdleness();
+		double assignedWorkLoad = o.getPositionsTree().getSumWorkload();
+		double treeGeneralness = o.getPositionsTree().getGeneralness();
+		double treeSpecificness = o.getPositionsTree().getSpecificness();
+		double treeAbsIdleness = o.getPositionsTree().getAbsoluteIdleness();
 		
 		double assignedDataLoad = 0.0;
 
-		for (final RoleNode or : o.getRolesTree().getTree()) {
+		for (final PositionNode or : o.getPositionsTree().getTree()) {
 			for (DataLoad d : or.getDataLoads()) 
 				assignedDataLoad += (double) d.getValue();
 		}
 		
 		Parameters.getInstance();
 		line.put("id", (Integer.toString(++id)));
-		line.put("Roles", (Integer.toString(o.getRolesTree().getTree().size())));
+		line.put("Positi", (Integer.toString(o.getPositionsTree().getTree().size())));
 		line.put("bWL", (String.format("%.2f", originalWorkLoad)));
 		line.put("rWL", (String.format("%.2f", assignedWorkLoad)));
 		line.put("bDL", (String.format("%.2f", originalDataLoad)));
@@ -162,17 +166,17 @@ public class OrganisationStatistics {
 		if (originalDataLoad > 0) addedDataLoad = 100 * assignedDataLoad / originalDataLoad;
 		line.put("%DL+", (String.format("%.0f%%", addedDataLoad)));
 		
-		double idleness = o.getRolesTree().getTree().size() * Parameters.getMaxWorkload() - originalWorkLoad;
+		double idleness = o.getPositionsTree().getTree().size() * Parameters.getMaxWorkload() - originalWorkLoad;
 		line.put("Idlene", (Double.toString(idleness)));
 		
 		line.put("%Idle+", (String.format("%.0f%%", 100 * treeAbsIdleness)));
 		line.put("%Geral", (String.format("%.0f%%", 100 * treeGeneralness)));
 		line.put("%Speci", (String.format("%.0f%%", 100 * treeSpecificness)));
 
-		line.put("rTree", o.getRolesTree().toString());
+		line.put("pTree", o.getPositionsTree().toString());
 		line.put("bgTree", bgTree);
 		line.put("States", (Integer.toString(o.getNStates())));
-		line.put("Levels", (Integer.toString(o.getRolesTree().getNumberOfLevels())));
+		line.put("Levels", (Integer.toString(o.getPositionsTree().getNumberOfLevels())));
 
 		// Only the binding process sends a set of agents
 		if (binding != null) {

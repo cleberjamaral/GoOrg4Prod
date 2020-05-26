@@ -8,6 +8,10 @@ import annotations.Skill;
 import fit.Resource;
 import fit.ResourceSet;
 
+/**
+ * @author cleber
+ *
+ */
 public class AgentSet implements ResourceSet {
 
 	private static AgentSet instance = null;

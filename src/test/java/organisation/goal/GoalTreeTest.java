@@ -470,8 +470,8 @@ public class GoalTreeTest {
 	}
 	
 	@Test
-	public void testRoleNotFound() {
-		System.out.println("\n\ntestRoleNotFound");
+	public void testPositionNotFound() {
+		System.out.println("\n\ntestPositionNotFound");
 		
         Throwable e = null;
         try {

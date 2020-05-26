@@ -19,6 +19,10 @@ import organisation.goal.GoalTree;
 import organisation.resource.AgentSet;
 import simplelogger.SimpleLogger;
 
+/**
+ * @author cleber
+ *
+ */
 public class OrganisationXMLParser {
 
     public void parseOrganisationSpecification(final String file) {

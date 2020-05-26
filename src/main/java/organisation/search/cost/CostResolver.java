@@ -1,12 +1,16 @@
 package organisation.search.cost;
 
 import organisation.Parameters;
-import organisation.exception.RoleNotFound;
+import organisation.exception.PositionNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
-import organisation.role.RoleNode;
-import organisation.role.RoleTree;
+import organisation.position.PositionNode;
+import organisation.position.PositionsTree;
 
+/**
+ * @author cleber
+ *
+ */
 public class CostResolver {
 
 	// static Cost costFunction = Cost.SPECIALIST;
@@ -26,40 +30,40 @@ public class CostResolver {
 	}
 
 	/**
-	 * return a penalty when an workload is added to a role, indicating
+	 * return a penalty when an workload is added to a position, indicating
 	 * it needs to switch the context adding setup cost
 	 * 
-	 * @param role that is receiving a goal
-	 * @param goal to me assigned to a role
+	 * @param position that is receiving a goal
+	 * @param goal to me assigned to a position
 	 * @return the cost
 	 */
-	public int getSetupPenalty(RoleNode role, GoalNode goal) {
-		// the role will receive a different workload, adding setup time
-		if (!role.getWorkloads().containsAll(goal.getWorkloads())) {
+	public int getSetupPenalty(PositionNode position, GoalNode goal) {
+		// the position will receive a different workload, adding setup time
+		if (!position.getWorkloads().containsAll(goal.getWorkloads())) {
 			return Parameters.getExtraPenalty();
 		}
 		return 0;
 		
 	}
 
-	public int getAddRootRolePenalty(GoalNode goal, RoleTree oldTree, RoleTree newTree) throws RoleNotFound {
+	public int getAddSupremePenalty(GoalNode goal, PositionsTree oldTree, PositionsTree newTree) throws PositionNotFound {
 		int cost = Parameters.getMinimalPenalty();
 
 		// GENERALIST
 		if (costFunction == Cost.GENERALIST) {
 			
-			// punish if it is creating more roles than the ideal
+			// punish if it is creating more position than the ideal
 			if (isDecreasingEfficiency(oldTree))
 				cost += Parameters.getDefaultPenalty();
 
-			// check if another role should receive this workload to become more generalist
+			// check if another position should receive this workload to become more generalist
 			if (isDecreasingGeneralism(goal, oldTree))
 				cost += Parameters.getExtraPenalty();
 		}
 
 		// SPECIALIST
 		if (costFunction == Cost.SPECIALIST) {
-			// punish if it is creating more roles than the ideal
+			// punish if it is creating more positions than the ideal
 			if (isDecreasingEfficiency(oldTree))
 				return cost + Parameters.getDefaultPenalty();
 			
@@ -72,18 +76,18 @@ public class CostResolver {
 		return cost;
 	}
 
-	public int getAddRolePenalty(RoleNode role, GoalNode goal, RoleTree oldTree, RoleTree newTree) throws RoleNotFound {
+	public int getAddSubordinatePenalty(PositionNode position, GoalNode goal, PositionsTree oldTree, PositionsTree newTree) throws PositionNotFound {
 
 		int cost = Parameters.getMinimalPenalty();
 
-		// High punishment when another role could receive the workload making the tree more generalist
+		// High punishment when another position could receive the workload making the tree more generalist
 		if (costFunction == Cost.GENERALIST) {
 			
-			// punish if it is creating more roles than the ideal
+			// punish if it is creating more positions than the ideal
 			if ((isDecreasingEfficiency(oldTree)))
 				cost += Parameters.getDefaultPenalty();
 
-			// check if another role should receive this workload to become more generalist
+			// check if another position should receive this workload to become more generalist
 			if (isDecreasingGeneralism(goal, oldTree))
 				cost += Parameters.getExtraPenalty();
 		}
@@ -95,12 +99,12 @@ public class CostResolver {
 		}
 		
 		// Low punishment when is preferred taller but is not child
-		if ((costFunction == Cost.TALLER) && (!role.hasParentGoal(goal)))
+		if ((costFunction == Cost.TALLER) && (!position.hasParentGoal(goal)))
 			return cost + Parameters.getDefaultPenalty();
 
 		// SPECIALIST
 		if (costFunction == Cost.SPECIALIST) {
-			// punish if it is creating more roles than the ideal
+			// punish if it is creating more positions than the ideal
 			if (isDecreasingEfficiency(oldTree))
 				return cost + Parameters.getDefaultPenalty();
 
@@ -112,16 +116,16 @@ public class CostResolver {
 		return cost;
 	}
 
-	public int getJoinRolePenalty(RoleNode role, GoalNode goal, RoleTree oldTree, RoleTree newTree) throws RoleNotFound {
+	public int getJoinExistingPenalty(PositionNode position, GoalNode goal, PositionsTree oldTree, PositionsTree newTree) throws PositionNotFound {
 
 		int cost = Parameters.getMinimalPenalty();
 
-		// Punish when goal and workloads already exist, better to put it to another role
-		if ((costFunction == Cost.GENERALIST) && (goalsAndWorkloadsAlreadyExist(role, goal, oldTree)))
+		// Punish when goal and workloads already exist, better to put it to another position
+		if ((costFunction == Cost.GENERALIST) && (goalsAndWorkloadsAlreadyExist(position, goal, oldTree)))
 			return Parameters.getExtraPenalty();
 
-		// High punishment when it is preferred taller and the role is not a child
-		if ((costFunction == Cost.TALLER) && (!role.hasParentGoal(goal)))
+		// High punishment when it is preferred taller and the position is not a child
+		if ((costFunction == Cost.TALLER) && (!position.hasParentGoal(goal)))
 			return cost + Parameters.getExtraPenalty();
 
 		// Low punishment when is preferred taller but is child
@@ -135,23 +139,23 @@ public class CostResolver {
 		return cost;
 	}
 
-	private boolean isDecreasingEfficiency(RoleTree oldTree) {
-		if ((searchMostEfficient) && (oldTree.getTree().size() >= GoalTree.getInstance().getBestNumberOfRoles()))
+	private boolean isDecreasingEfficiency(PositionsTree oldTree) {
+		if ((searchMostEfficient) && (oldTree.getTree().size() >= GoalTree.getInstance().getBestNumberOfPositions()))
 			return true;
 
 		return false;
 	}
 
-	private boolean isDecreasingGeneralism(GoalNode goal, RoleTree oldTree) {
-		for (RoleNode r : oldTree.getTree()) {
-			// Check if there is a role that has the same goal and could receive this other one
+	private boolean isDecreasingGeneralism(GoalNode goal, PositionsTree oldTree) {
+		for (PositionNode r : oldTree.getTree()) {
+			// Check if there is a position that has the same goal and could receive this other one
 			if ((r.containsGoalByOriginalName(goal))
 				&& (r.getSumWorkload() + goal.getSumWorkload() <= Parameters.getMaxWorkload())) {
 				
 				return true;
 			}
 			
-			// Check if there is a role that has the workloads and could receive this other one
+			// Check if there is a position that has the workloads and could receive this other one
 			if ((r.getWorkloads().containsAll(goal.getWorkloads()))
 					&& (r.getSumWorkload() + goal.getSumWorkload() <= Parameters.getMaxWorkload())) {
 				
@@ -161,10 +165,10 @@ public class CostResolver {
 		return false;
 	}
 
-	private boolean goalsAndWorkloadsAlreadyExist(RoleNode role, GoalNode goal, RoleTree oldTree) throws RoleNotFound {
-		RoleNode old = oldTree.findRoleByRoleName(role.getRoleName());
+	private boolean goalsAndWorkloadsAlreadyExist(PositionNode position, GoalNode goal, PositionsTree oldTree) throws PositionNotFound {
+		PositionNode old = oldTree.findPositionByName(position.getPositionName());
 		
-		// Punish when it would be possible to join with the give role
+		// Punish when it would be possible to join with the give position
 		if (old.getWorkloads().containsAll(goal.getWorkloads()))
 			return true;
 		

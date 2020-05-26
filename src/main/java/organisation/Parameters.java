@@ -1,5 +1,9 @@
 package organisation;
 
+/**
+ * @author cleber
+ *
+ */
 public class Parameters {
 
 	private static Parameters instance = null;
@@ -7,9 +11,9 @@ public class Parameters {
 	// stop search after finding one solution
 	private static boolean oneSolution = false;
 
-	// max dataload allowed, in case of excess it must go to another role
+	// max dataload allowed, in case of excess it must go to another position
 	private static double maxDataLoad = 8;
-	// max workload allowed, in case of excess it must go to another role 
+	// max workload allowed, in case of excess it must go to another position 
 	private static double maxWorkload = 8;
 	// dataload granularity, for breaking goals (max grain size)
 	private static double dataLoadGrain = 8;

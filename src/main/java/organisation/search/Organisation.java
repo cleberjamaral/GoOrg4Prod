@@ -10,16 +10,20 @@ import organisation.OrganisationPlot;
 import organisation.OrganisationStatistics;
 import organisation.Parameters;
 import organisation.exception.OutputDoesNotMatchWithInput;
-import organisation.exception.RoleNotFound;
+import organisation.exception.PositionNotFound;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
-import organisation.role.RoleNode;
-import organisation.role.RoleTree;
+import organisation.position.PositionNode;
+import organisation.position.PositionsTree;
 import organisation.search.cost.Cost;
 import organisation.search.cost.CostResolver;
 import organisation.search.cost.HeuristicResolver;
 import simplelogger.SimpleLogger;
 
+/**
+ * @author cleber
+ *
+ */
 public class Organisation implements Estado, Heuristica {
 
 	/*** STATIC ***/
@@ -41,8 +45,7 @@ public class Organisation implements Estado, Heuristica {
 	
 	/*** LOCAL ***/
 	// the chart that is being created, potentially a complete chart
-	// private List<RoleNode> rolesTree = new ArrayList<RoleNode>();
-	RoleTree rolesTree = new RoleTree();
+	PositionsTree positionsTree = new PositionsTree();
 	// The goals that were not explored yet
 	private List<GoalNode> goalSuccessors = new ArrayList<GoalNode>();
 	// Cost supporting variables
@@ -63,7 +66,7 @@ public class Organisation implements Estado, Heuristica {
 	private Organisation() {}
 
 	/**
-	 * This constructor should be used only once for generating the root role
+	 * This constructor should be used only once for generating the first supreme
 	 * and setup the algorithm
 	 * 
 	 * @param orgName is an arbitrary name for this organisation
@@ -144,7 +147,7 @@ public class Organisation implements Estado, Heuristica {
 	
 	private void matchSumWorkload() throws OutputDoesNotMatchWithInput {
 		// checking if sum of efforts match
-		if (Math.abs(goalsTree.getSumEfforts() - rolesTree.getSumWorkload()) > 0.01) {
+		if (Math.abs(goalsTree.getSumEfforts() - positionsTree.getSumWorkload()) > 0.01) {
 			throw new OutputDoesNotMatchWithInput(
 					"The sum of efforts of the goals tree and the created organisation does not match!");
 		}
@@ -156,7 +159,7 @@ public class Organisation implements Estado, Heuristica {
 		for (GoalNode g : goalsTree.getTree())
 			goalsTreeNumberOfWorkloads += g.getWorkloads().size();
 		int organisationNumberOfWorkloads = 0;
-		for (RoleNode r : rolesTree.getTree())
+		for (PositionNode r : positionsTree.getTree())
 			goalsTreeNumberOfWorkloads += r.getWorkloads().size();
 		if (organisationNumberOfWorkloads > goalsTreeNumberOfWorkloads)
 			throw new OutputDoesNotMatchWithInput("There are more workloads in the output than in the input!");
@@ -165,7 +168,7 @@ public class Organisation implements Estado, Heuristica {
 	private void matchNumberOfGoals() throws OutputDoesNotMatchWithInput {
 		// number of goals in the goals tree must be same as the allocated ones
 		int nAssignedGoals = 0;
-		for (final RoleNode or : this.getRolesTree().getTree()) nAssignedGoals += or.getAssignedGoals().size();
+		for (final PositionNode or : this.getPositionsTree().getTree()) nAssignedGoals += or.getAssignedGoals().size();
 		GoalTree gTree = GoalTree.getInstance();
 		if (nAssignedGoals != gTree.getTree().size())
 			throw new OutputDoesNotMatchWithInput("There are more workloads in the output than in the input!");
@@ -177,18 +180,18 @@ public class Organisation implements Estado, Heuristica {
 		List<Estado> suc = new LinkedList<>(); // Lista de sucessores
 
 		// add each goal as root
-		if (rolesTree.getTree().size() == 0) {
-			// add all possible successors as root
+		if (positionsTree.getTree().size() == 0) {
+			// add all possible successors as supreme
 			for (GoalNode goalToBeAssociated : goalSuccessors) {
-				addNotNull((List<Object>) (List<?>) suc, addRootRole(goalToBeAssociated));
+				addNotNull((List<Object>) (List<?>) suc, addSupremePosition(goalToBeAssociated));
 			}
 		} else {
 			for (GoalNode goalToBeAssociated : goalSuccessors) {
 				// add all children as possible successors
-				for (RoleNode role : rolesTree.getTree()) {
-					addNotNull((List<Object>) (List<?>) suc, addRootRole(goalToBeAssociated));
-					addNotNull((List<Object>) (List<?>) suc, addRole(role, goalToBeAssociated));
-					addNotNull((List<Object>) (List<?>) suc, joinRole(role, goalToBeAssociated));
+				for (PositionNode position : positionsTree.getTree()) {
+					addNotNull((List<Object>) (List<?>) suc, addSupremePosition(goalToBeAssociated));
+					addNotNull((List<Object>) (List<?>) suc, addSubordinatePosition(position, goalToBeAssociated));
+					addNotNull((List<Object>) (List<?>) suc, joinExistingPosition(position, goalToBeAssociated));
 				}
 			}
 		}
@@ -200,127 +203,127 @@ public class Organisation implements Estado, Heuristica {
 		if (e != null) l.add(e);		
 	}
 	
-	public Organisation addRootRole(GoalNode goalToAssign) {
+	public Organisation addSupremePosition(GoalNode goalToAssign) {
 		try {
 			// Prune states with effort equal to 0
 			if (goalToAssign.getSumWorkload() == 0) {
-				LOG.debug("Visited #" + getNStates() + " addRootRole pruned#1 " + this.toString());
+				LOG.debug("Visited #" + getNStates() + " addSupreme pruned#1 " + this.toString());
 				return null;
 			}
 
 			Organisation newState = (Organisation) createState(goalToAssign);
 
-			RoleNode nr = newState.rolesTree.createRole(null, "r" + newState.rolesTree.size(), goalToAssign);
+			PositionNode nr = newState.positionsTree.createPosition(null, "p" + newState.positionsTree.size(), goalToAssign);
 
-			newState.cost = penalty.getAddRootRolePenalty(goalToAssign, this.getRolesTree(), newState.getRolesTree());
+			newState.cost = penalty.getAddSupremePenalty(goalToAssign, this.getPositionsTree(), newState.getPositionsTree());
 			newState.accCost = this.accCost + newState.cost;
 
-			logTransformation("addRootRole", newState, nr);
+			logTransformation("addSupreme", newState, nr);
 			
 			return newState;
 
 		} catch (Exception e) {
-			LOG.fatal("Fatal error on addRole! " + e.getMessage());
+			LOG.fatal("Fatal error on addSupreme! " + e.getMessage());
 		}
 		return null;
 	}
 
 	
-	public Organisation addRole(RoleNode aGivenRole, GoalNode goalToAssign) {
+	public Organisation addSubordinatePosition(PositionNode aGivenPosition, GoalNode goalToAssign) {
 
 		try {
-			// cannot create add a role without a root
-			if (this.rolesTree.size() < 1) {
-				LOG.debug("Visited #" + getNStates() + "  addRole pruned#0 " + this.toString());
+			// cannot create add a position without a supreme
+			if (this.positionsTree.size() < 1) {
+				LOG.debug("Visited #" + getNStates() + "  addSubordinate pruned#0 " + this.toString());
 				return null;
 			}
 
 			// Prune states with effort equal to 0
 			if (goalToAssign.getSumWorkload() == 0) {
-				LOG.debug("Visited #" + getNStates() + " addRole pruned#1 " + this.toString());
+				LOG.debug("Visited #" + getNStates() + " addSubordinate pruned#1 " + this.toString());
 				return null;
 			}
 
 			// Prune states with effort greater than max (should never happen if the goals were broken properly)
 			if (goalToAssign.getSumWorkload() > Parameters.getMaxWorkload()) {
-				LOG.debug("Visited #" + getNStates() + " addRole pruned#2 " + this.toString());
+				LOG.debug("Visited #" + getNStates() + " addSubordinate pruned#2 " + this.toString());
 				return null;
 			}
 
 			// Prune states which parent cannot afford data amount
-			if ((aGivenRole.getParentSumDataAmount() + aGivenRole.calculateAddedDataLoad(goalToAssign)) > Parameters.getMaxDataLoad()) {
-				LOG.debug("Visited #" + getNStates() + " addRole pruned#3 " + this.toString());
+			if ((aGivenPosition.getParentSumDataAmount() + aGivenPosition.calculateAddedDataLoad(goalToAssign)) > Parameters.getMaxDataLoad()) {
+				LOG.debug("Visited #" + getNStates() + " addSubordinate pruned#3 " + this.toString());
 				return null;
 			}
 
 			Organisation newState = (Organisation) createState(goalToAssign);
 
-			RoleNode nr = newState.rolesTree.createRole(newState.rolesTree.findRoleByRoleName(aGivenRole.getRoleName()),
-					"r" + newState.rolesTree.size(), goalToAssign);
+			PositionNode nr = newState.positionsTree.createPosition(newState.positionsTree.findPositionByName(aGivenPosition.getPositionName()),
+					"p" + newState.positionsTree.size(), goalToAssign);
 			
 
-			newState.cost = penalty.getAddRolePenalty(aGivenRole, goalToAssign, this.getRolesTree(), newState.getRolesTree());
+			newState.cost = penalty.getAddSubordinatePenalty(aGivenPosition, goalToAssign, this.getPositionsTree(), newState.getPositionsTree());
 			newState.accCost = this.accCost + newState.cost;
 
-			logTransformation("addRole", newState, nr);
+			logTransformation("addSubordinate", newState, nr);
 			
 			return newState;
 
-		} catch (RoleNotFound e) {
-			LOG.fatal("Fatal error on addRole! " + e.getMessage());
+		} catch (PositionNotFound e) {
+			LOG.fatal("Fatal error on addSubordinate! " + e.getMessage());
 		}
 		return null;
 	}
 
-	public Organisation joinRole(RoleNode hostRole, GoalNode goalToAssign) {
+	public Organisation joinExistingPosition(PositionNode hostPosition, GoalNode goalToAssign) {
 
 		try {
-			// cannot join a role of an empty tree
-			if (this.rolesTree.size() < 1) {
-				LOG.debug("Visited #" + getNStates() + " joinRole pruned#0 " + this.toString());
+			// cannot join a position of an empty tree
+			if (this.positionsTree.size() < 1) {
+				LOG.debug("Visited #" + getNStates() + " joinExisting pruned#0 " + this.toString());
 				return null;
 			}
 
-			// Prune states with effort equal to 0 (should never happen since a role without effort should not be created)
-			if (hostRole.getSumWorkload() + goalToAssign.getSumWorkload() == 0) {
-				LOG.debug("Visited #" + getNStates() + " joinRole pruned#1 " + this.toString());
+			// Prune states with effort equal to 0 (should never happen since a position without effort should not be created)
+			if (hostPosition.getSumWorkload() + goalToAssign.getSumWorkload() == 0) {
+				LOG.debug("Visited #" + getNStates() + " joinExisting pruned#1 " + this.toString());
 				return null;
 			}
 			
 			// Prune states with effort greater than max
-			if ((hostRole.getSumWorkload() + goalToAssign.getSumWorkload()) > Parameters.getMaxWorkload()) {
-				LOG.debug("Visited #" + getNStates() + " joinRole pruned#2 " + this.toString());
+			if ((hostPosition.getSumWorkload() + goalToAssign.getSumWorkload()) > Parameters.getMaxWorkload()) {
+				LOG.debug("Visited #" + getNStates() + " joinExisting pruned#2 " + this.toString());
 				return null;
 			}
 
 			// Prune states which parent cannot afford data amount 
-			if ((hostRole.getParentSumDataAmount() + hostRole.calculateAddedDataLoad(goalToAssign)) > Parameters.getMaxDataLoad()) {
-				LOG.debug("Visited #" + getNStates() + " joinRole pruned#3 " + this.toString());
+			if ((hostPosition.getParentSumDataAmount() + hostPosition.calculateAddedDataLoad(goalToAssign)) > Parameters.getMaxDataLoad()) {
+				LOG.debug("Visited #" + getNStates() + " joinExisting pruned#3 " + this.toString());
 				return null;
 			}
 
 			Organisation newState = (Organisation) createState(goalToAssign);
 
-			RoleNode jr = newState.rolesTree.assignGoalToRoleByRoleName(hostRole.getRoleName(), goalToAssign);
+			PositionNode jr = newState.positionsTree.assignGoalToPositionByPositionName(hostPosition.getPositionName(), goalToAssign);
 
-			newState.cost = penalty.getJoinRolePenalty(hostRole, goalToAssign, this.getRolesTree(), newState.getRolesTree());
+			newState.cost = penalty.getJoinExistingPenalty(hostPosition, goalToAssign, this.getPositionsTree(), newState.getPositionsTree());
 			newState.accCost = this.accCost + newState.cost;
 
-			logTransformation("joinRole", newState, jr);
+			logTransformation("joinPosition", newState, jr);
 
 			return newState;
-		} catch (RoleNotFound e) {
-			LOG.fatal("Fatal error on joinRole! " + e.getMessage());
+		} catch (PositionNotFound e) {
+			LOG.fatal("Fatal error on joinPosition! " + e.getMessage());
 		}
 		return null;
 	}
 
 	/**
 	 * This is the signature of an organisation. Two organsiations are considered
-	 * equal if they have the same name and exactly same roles tree
+	 * equal if they have the same name and exactly same positions tree
 	 */
 	public String toString() {
-		return getOrgName() + rolesTree.toString() + " - " + this.goalSuccessors;
+		return getOrgName() + positionsTree.toString() + " - " + this.goalSuccessors;
 	}
 
 	/**
@@ -347,7 +350,7 @@ public class Organisation implements Estado, Heuristica {
 	 * retorna o hashCode desse estado (usado para poda, conjunto de fechados)
 	 */
 	public int hashCode() {
-		if (rolesTree != null)
+		if (positionsTree != null)
 			return toString().hashCode();
 		else
 			return -1;
@@ -365,8 +368,8 @@ public class Organisation implements Estado, Heuristica {
 	 */
 	public int h() {
 		try {
-			return heuristic.getPedictedCost(this.goalSuccessors, this.rolesTree);
-		} catch (RoleNotFound e) {
+			return heuristic.getPedictedCost(this.goalSuccessors, this.positionsTree);
+		} catch (PositionNotFound e) {
 			e.printStackTrace();
 		}
 		return 0;
@@ -384,7 +387,7 @@ public class Organisation implements Estado, Heuristica {
 		Organisation newState = new Organisation();
 
 		try {
-			newState.rolesTree = rolesTree.cloneContent();
+			newState.positionsTree = positionsTree.cloneContent();
 
 			// Add all successors of current state but not the new state itself
 			// list of goals does not need to be cloned because does not change
@@ -392,23 +395,23 @@ public class Organisation implements Estado, Heuristica {
 				if (goal != gn)
 					newState.goalSuccessors.add(goal);
 			}
-		} catch (RoleNotFound e) {
+		} catch (PositionNotFound e) {
 			e.printStackTrace();
 		}
 
 		return newState;
 	}
 
-	public RoleTree getRolesTree() {
-		return rolesTree;
+	public PositionsTree getPositionsTree() {
+		return positionsTree;
 	}
 
-	private void logTransformation(String transformation, Organisation state, RoleNode role) {
+	private void logTransformation(String transformation, Organisation state, PositionNode position) {
 		String parent = "__";
-		if (role.getParent() != null)
-			parent = role.getParent().getRoleName();
-		LOG.trace("Visited #" + getNStates() + " " + transformation + ": " + role.getRoleName() + "^"
-				+ parent + " " + state.rolesTree + ", nSucc: " + state.goalSuccessors + ", Hash: " + state.hashCode()
+		if (position.getParent() != null)
+			parent = position.getParent().getPositionName();
+		LOG.trace("Visited #" + getNStates() + " " + transformation + ": " + position.getPositionName() + "^"
+				+ parent + " " + state.positionsTree + ", nSucc: " + state.goalSuccessors + ", Hash: " + state.hashCode()
 				+ ", Cost: " + state.accCost + "/" + state.cost);
 	}
 	
@@ -451,17 +454,17 @@ public class Organisation implements Estado, Heuristica {
 	 */
 	public long openedStates(int i, int n) {    
 	    long result = 0;
-	    // second transformation makes each goal a root role
+	    // second transformation makes each goal a supreme
 	    if (i == 1)
 	        result = 3 * n;
-	    // further transformations make 3 states from each role
+	    // further transformations make 3 states from each position
 	    if (i > 1) 
 	        result = 3 * i * openedStates(i-1, n);
 	    return result;     
 	}
 
 	public int getAdjustedEstimatedNumberOfOrganisations() {
-        // second transformation makes each goal a root role
+        // second transformation makes each goal a supreme
 	    int openedStates = goalsTree.getTree().size();
         // first transformation creates an empty tree
 	    int nStates = openedStates + 1;

@@ -12,6 +12,10 @@ import organisation.Parameters;
 import organisation.exception.CircularReference;
 import organisation.exception.GoalNotFound;
 
+/**
+ * @author cleber
+ *
+ */
 public class GoalTree {
 
 	private static GoalTree instance = null;
@@ -425,11 +429,11 @@ public class GoalTree {
 	}
 
 	/**
-	 * This is the lower bound of number of roles according to max workloads
+	 * This is the lower bound of number of positions according to max workloads
 	 * 
-	 * @return integer representing bet number of roles (lower bound)
+	 * @return integer representing bet number of positions (lower bound)
 	 */
-	public int getBestNumberOfRoles() {
+	public int getBestNumberOfPositions() {
 		return Math.max(
 				(int) Math.ceil(getSumEfforts() / Parameters.getMaxWorkload()),
 				(int) Math.ceil(getSumDataLoad() / Parameters.getMaxDataLoad()));
