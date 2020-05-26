@@ -183,31 +183,50 @@ public class PositionsTree implements RequirementSet {
 	}
 	
 	/**
-	 * Generalness is about how workloads are distributed across position. When all
-	 * positions have all given workloads it means all agents must have all those skills
-	 * and can play any position in the organisation, i.e., maximum generalness.
+	 * Generalness is about how goals are distributed across positions. When all
+	 * positions have all given goals it means all agents are responsible for all
+	 * tasks and they can play any position, i.e., maximum generalness.
 	 * 
 	 * For instance, for a GDT with a set of goals that together have 3 different
-	 * workloads the PositionsTree should prefer structures in which all positions have
-	 * those 3 workloads. So, the 3 agents that will plays those positions can be
-	 * actually allocated in any one of those
+	 * goals ideally these goals should be broken into 9 goals and the PositionsTree 
+	 * should prefer structures in which all positions have one part of each of 
+	 * those 3 goals. So, the 3 agents that will plays those positions can be
+	 * actually allocated in any one of those positions
 	 * 
 	 * @return generalness index from 0 to 1 (less to maximum generalness possible)
+	 * @throws Exception 
 	 */
 	public double getGeneralness() {
-		int nPositions = this.tree.size();
-		int nAllWorkloads = 0;
-		
+		int nAllOriginalGoalsAssigned = 0;
+		int nGoalsAssigned = 0;
+
+		// An original goal refers to the whole or a part of a given (non-broken) goal
 		for (PositionNode or : this.tree) {
-			// PositionNode.getWorkloads() is a hashset returning only unique workloads
-			nAllWorkloads += or.getWorkloads().size();
+			Set<String> allOriginalGoalsOfPosition = new HashSet<>();
+			for (GoalNode g : or.getAssignedGoals()) {
+				allOriginalGoalsOfPosition.add(g.getOriginalName());
+				// Accumulates all goals (all broken goals) 
+				nGoalsAssigned++;
+			}
+			// Accumulates only different goals, sum all we have on each position 
+			nAllOriginalGoalsAssigned += allOriginalGoalsOfPosition.size();
 		}
-		
-		// the most generalist positions tree must have all workload on each position
-		// sumOfDiffWL.size() represents all unique workloads quantity
-		int nMaxWorkloads = nPositions * GoalTree.getInstance().getNumberDiffWorkloads();
-		
-		return (double) nAllWorkloads / (double) nMaxWorkloads;
+
+		// ideal situation: each original goal has a broken part that can be distributed
+		// equally across all positions
+		int nMaxOriginalGoalsSpread = GoalTree.getInstance().getNumberOriginalGoals() * this.tree.size();
+
+		// the actual generalness of the current positions tree
+		double generalness = (double) nAllOriginalGoalsAssigned / (double) nMaxOriginalGoalsSpread;
+
+		// if it is a partial generalness, add a penalty according to the number of goals to assign
+		int nGoalsToAssing = GoalTree.getInstance().getTree().size() - nGoalsAssigned;
+
+		// a penalty for partial generalness
+		if (nGoalsToAssing > 0)
+			generalness /= nGoalsToAssing * GoalTree.getInstance().getTree().size() * 10;
+
+		return generalness;
 	}
 	
 	/**

@@ -22,6 +22,7 @@ public class GoalTree {
     private GoalNode rootNode;
     private Set<GoalNode> tree = new HashSet<>();
     Set<Workload> allDiffWorkloads = new HashSet<>();
+    Set<String> allOriginalGoals = new HashSet<>();
 
     private GoalTree() {}
     
@@ -40,8 +41,10 @@ public class GoalTree {
      */
     public void setRootNode(GoalNode rootNode) {
         this.rootNode = rootNode;
-        if (!treeContains(this.rootNode))
+        if (!treeContains(this.rootNode)) {
             tree.add(this.rootNode);
+            allOriginalGoals.add(this.rootNode.getOriginalName());
+        }
     }
 
     /**
@@ -51,8 +54,10 @@ public class GoalTree {
      */
     public void setRootNode(String rootNode) {
         this.rootNode = new GoalNode(null, rootNode);
-        if (!treeContains(this.rootNode))
+        if (!treeContains(this.rootNode)) {
             tree.add(this.rootNode);
+            allOriginalGoals.add(this.rootNode.getOriginalName());
+        }
     }
 
     /**
@@ -82,15 +87,20 @@ public class GoalTree {
      * @return the created goal node
      */
     public GoalNode addGoal(String name, GoalNode parent) {
-        GoalNode g = new GoalNode(parent, name);
-        if (!treeContains(g))
-            tree.add(g);
-        return g;
+        GoalNode goal = new GoalNode(parent, name);
+        if (!treeContains(goal)) {
+            tree.add(goal);
+            allOriginalGoals.add(goal.getOriginalName());
+        }
+        
+        return goal;
     }
     
     public void addGoal(GoalNode goal) {
-        if (!treeContains(goal))
+        if (!treeContains(goal)) {
             tree.add(goal);
+            allOriginalGoals.add(goal.getOriginalName());
+        }
     }
 
     /**
@@ -208,6 +218,20 @@ public class GoalTree {
     		allDiffWorkloads.add(w);
         for (GoalNode g : root.getDescendants()) 
             updateNumberDiffWorkloads(g);
+	}
+
+	/**
+	 * A recursive function to get unique goals.
+	 * Number of original goals is used to calculate generalness
+	 * and other rates. When the tree is build from goals node and later
+	 * imported to the tree it should be calculated.
+	 * 
+	 * @param root goal
+	 */
+	public void updateNumberOriginalGoals(GoalNode root) {
+		allOriginalGoals.add(root.getOriginalName());
+        for (GoalNode g : root.getDescendants()) 
+        	updateNumberOriginalGoals(g);
 	}
 	
     /**
@@ -442,5 +466,8 @@ public class GoalTree {
 	public int getNumberDiffWorkloads() {
 		return allDiffWorkloads.size();
 	}
-
+	
+	public int getNumberOriginalGoals() {
+		return allOriginalGoals.size();
+	}
 }
