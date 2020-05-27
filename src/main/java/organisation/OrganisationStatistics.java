@@ -49,12 +49,12 @@ public class OrganisationStatistics {
 	private OrganisationStatistics() {
 		//fields and sequence of columns in the CSV file
 		this.fields.add("id");
-		this.fields.add("Positi");
-		this.fields.add("%WL+");
-		this.fields.add("%DL+");
+		this.fields.add("nPosit");
 		this.fields.add("%Idle+"); //Absolute Idleness %
 		this.fields.add("%Geral"); //Generalness %
 		this.fields.add("%Speci"); //Specificness %
+		this.fields.add("%Tall"); //Tallness %
+		this.fields.add("%Flat"); //Flatness % matching requirements and resources
 		this.fields.add("%Feasi"); //Feasible % matching requirements and resources
 		this.fields.add("Levels");
 		this.fields.add("States");
@@ -63,6 +63,8 @@ public class OrganisationStatistics {
 		this.fields.add("rWL");
 		this.fields.add("bDL");
 		this.fields.add("rDL");
+		this.fields.add("%WL+");
+		this.fields.add("%DL+");
 		this.fields.add("pTree");
 		this.fields.add("bgTree");
 		this.fields.add("agents");
@@ -139,9 +141,6 @@ public class OrganisationStatistics {
 		Map<String,String> line = new HashMap<>();
 		
 		double assignedWorkLoad = o.getPositionsTree().getSumWorkload();
-		double treeGeneralness = o.getPositionsTree().getGeneralness();
-		double treeSpecificness = o.getPositionsTree().getSpecificness();
-		double treeAbsIdleness = o.getPositionsTree().getAbsoluteIdleness();
 		
 		double assignedDataLoad = 0.0;
 
@@ -152,7 +151,7 @@ public class OrganisationStatistics {
 		
 		Parameters.getInstance();
 		line.put("id", (Integer.toString(++id)));
-		line.put("Positi", (Integer.toString(o.getPositionsTree().getTree().size())));
+		line.put("nPosit", (Integer.toString(o.getPositionsTree().getTree().size())));
 		line.put("bWL", (String.format("%.2f", originalWorkLoad)));
 		line.put("rWL", (String.format("%.2f", assignedWorkLoad)));
 		line.put("bDL", (String.format("%.2f", originalDataLoad)));
@@ -169,10 +168,12 @@ public class OrganisationStatistics {
 		double idleness = o.getPositionsTree().getTree().size() * Parameters.getMaxWorkload() - originalWorkLoad;
 		line.put("Idlene", (Double.toString(idleness)));
 		
-		line.put("%Idle+", (String.format("%.0f%%", 100 * treeAbsIdleness)));
-		line.put("%Geral", (String.format("%.0f%%", 100 * treeGeneralness)));
-		line.put("%Speci", (String.format("%.0f%%", 100 * treeSpecificness)));
-
+		line.put("%Idle+", (String.format("%.0f%%", 100 * o.getPositionsTree().getAbsoluteIdleness())));
+		line.put("%Geral", (String.format("%.0f%%", 100 * o.getPositionsTree().getGeneralness())));
+		line.put("%Speci", (String.format("%.0f%%", 100 * o.getPositionsTree().getSpecificness())));
+		line.put("%Tall", (String.format("%.0f%%", 100 * o.getPositionsTree().getTallness())));
+		line.put("%Flat", (String.format("%.0f%%", 100 * o.getPositionsTree().getFlatness())));
+		
 		line.put("pTree", o.getPositionsTree().toString());
 		line.put("bgTree", bgTree);
 		line.put("States", (Integer.toString(o.getNStates())));
