@@ -84,7 +84,7 @@ public class Organisation implements Estado, Heuristica {
 		goalsTree.addSuccessorsToList(this.goalSuccessors, goalsTree.getRootNode());
 		
 		// Used to infer a bad decision on the search
-		Parameters.setDefaultPenalty(this.goalSuccessors.size() + 1);
+		Parameters.setDefaultPenalty((this.goalSuccessors.size() + 1) * 10);
 		penalty = new CostResolver(preferences);
 		//heuristic = new HeuristicResolver(costFunction);
 		isGoalList = new ArrayList<Organisation>();
