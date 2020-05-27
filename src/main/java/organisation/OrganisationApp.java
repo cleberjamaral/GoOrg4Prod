@@ -1,5 +1,8 @@
 package organisation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import organisation.exception.CircularReference;
 import organisation.exception.GoalNotFound;
 import organisation.goal.GoalNode;
@@ -19,7 +22,7 @@ public class OrganisationApp {
 
 	public static void main(String[] args) {
 
-		Cost c = Cost.GENERALIST;
+		List<Cost> preferences = new ArrayList<>();
 		String search = "BFS";
 
 		OrganisationGenerator orgGen = new OrganisationGenerator();
@@ -27,10 +30,13 @@ public class OrganisationApp {
 
 		// if an argument to choose a cost function was given
 		if (args.length >= 2)
-			c = Cost.valueOf(args[1]);
+			preferences.add(Cost.valueOf(args[1]));
 		
 		if (args.length >= 3)
 			search = args[2];
+
+		if (preferences.size() == 0)
+			preferences.add(Cost.GENERALIST);
 
 		// if a Moise XML file was not provided, use a sample organisation
 		if ((args.length < 1) || (args[0].equals("0"))) {
@@ -55,7 +61,7 @@ public class OrganisationApp {
 				gTree.addInform("g1", "i1", "g0", 1);
 
 				// perform organisation generation (free design)
-				Organisation org = orgGen.generateOrganisationFromTree("sample", c, search, Parameters.isOneSolution());
+				Organisation org = orgGen.generateOrganisationFromTree("sample", preferences, search, Parameters.isOneSolution());
 
 				// set available agents for this example
 				AgentSet agents = AgentSet.getInstance();
@@ -86,7 +92,7 @@ public class OrganisationApp {
 			LOG.info("Search algorit: "+ search);
 
 			// generate organisations
-			Organisation org = orgGen.generateOrganisationFromTree(name, c, search, Parameters.isOneSolution());
+			Organisation org = orgGen.generateOrganisationFromTree(name, preferences, search, Parameters.isOneSolution());
 			
 			// get parsed agents set
 			AgentSet agents = AgentSet.getInstance();

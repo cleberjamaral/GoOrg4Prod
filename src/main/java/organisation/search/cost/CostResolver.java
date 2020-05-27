@@ -1,5 +1,7 @@
 package organisation.search.cost;
 
+import java.util.List;
+
 import organisation.Parameters;
 import organisation.exception.PositionNotFound;
 import organisation.goal.GoalNode;
@@ -13,19 +15,19 @@ import organisation.position.PositionsTree;
  */
 public class CostResolver {
 
-	private static Cost costFunction = Cost.GENERALIST;
+	private static List<Cost> preferences = null;
 	private static boolean searchMostEfficient = true;
 
-	public CostResolver(Cost costFunction) {
-		CostResolver.setCostFunction(costFunction);
+	public CostResolver(List<Cost> preferences) {
+		CostResolver.setPreferences(preferences);
 	}
 
-	public static Cost getCostFunction() {
-		return costFunction;
+	public static List<Cost> getPreferences() {
+		return preferences;
 	}
 
-	public static void setCostFunction(Cost costFunction) {
-		CostResolver.costFunction = costFunction;
+	public static void setPreferences(List<Cost> preferences) {
+		CostResolver.preferences = preferences;
 	}
 
 	/**
@@ -49,7 +51,7 @@ public class CostResolver {
 		int cost = Parameters.getMinimalPenalty();
 
 		// GENERALIST
-		if (costFunction == Cost.GENERALIST) {
+		if (preferences.contains(Cost.GENERALIST)) {
 			
 			// punish if it is creating more position than the ideal
 			if (isDecreasingEfficiency(oldTree))
@@ -60,7 +62,7 @@ public class CostResolver {
 		}
 
 		// SPECIALIST
-		if (costFunction == Cost.SPECIALIST) {
+		if (preferences.contains(Cost.SPECIALIST)) {
 			// punish if it is creating more positions than the ideal
 			if (isDecreasingEfficiency(oldTree))
 				cost += Parameters.getDefaultPenalty();
@@ -77,7 +79,7 @@ public class CostResolver {
 		int cost = Parameters.getMinimalPenalty();
 
 		// High punishment when another position could receive the workload making the tree more generalist
-		if (costFunction == Cost.GENERALIST) {
+		if (preferences.contains(Cost.GENERALIST)) {
 			
 			// punish if it is creating more positions than the ideal
 			if ((isDecreasingEfficiency(oldTree)))
@@ -89,16 +91,16 @@ public class CostResolver {
 
 		// High punishment when it is creating more levels in a preferable flatter
 		// structure
-		if ((costFunction == Cost.FLATTER) && (newTree.getNumberOfLevels() > oldTree.getNumberOfLevels())) {
+		if ((preferences.contains(Cost.FLATTER)) && (newTree.getNumberOfLevels() > oldTree.getNumberOfLevels())) {
 			return cost + Parameters.getExtraPenalty();
 		}
 		
 		// Low punishment when is preferred taller but is not child
-		if ((costFunction == Cost.TALLER) && (!position.hasParentGoal(goal)))
+		if ((preferences.contains(Cost.TALLER)) && (!position.hasParentGoal(goal)))
 			return cost + Parameters.getDefaultPenalty();
 
 		// SPECIALIST
-		if (costFunction == Cost.SPECIALIST) {
+		if (preferences.contains(Cost.SPECIALIST)) {
 			// punish if it is creating more positions than the ideal
 			if (isDecreasingEfficiency(oldTree))
 				cost += Parameters.getDefaultPenalty();
@@ -115,21 +117,21 @@ public class CostResolver {
 		int cost = Parameters.getMinimalPenalty();
 
 		// Punish when goal and workloads already exist, better to put it to another position
-		if (costFunction == Cost.GENERALIST) { 
+		if (preferences.contains(Cost.GENERALIST)) { 
 			// penalize according to generalness of the new tree
 			return (int) ((1 - newTree.getGeneralness()) * Parameters.getDefaultPenalty());
 		}
 
 		// High punishment when it is preferred taller and the position is not a child
-		if ((costFunction == Cost.TALLER) && (!position.hasParentGoal(goal)))
+		if ((preferences.contains(Cost.TALLER)) && (!position.hasParentGoal(goal)))
 			return cost + Parameters.getExtraPenalty();
 
 		// Low punishment when is preferred taller but is child
-		if (costFunction == Cost.TALLER)
+		if (preferences.contains(Cost.TALLER))
 			return cost + Parameters.getDefaultPenalty();
 
 		// SPECIALIST
-		if (costFunction == Cost.SPECIALIST) {
+		if (preferences.contains(Cost.SPECIALIST)) {
 			// penalize according to specificness of the new tree
 			return (int) ((1 - newTree.getSpecificness()) * Parameters.getDefaultPenalty());
 		}

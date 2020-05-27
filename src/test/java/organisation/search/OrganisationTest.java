@@ -15,7 +15,10 @@ import organisation.search.cost.Cost;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -74,7 +77,7 @@ public class OrganisationTest {
 
 			s.prepareGenerationStatisticsFile(org);
 			
-			final Organisation o = new Organisation(org, gTree, c, true);
+			final Organisation o = new Organisation(org, gTree, Arrays.asList(c), true);
 			final Nodo n = new BuscaLargura().busca(o);
 
 			try {
@@ -114,7 +117,8 @@ public class OrganisationTest {
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.prepareGenerationStatisticsFile("Estimation2Goals");
 
-			final Organisation o = new Organisation("Estimation2Goals", gTree, Cost.GENERALIST, false);
+			final Organisation o = new Organisation("Estimation2Goals", gTree,
+					Arrays.asList(Cost.GENERALIST), false);
 
 			BuscaLargura busca = new BuscaLargura();
 			MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
@@ -162,7 +166,8 @@ public class OrganisationTest {
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.prepareGenerationStatisticsFile("Estimation3Goals");
 
-			final Organisation o = new Organisation("Estimation3Goals", gTree, Cost.GENERALIST, false);
+			final Organisation o = new Organisation("Estimation3Goals", gTree,
+					Arrays.asList(Cost.GENERALIST), false);
 			
 			BuscaLargura busca = new BuscaLargura();
 			MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
@@ -207,7 +212,8 @@ public class OrganisationTest {
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.prepareGenerationStatisticsFile("Estimation4Goals");
 
-			final Organisation o = new Organisation("Estimation4Goals", gTree, Cost.GENERALIST, false);
+			final Organisation o = new Organisation("Estimation4Goals", gTree,
+					Arrays.asList(Cost.GENERALIST), false);
 			
 			BuscaLargura busca = new BuscaLargura();
 			MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
@@ -248,7 +254,8 @@ public class OrganisationTest {
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.prepareGenerationStatisticsFile("AllCreatedOrgs2Goals");
 			
-			final Organisation o = new Organisation("AllCreatedOrgs2Goals", gTree, Cost.GENERALIST, false);
+			final Organisation o = new Organisation("AllCreatedOrgs2Goals", gTree,
+					Arrays.asList(Cost.GENERALIST), false);
 
 			BuscaLargura busca = new BuscaLargura();
 			MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
@@ -312,7 +319,8 @@ public class OrganisationTest {
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.prepareGenerationStatisticsFile("AllCreatedOrgs3Goals");
 
-			final Organisation o = new Organisation("AllCreatedOrgs3Goals", gTree, Cost.GENERALIST, false);
+			final Organisation o = new Organisation("AllCreatedOrgs3Goals", gTree,
+					Arrays.asList(Cost.GENERALIST), false);
 
 			BuscaLargura busca = new BuscaLargura();
 			MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
@@ -374,7 +382,8 @@ public class OrganisationTest {
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.prepareGenerationStatisticsFile("testOrganisationIsValid");
 
-			Organisation o = new Organisation("testOrganisationIsValid", gTree, Cost.GENERALIST, true);
+			Organisation o = new Organisation("testOrganisationIsValid", gTree,
+					Arrays.asList(Cost.GENERALIST), true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			System.out.println("Validate original gdt workloads with organisations' workloads (must be ok)");

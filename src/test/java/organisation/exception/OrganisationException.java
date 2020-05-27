@@ -3,6 +3,10 @@ package organisation.exception;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Test;
 
 import busca.BuscaLargura;
@@ -30,7 +34,8 @@ public class OrganisationException {
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.prepareGenerationStatisticsFile("testOutputDoesNotMatchWithInput");
 
-			Organisation o = new Organisation("testOutputDoesNotMatchWithInput", gTree, Cost.GENERALIST, true);
+			Organisation o = new Organisation("testOutputDoesNotMatchWithInput", gTree,
+					Arrays.asList(Cost.GENERALIST), true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			System.out.println("Force a wrong validation, which must throw an exception");
@@ -56,7 +61,8 @@ public class OrganisationException {
 			gTree.addWorkload("g0", "w0", 1);
 
 			System.out.println("GoalsTree: " + gTree.getTree().toString());
-			Organisation o = new Organisation("testPositionNotFound", gTree, Cost.GENERALIST, true);
+			Organisation o = new Organisation("testPositionNotFound", gTree,
+					Arrays.asList(Cost.GENERALIST), true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			System.out.println("Positions tree: " + ((Organisation) n.getEstado()).getPositionsTree());

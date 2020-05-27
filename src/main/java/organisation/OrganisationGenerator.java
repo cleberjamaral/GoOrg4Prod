@@ -1,5 +1,8 @@
 package organisation;
 
+import java.util.List;
+import java.util.Set;
+
 import busca.AEstrela;
 import busca.BuscaLargura;
 import busca.BuscaProfundidade;
@@ -19,7 +22,7 @@ public class OrganisationGenerator {
     Organisation inicial;
     private SimpleLogger LOG = SimpleLogger.getInstance();
 
-	public Organisation generateOrganisationFromTree(String name, Cost c, String search, boolean oneSolution) {
+	public Organisation generateOrganisationFromTree(String name, List<Cost> preferences, String search, boolean oneSolution) {
 		try {
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.deleteExistingStatistics();
@@ -36,7 +39,7 @@ public class OrganisationGenerator {
 			p.saveDotAsPNG(name + "_broken_gdt", p.plotGoalTree(name + "_broken_gdt", gTree));
 			s.saveDataOfBrokenTree();
 			
-			inicial = new Organisation(name, gTree, c, oneSolution);
+			inicial = new Organisation(name, gTree, preferences, oneSolution);
 			LOG.info("\n\nEstimated number of states to visit (worst case): "
 					+ inicial.getEstimatedNumberOfOrganisations());
 

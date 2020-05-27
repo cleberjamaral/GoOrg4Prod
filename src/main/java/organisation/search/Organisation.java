@@ -3,6 +3,7 @@ package organisation.search;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import busca.Estado;
 import busca.Heuristica;
@@ -71,9 +72,9 @@ public class Organisation implements Estado, Heuristica {
 	 * 
 	 * @param orgName is an arbitrary name for this organisation
 	 * @param gTree the goal tree, supposed to be a broken tree ready to process
-	 * @param costFunction the desired cost function
+	 * @param preferences the desired cost function
 	 */
-	public Organisation(String orgName, GoalTree gTree, Cost costFunction, Boolean oneSolution) {
+	public Organisation(String orgName, GoalTree gTree, List<Cost> preferences, Boolean oneSolution) {
 		Organisation.orgName = orgName;
 		Organisation.oneSolution = oneSolution;
 		Organisation.nStatesX2 = 0;
@@ -84,8 +85,8 @@ public class Organisation implements Estado, Heuristica {
 		
 		// Used to infer a bad decision on the search
 		Parameters.setDefaultPenalty(this.goalSuccessors.size() + 1);
-		penalty = new CostResolver(costFunction);
-		heuristic = new HeuristicResolver(costFunction);
+		penalty = new CostResolver(preferences);
+		//heuristic = new HeuristicResolver(costFunction);
 		isGoalList = new ArrayList<Organisation>();
 		
 		Parameters.getInstance();
@@ -93,7 +94,7 @@ public class Organisation implements Estado, Heuristica {
 		LOG.info("Workload grain: "+ Parameters.getWorkloadGrain());
 		LOG.info("Max DataLoad  : "+ Parameters.getMaxDataLoad());
 		LOG.info("DataLoad grain: "+ Parameters.getDataLoadGrain());
-		LOG.info("Cost function : "+ costFunction);
+		LOG.info("Preferences   : "+ preferences.toString());
 		LOG.info("One solution? : "+ Parameters.isOneSolution());
 	}
 
