@@ -28,23 +28,6 @@ public class CostResolver {
 		CostResolver.preferences = preferences;
 	}
 
-	/**
-	 * return a penalty when an workload is added to a position, indicating
-	 * it needs to switch the context adding setup cost
-	 * 
-	 * @param position that is receiving a goal
-	 * @param goal to me assigned to a position
-	 * @return the cost
-	 */
-	public int getSetupPenalty(PositionNode position, GoalNode goal) {
-		// the position will receive a different workload, adding setup time
-		if (!position.getWorkloads().containsAll(goal.getWorkloads())) {
-			return Parameters.getExtraPenalty();
-		}
-		return 0;
-		
-	}
-
 	public int getAddSupremePenalty(GoalNode goal, PositionsTree oldTree, PositionsTree newTree) throws PositionNotFound {
 		int cost = Parameters.getMinimalPenalty();
 
