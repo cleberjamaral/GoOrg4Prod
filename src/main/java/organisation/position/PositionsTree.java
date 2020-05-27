@@ -309,6 +309,35 @@ public class PositionsTree implements RequirementSet {
 
 		return occupancy / capacity;
 	}
+	
+	/**
+	 * Less idleness rate is about the efficiency of the workforce distribution. If
+	 * the sum of workloads is not multiple of the max workload, efficiency will
+	 * never be 100%. If the algorithm is creating more positions than the minimum
+	 * (ideal) it is decreasing lessIdlenessRate.
+	 * 
+	 * @return less idleness varies from 0 to 1, being 1 for max efficiency
+	 */
+	public double getLessIdlenessRate() {
+		int nGoalsAssigned = 0;
+		double capacity = this.tree.size() * Parameters.getMaxWorkload();
+		double occupancy = this.getSumWorkload();
+
+		double lessIdlenessRate =  occupancy / capacity;
+		
+		for (PositionNode or : this.tree) {
+			// Accumulates all goals (all broken goals) 
+			nGoalsAssigned += or.getAssignedGoals().size();
+		}
+		// if it is a partial generalness, add a penalty according to the number of goals to assign
+		int nGoalsToAssing = GoalTree.getInstance().getTree().size() - nGoalsAssigned;
+
+		// a penalty for partial generalness
+		if (nGoalsToAssing > 0)
+			lessIdlenessRate /= nGoalsToAssing * GoalTree.getInstance().getTree().size() * 10;
+		
+		return lessIdlenessRate;
+	}
 
 	@Override
 	public Set<Requirement> getRequirements() {

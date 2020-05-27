@@ -29,11 +29,8 @@ public class OrganisationApp {
 		OrganisationBinder orgBin = new OrganisationBinder();
 
 		// if an argument to choose a cost function was given
-		if (args.length >= 2)
-			preferences.add(Cost.valueOf(args[1]));
-		
-		if (args.length >= 3)
-			search = args[2];
+		for (int i = 1; i < args.length; i++)
+			preferences.add(Cost.valueOf(args[i]));
 
 		if (preferences.size() == 0)
 			preferences.add(Cost.GENERALIST);
