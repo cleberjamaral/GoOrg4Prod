@@ -35,7 +35,7 @@ public class OrganisationException {
 			s.prepareGenerationStatisticsFile("testOutputDoesNotMatchWithInput");
 
 			Organisation o = new Organisation("testOutputDoesNotMatchWithInput", gTree,
-					Arrays.asList(Cost.GENERALIST, Cost.LESS_IDLENESS), true);
+					Arrays.asList(Cost.GENERALIST, Cost.EFFICIENT), true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			System.out.println("Force a wrong validation, which must throw an exception");
@@ -62,7 +62,7 @@ public class OrganisationException {
 
 			System.out.println("GoalsTree: " + gTree.getTree().toString());
 			Organisation o = new Organisation("testPositionNotFound", gTree,
-					Arrays.asList(Cost.GENERALIST, Cost.LESS_IDLENESS), true);
+					Arrays.asList(Cost.GENERALIST, Cost.EFFICIENT), true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			System.out.println("Positions tree: " + ((Organisation) n.getEstado()).getPositionsTree());

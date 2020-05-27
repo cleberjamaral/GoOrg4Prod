@@ -5,7 +5,6 @@ import java.util.List;
 import organisation.Parameters;
 import organisation.exception.PositionNotFound;
 import organisation.goal.GoalNode;
-import organisation.position.PositionNode;
 import organisation.position.PositionsTree;
 
 /**
@@ -32,15 +31,15 @@ public class CostResolver {
 		int cost = Parameters.getMinimalPenalty();
 
 		// LESS_IDLENESS - punish if it is creating more position than the ideal
-		if (preferences.contains(Cost.LESS_IDLENESS)) {
+		if (preferences.contains(Cost.EFFICIENT)) {
 			cost += (int) ((1 - newTree.getLessIdlenessRate()) * Parameters.getDefaultPenalty()
-					* (preferences.indexOf(Cost.LESS_IDLENESS) + 1));
+					* (preferences.indexOf(Cost.EFFICIENT) + 1));
 		}
 
 		// MORE_IDLENESS - punish if it is NOT creating as more position a possible
-		if (preferences.contains(Cost.MORE_IDLENESS)) {
+		if (preferences.contains(Cost.IDLE)) {
 			cost += (int) ((1 - newTree.getAbsoluteIdleness()) * Parameters.getDefaultPenalty()
-					* (preferences.indexOf(Cost.MORE_IDLENESS) + 1));
+					* (preferences.indexOf(Cost.IDLE) + 1));
 		}
 
 		// GENERALIST - penalize according to generalness of the new tree

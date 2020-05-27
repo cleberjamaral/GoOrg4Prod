@@ -11,11 +11,11 @@ package organisation.search.cost;
  * 2 FLATTER      : Flatter (fewer levels) hierarchies are preferable 
  * 3 SPECIALIST   : More specialist positions are preferable
  * 4 GENERALIST   : More generalist positions are preferable
- * 5 LESS_IDLENESS: Fewer idleness is preferable
- * 6 MORE_IDLENESS: More idleness is preferable
+ * 5 EFFICIENT    : Fewer idleness is preferable
+ * 6 IDLE         : More idleness is preferable
  *  
  * @author cleber
  */
 public enum Cost {
-	UNITARY, TALLER, FLATTER, SPECIALIST, GENERALIST, LESS_IDLENESS, MORE_IDLENESS;
+	UNITARY, TALLER, FLATTER, SPECIALIST, GENERALIST, EFFICIENT, IDLE;
 }
