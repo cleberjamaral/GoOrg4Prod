@@ -278,24 +278,6 @@ public class PositionsTree implements RequirementSet {
 	
 	/**
 	 * Idleness is about total workload split into positions. It considers the ideal
-	 * number of positions according to maximum workload per positions. In case of relative
-	 * idleness, the idleness is ZERO if the goals tree has the minimum idleness that
-	 * the GDT and max workload allows.
-	 * 
-	 * @return idleness relative to the minimum idleness which is possibly achieved.
-	 *         Varies from 0 to 1.
-	 */
-	public double getRelativeIdleness() {
-		double minIdleness = Parameters.getMaxWorkload()
-				- (GoalTree.getInstance().getSumEfforts() % Parameters.getMaxWorkload());
-
-		double idleness = this.tree.size() * Parameters.getMaxWorkload() - GoalTree.getInstance().getSumEfforts();
-
-		return (idleness - minIdleness) / minIdleness;
-	}
-	
-	/**
-	 * Idleness is about total workload split into positions. It considers the ideal
 	 * number of positions according to maximum workload per position. In case of absolute
 	 * idleness, the idleness is the real one, no matter if it is possible to do a 
 	 * perfect split or not, i.e., idleness is ZERO only if the goals tree has reached 
