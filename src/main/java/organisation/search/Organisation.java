@@ -216,7 +216,7 @@ public class Organisation implements Estado, Heuristica {
 
 			PositionNode nr = newState.positionsTree.createPosition(null, "p" + newState.positionsTree.size(), goalToAssign);
 
-			newState.cost = penalty.getAddSupremePenalty(goalToAssign, this.getPositionsTree(), newState.getPositionsTree());
+			newState.cost = penalty.getPenalty(goalToAssign, this.getPositionsTree(), newState.getPositionsTree());
 			newState.accCost = this.accCost + newState.cost;
 
 			logTransformation("addSupreme", newState, nr);
@@ -263,7 +263,7 @@ public class Organisation implements Estado, Heuristica {
 					"p" + newState.positionsTree.size(), goalToAssign);
 			
 
-			newState.cost = penalty.getAddSubordinatePenalty(aGivenPosition, goalToAssign, this.getPositionsTree(), newState.getPositionsTree());
+			newState.cost = penalty.getPenalty(goalToAssign, this.getPositionsTree(), newState.getPositionsTree());
 			newState.accCost = this.accCost + newState.cost;
 
 			logTransformation("addSubordinate", newState, nr);
@@ -307,7 +307,7 @@ public class Organisation implements Estado, Heuristica {
 
 			PositionNode jr = newState.positionsTree.assignGoalToPositionByPositionName(hostPosition.getPositionName(), goalToAssign);
 
-			newState.cost = penalty.getJoinExistingPenalty(hostPosition, goalToAssign, this.getPositionsTree(), newState.getPositionsTree());
+			newState.cost = penalty.getPenalty(goalToAssign, this.getPositionsTree(), newState.getPositionsTree());
 			newState.accCost = this.accCost + newState.cost;
 
 			logTransformation("joinPosition", newState, jr);
