@@ -63,12 +63,10 @@ public class CostResolver {
 		if (costFunction == Cost.SPECIALIST) {
 			// punish if it is creating more positions than the ideal
 			if (isDecreasingEfficiency(oldTree))
-				return cost + Parameters.getDefaultPenalty();
+				cost += Parameters.getDefaultPenalty();
 			
-			// compare specificness of old and new trees
-			if (newTree.getSpecificness() < oldTree.getSpecificness()) {
-				return cost + Parameters.getExtraPenalty();
-			}
+			// penalize according to specificness of the new tree
+			cost += (int) ((1 - newTree.getSpecificness()) * Parameters.getDefaultPenalty());
 		}
 
 		return cost;
@@ -103,11 +101,10 @@ public class CostResolver {
 		if (costFunction == Cost.SPECIALIST) {
 			// punish if it is creating more positions than the ideal
 			if (isDecreasingEfficiency(oldTree))
-				return cost + Parameters.getDefaultPenalty();
+				cost += Parameters.getDefaultPenalty();
 
-			// compare specificness of old and new trees
-			if (newTree.getSpecificness() < oldTree.getSpecificness())
-				return cost + Parameters.getExtraPenalty();
+			// penalize according to specificness of the new tree
+			cost += (int) ((1 - newTree.getSpecificness()) * Parameters.getDefaultPenalty());
 		}
 
 		return cost;
@@ -132,8 +129,10 @@ public class CostResolver {
 			return cost + Parameters.getDefaultPenalty();
 
 		// SPECIALIST
-		if ((costFunction == Cost.SPECIALIST) && (newTree.getSpecificness() < oldTree.getSpecificness()))
-			return cost + Parameters.getExtraPenalty();
+		if (costFunction == Cost.SPECIALIST) {
+			// penalize according to specificness of the new tree
+			return (int) ((1 - newTree.getSpecificness()) * Parameters.getDefaultPenalty());
+		}
 
 		return cost;
 	}

@@ -245,19 +245,35 @@ public class PositionsTree implements RequirementSet {
 	 *         possible)
 	 */
 	public double getSpecificness() {
-		int nAllWorkloads = 0;
-		
+		int nAllOriginalGoalsAssigned = 0;
+		int nGoalsAssigned = 0;
+
 		for (PositionNode or : this.tree) {
-			// PositionNode.getWorkloads() is a hashset returning only unique workloads
-			nAllWorkloads += or.getWorkloads().size();
+			Set<String> allOriginalGoalsOfPosition = new HashSet<>();
+			for (GoalNode g : or.getAssignedGoals()) {
+				allOriginalGoalsOfPosition.add(g.getOriginalName());
+				// Accumulates all goals (all broken goals) 
+				nGoalsAssigned++;
+			}
+			// Accumulates only different goals, sum all we have on each position 
+			nAllOriginalGoalsAssigned += allOriginalGoalsOfPosition.size();
 		}
 		
 		// the most specialist positions tree must have all workloads distributed
 		// without splitting them (if may be impossible if the sumofefforts if higher
 		// than maxWorkload, but efficiency/idleness should not be taken into account
-		int nMinWorkloads = Math.max(GoalTree.getInstance().getNumberDiffWorkloads(), this.tree.size());
+		int nMinOriginalGoalsSpread = Math.max(GoalTree.getInstance().getOriginalGoals().size(), this.tree.size());
 		
-		return (double) nMinWorkloads / (double) nAllWorkloads;
+		double specificness = (double) nMinOriginalGoalsSpread / (double) nAllOriginalGoalsAssigned;
+		
+		// if it is a partial generalness, add a penalty according to the number of goals to assign
+		int nGoalsToAssing = GoalTree.getInstance().getTree().size() - nGoalsAssigned;
+
+		// a penalty for partial generalness
+		if (nGoalsToAssing > 0)
+			specificness /= nGoalsToAssing * GoalTree.getInstance().getTree().size() * 10;
+
+		return specificness;
 	}
 	
 	/**
