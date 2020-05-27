@@ -6,6 +6,7 @@ import busca.Nodo;
 import organisation.OrganisationStatistics;
 import organisation.Parameters;
 import organisation.exception.GoalNotFound;
+import organisation.exception.OutputDoesNotMatchWithInput;
 import organisation.goal.GoalNode;
 import organisation.goal.GoalTree;
 import organisation.position.PositionNode;
@@ -80,7 +81,7 @@ public class OrganisationTest {
 				System.out.println("All goals without workload results in an empty organisation, there is nothing to do!");
 				System.out.println("rTree:" + c.name());
 				
-				assertNull((Organisation) n.getEstado());
+				assertNull(n);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -109,6 +110,9 @@ public class OrganisationTest {
 			
 			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
 			assertEquals(2, GoalTree.getInstance().getOriginalGoals().size(), 0);
+			
+			OrganisationStatistics s = OrganisationStatistics.getInstance();
+			s.prepareGenerationStatisticsFile("Estimation2Goals");
 
 			final Organisation o = new Organisation("Estimation2Goals", gTree, Cost.GENERALIST, false);
 
@@ -155,6 +159,9 @@ public class OrganisationTest {
 			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
 			assertEquals(3, GoalTree.getInstance().getOriginalGoals().size(), 0);
 
+			OrganisationStatistics s = OrganisationStatistics.getInstance();
+			s.prepareGenerationStatisticsFile("Estimation3Goals");
+
 			final Organisation o = new Organisation("Estimation3Goals", gTree, Cost.GENERALIST, false);
 			
 			BuscaLargura busca = new BuscaLargura();
@@ -197,6 +204,9 @@ public class OrganisationTest {
 			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
 			assertEquals(4, GoalTree.getInstance().getOriginalGoals().size(), 0);
 
+			OrganisationStatistics s = OrganisationStatistics.getInstance();
+			s.prepareGenerationStatisticsFile("Estimation4Goals");
+
 			final Organisation o = new Organisation("Estimation4Goals", gTree, Cost.GENERALIST, false);
 			
 			BuscaLargura busca = new BuscaLargura();
@@ -235,6 +245,9 @@ public class OrganisationTest {
 			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
 			assertEquals(2, GoalTree.getInstance().getOriginalGoals().size(), 0);
 
+			OrganisationStatistics s = OrganisationStatistics.getInstance();
+			s.prepareGenerationStatisticsFile("AllCreatedOrgs2Goals");
+			
 			final Organisation o = new Organisation("AllCreatedOrgs2Goals", gTree, Cost.GENERALIST, false);
 
 			BuscaLargura busca = new BuscaLargura();
@@ -296,6 +309,9 @@ public class OrganisationTest {
 			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
 			assertEquals(3, GoalTree.getInstance().getOriginalGoals().size(), 0);
 
+			OrganisationStatistics s = OrganisationStatistics.getInstance();
+			s.prepareGenerationStatisticsFile("AllCreatedOrgs3Goals");
+
 			final Organisation o = new Organisation("AllCreatedOrgs3Goals", gTree, Cost.GENERALIST, false);
 
 			BuscaLargura busca = new BuscaLargura();
@@ -344,4 +360,27 @@ public class OrganisationTest {
 		}
 	}
 	
+	@Test
+	public void testOrganisationIsValid() {
+		System.out.println("\n\ntestOrganisationIsValid");
+		try {
+			GoalNode g0 = new GoalNode(null, "g0");
+			GoalTree gTree = GoalTree.getInstance();
+			gTree.setRootNode(g0);
+			gTree.addWorkload("g0", "w0", 1);
+
+			System.out.println("GoalsTree: " + gTree.getTree().toString());
+
+			OrganisationStatistics s = OrganisationStatistics.getInstance();
+			s.prepareGenerationStatisticsFile("testOrganisationIsValid");
+
+			Organisation o = new Organisation("testOrganisationIsValid", gTree, Cost.GENERALIST, true);
+			Nodo n = new BuscaLargura().busca(o);
+
+			System.out.println("Validate original gdt workloads with organisations' workloads (must be ok)");
+			assertTrue(((Organisation) n.getEstado()).isValid());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
