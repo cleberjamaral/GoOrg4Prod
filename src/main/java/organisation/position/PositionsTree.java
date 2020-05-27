@@ -319,12 +319,25 @@ public class PositionsTree implements RequirementSet {
 	 * @return less idleness varies from 0 to 1, being 1 for max efficiency
 	 */
 	public double getLessIdlenessRate() {
-		int nGoalsAssigned = 0;
 		double capacity = this.tree.size() * Parameters.getMaxWorkload();
 		double occupancy = this.getSumWorkload();
 
-		double lessIdlenessRate =  occupancy / capacity;
-		
+		return compensateWhenSearchInProgress(occupancy / capacity);
+	}
+
+	public double getFlatness() {
+		// The minimum number of levels is 1
+		return compensateWhenSearchInProgress(1.0 / (double) numberOfLevels);
+	}
+	
+	public double getTallness() {
+		// The maximum number of levels is the number of broken goals
+		return compensateWhenSearchInProgress(
+				(double) numberOfLevels / (double) GoalTree.getInstance().getTree().size());
+	}
+
+	private double compensateWhenSearchInProgress(double rate) {
+		int nGoalsAssigned = 0;
 		for (PositionNode or : this.tree) {
 			// Accumulates all goals (all broken goals) 
 			nGoalsAssigned += or.getAssignedGoals().size();
@@ -334,11 +347,11 @@ public class PositionsTree implements RequirementSet {
 
 		// a penalty for partial generalness
 		if (nGoalsToAssing > 0)
-			lessIdlenessRate /= nGoalsToAssing * GoalTree.getInstance().getTree().size() * 10;
-		
-		return lessIdlenessRate;
+			return rate / (nGoalsToAssing * GoalTree.getInstance().getTree().size() * 10);
+		else
+			return rate;
 	}
-
+	
 	@Override
 	public Set<Requirement> getRequirements() {
 		//TODO: (Set<Requirement>) tree should work!!!
