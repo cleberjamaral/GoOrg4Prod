@@ -5,7 +5,6 @@ import java.util.List;
 import organisation.Parameters;
 import organisation.exception.PositionNotFound;
 import organisation.goal.GoalNode;
-import organisation.goal.GoalTree;
 import organisation.position.PositionNode;
 import organisation.position.PositionsTree;
 
@@ -16,7 +15,6 @@ import organisation.position.PositionsTree;
 public class CostResolver {
 
 	private static List<Cost> preferences = null;
-	private static boolean searchMostEfficient = true;
 
 	public CostResolver(List<Cost> preferences) {
 		CostResolver.setPreferences(preferences);
@@ -128,13 +126,6 @@ public class CostResolver {
 		}
 
 		return cost;
-	}
-
-	private boolean isDecreasingEfficiency(PositionsTree oldTree) {
-		if ((searchMostEfficient) && (oldTree.getTree().size() >= GoalTree.getInstance().getBestNumberOfPositions()))
-			return true;
-
-		return false;
 	}
 
 }
