@@ -51,6 +51,7 @@ public class OrganisationStatistics {
 		this.fields.add("id");
 		this.fields.add("nPosit");
 		this.fields.add("%Idle+"); //Absolute Idleness %
+		this.fields.add("%Effic"); //Efficiency %
 		this.fields.add("%Geral"); //Generalness %
 		this.fields.add("%Speci"); //Specificness %
 		this.fields.add("%Tall"); //Tallness %
@@ -169,6 +170,7 @@ public class OrganisationStatistics {
 		line.put("Idlene", (Double.toString(idleness)));
 		
 		line.put("%Idle+", (String.format("%.0f%%", 100 * o.getPositionsTree().getAbsoluteIdleness())));
+		line.put("%Effic", (String.format("%.0f%%", 100 * o.getPositionsTree().getLessIdlenessRate())));
 		line.put("%Geral", (String.format("%.0f%%", 100 * o.getPositionsTree().getGeneralness())));
 		line.put("%Speci", (String.format("%.0f%%", 100 * o.getPositionsTree().getSpecificness())));
 		line.put("%Tall", (String.format("%.0f%%", 100 * o.getPositionsTree().getTallness())));

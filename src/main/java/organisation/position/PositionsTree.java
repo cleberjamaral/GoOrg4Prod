@@ -307,7 +307,7 @@ public class PositionsTree implements RequirementSet {
 		double capacity = this.tree.size() * Parameters.getMaxWorkload();
 		double occupancy = capacity - GoalTree.getInstance().getSumEfforts();
 
-		return occupancy / capacity;
+		return compensateWhenSearchInProgress(occupancy / capacity);
 	}
 	
 	/**

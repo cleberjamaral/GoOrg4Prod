@@ -37,6 +37,12 @@ public class CostResolver {
 					* (preferences.indexOf(Cost.LESS_IDLENESS) + 1));
 		}
 
+		// MORE_IDLENESS - punish if it is NOT creating as more position a possible
+		if (preferences.contains(Cost.MORE_IDLENESS)) {
+			cost += (int) ((1 - newTree.getAbsoluteIdleness()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.MORE_IDLENESS) + 1));
+		}
+
 		// GENERALIST - penalize according to generalness of the new tree
 		if (preferences.contains(Cost.GENERALIST)) {
 			cost += (int) ((1 - newTree.getGeneralness()) * Parameters.getDefaultPenalty()
