@@ -23,7 +23,7 @@ import organisation.goal.GoalTree;
 import organisation.search.Organisation;
 import organisation.search.cost.Cost;
 
-public class CostTallerTest {
+public class CostFlatterTest {
 
 	@BeforeClass
 	public static void beforeTests() {
@@ -39,9 +39,9 @@ public class CostTallerTest {
 	}
 	
     @Test
-    public void testOnePositionTallerOrg() {
+    public void testOnePositionFlatterOrg() {
     	try {
-    		System.out.println("\n\ntestOnePositionTallerOrg");
+    		System.out.println("\n\ntestOnePositionFlatterOrg");
 
     		// parameters
     		Parameters.getInstance();
@@ -87,11 +87,11 @@ public class CostTallerTest {
 			//TODO: assert if inform was removed since it is circular
 			
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
-			s.prepareGenerationStatisticsFile("testOnePositionTallerOrg");
+			s.prepareGenerationStatisticsFile("testOnePositionFlatterOrg");
 			
 			System.out.println("Total workload is 4 (less than 8 - max) -> goals must be assigned to one position.");
-			Organisation o = new Organisation("testOnePositionTallerOrg", gTree,
-					Arrays.asList(Cost.TALLER, Cost.LESS_IDLENESS), true);
+			Organisation o = new Organisation("testOnePositionFlatterOrg", gTree,
+					Arrays.asList(Cost.FLATTER, Cost.LESS_IDLENESS), true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			System.out.println("Generated tree: " + ((Organisation)n.getEstado()).getPositionsTree().getTree());
@@ -101,8 +101,8 @@ public class CostTallerTest {
 			assertEquals(1, ((Organisation) n.getEstado()).getPositionsTree().getNumberOfLevels());
 			
 			assertTrue(((Organisation) n.getEstado()).isValid());
-			// max tallness: 3 goals => 5 broken goals, in 1 positions (less idleness) / 5
-			assertTrue(((Organisation) n.getEstado()).getPositionsTree().getTallness() >= 1/5);
+			// max flatness: 1
+			assertTrue(((Organisation) n.getEstado()).getPositionsTree().getFlatness() == 1);
 
     	} catch (CircularReference e) {
 			e.printStackTrace();
@@ -116,7 +116,7 @@ public class CostTallerTest {
 	@Test
 	public void testTwoPositionsTallerOrg() {
 		try {
-			System.out.println("\n\ntestTwoPositionsTallerOrg");
+			System.out.println("\n\ntestTwoPositionsFlatterOrg");
 
 			Parameters.getInstance();
 			Parameters.setMaxWorkload(8.0);
@@ -140,21 +140,21 @@ public class CostTallerTest {
 			assertEquals(2, GoalTree.getInstance().getOriginalGoals().size(), 0);
 
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
-			s.prepareGenerationStatisticsFile("testTwoPositionsTallerOrg");
+			s.prepareGenerationStatisticsFile("testTwoPositionsFlatterOrg");
 
 			System.out.println("Total workload is 10 -> goals must be assigned to two positions.");
 			Organisation o = new Organisation("testTwoPositionsGeneralistOrg", gTree,
-					Arrays.asList(Cost.TALLER, Cost.LESS_IDLENESS), true);
+					Arrays.asList(Cost.FLATTER, Cost.LESS_IDLENESS), true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			assertEquals(2, ((Organisation) n.getEstado()).getPositionsTree().getTree().size());
-			assertEquals(2, ((Organisation) n.getEstado()).getPositionsTree().getNumberOfLevels());
+			assertEquals(1, ((Organisation) n.getEstado()).getPositionsTree().getNumberOfLevels());
 			assertEquals(10, ((Organisation) n.getEstado()).getPositionsTree().getSumWorkload(), 0);
 			System.out.println("Generated tree: " + ((Organisation)n.getEstado()).getPositionsTree().getTree());
 			
 			assertTrue(((Organisation) n.getEstado()).isValid());
-			// max tallness: 2 goals => 6 broken goals, in 2 positions (less idleness) / 6
-			assertTrue(((Organisation) n.getEstado()).getPositionsTree().getTallness() >= 2/6);
+			// max flatness: 1
+			assertTrue(((Organisation) n.getEstado()).getPositionsTree().getFlatness() == 1);
 			
 		} catch (CircularReference e) {
 			e.printStackTrace();
@@ -166,9 +166,9 @@ public class CostTallerTest {
 	}
 	
 	@Test
-	public void testThreePositionsTallerOrg() {
+	public void testThreePositionsFlatterOrg() {
 		try {
-			System.out.println("\n\ntestThreePositionsTallerOrg");
+			System.out.println("\n\ntestThreePositionsFlatterOrg");
 
 			Parameters.getInstance();
 			Parameters.setMaxWorkload(8.0);
@@ -191,21 +191,21 @@ public class CostTallerTest {
 			assertEquals(3, GoalTree.getInstance().getOriginalGoals().size(), 0);
 
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
-			s.prepareGenerationStatisticsFile("testThreePositionsTallerOrg");
+			s.prepareGenerationStatisticsFile("testThreePositionsFlatterOrg");
 
 			System.out.println("Total workload is 21 -> goals must be assigned to three positions.");
-			Organisation o = new Organisation("testThreePositionsTallerOrg", gTree,
-					Arrays.asList(Cost.TALLER, Cost.LESS_IDLENESS), true);
+			Organisation o = new Organisation("testThreePositionsFlatterOrg", gTree,
+					Arrays.asList(Cost.FLATTER, Cost.LESS_IDLENESS), true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			assertEquals(3, ((Organisation) n.getEstado()).getPositionsTree().getTree().size());
-			assertEquals(3, ((Organisation) n.getEstado()).getPositionsTree().getNumberOfLevels());
+			assertEquals(1, ((Organisation) n.getEstado()).getPositionsTree().getNumberOfLevels());
 			assertEquals(21, ((Organisation) n.getEstado()).getPositionsTree().getSumWorkload(), 0);
 			System.out.println("Generated tree: " + ((Organisation)n.getEstado()).getPositionsTree().getTree());
 			
 			assertTrue(((Organisation) n.getEstado()).isValid());
-			// max tallness: 3 goals => 7 broken goals, in 3 positions (less idleness) / 7
-			assertTrue(((Organisation) n.getEstado()).getPositionsTree().getTallness() >= 3/7);
+			// max flatness: 1
+			assertTrue(((Organisation) n.getEstado()).getPositionsTree().getFlatness() == 1);
 
 		} catch (CircularReference e) {
 			e.printStackTrace();
