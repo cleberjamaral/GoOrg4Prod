@@ -33,17 +33,20 @@ public class CostResolver {
 
 		// LESS_IDLENESS - punish if it is creating more position than the ideal
 		if (preferences.contains(Cost.LESS_IDLENESS)) {
-			cost += (int) ((1 - newTree.getLessIdlenessRate()) * Parameters.getExtraPenalty());
+			cost += (int) ((1 - newTree.getLessIdlenessRate()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.LESS_IDLENESS) + 1));
 		}
 
 		// GENERALIST - penalize according to generalness of the new tree
 		if (preferences.contains(Cost.GENERALIST)) {
-			cost += (int) ((1 - newTree.getGeneralness()) * Parameters.getDefaultPenalty());
+			cost += (int) ((1 - newTree.getGeneralness()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.GENERALIST) + 1));
 		}
 
 		// SPECIALIST - penalize according to specificness of the new tree
 		if (preferences.contains(Cost.SPECIALIST)) {
-			cost += (int) ((1 - newTree.getSpecificness()) * Parameters.getDefaultPenalty());
+			cost += (int) ((1 - newTree.getSpecificness()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.SPECIALIST) + 1));
 		}
 
 		return cost;
@@ -55,27 +58,30 @@ public class CostResolver {
 
 		// LESS_IDLENESS - punish if it is creating more position than the ideal
 		if (preferences.contains(Cost.LESS_IDLENESS)) {
-			cost += (int) ((1 - newTree.getLessIdlenessRate()) * Parameters.getExtraPenalty());
+			cost += (int) ((1 - newTree.getLessIdlenessRate()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.LESS_IDLENESS) + 1));
 		}
 
-		// GENERALIST - penalize according to generalness of the new tree 
+		// GENERALIST - penalize according to generalness of the new tree
 		if (preferences.contains(Cost.GENERALIST)) {
-			cost += (int) ((1 - newTree.getGeneralness()) * Parameters.getDefaultPenalty());
+			cost += (int) ((1 - newTree.getGeneralness()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.GENERALIST) + 1));
 		}
 
 		// High punishment when it is creating more levels in a preferable flatter
 		// structure
 		if ((preferences.contains(Cost.FLATTER)) && (newTree.getNumberOfLevels() > oldTree.getNumberOfLevels())) {
-			cost += Parameters.getExtraPenalty();
+			cost += Parameters.getDefaultPenalty() * (preferences.indexOf(Cost.FLATTER) + 1);
 		}
-		
+
 		// Low punishment when is preferred taller but is not child
 		if ((preferences.contains(Cost.TALLER)) && (!position.hasParentGoal(goal)))
-			cost += Parameters.getDefaultPenalty();
+			cost += Parameters.getDefaultPenalty() * (preferences.indexOf(Cost.TALLER) + 1);
 
 		// SPECIALIST - penalize according to specificness of the new tree
 		if (preferences.contains(Cost.SPECIALIST)) {
-			cost += (int) ((1 - newTree.getSpecificness()) * Parameters.getDefaultPenalty());
+			cost += (int) ((1 - newTree.getSpecificness()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.SPECIALIST) + 1));
 		}
 
 		return cost;
@@ -87,25 +93,28 @@ public class CostResolver {
 
 		// LESS_IDLENESS - punish if it is creating more position than the ideal
 		if (preferences.contains(Cost.LESS_IDLENESS)) {
-			cost += (int) ((1 - newTree.getLessIdlenessRate()) * Parameters.getExtraPenalty());
+			cost += (int) ((1 - newTree.getLessIdlenessRate()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.LESS_IDLENESS) + 1));
 		}
 
-		// GENERALIST - penalize according to generalness of the new tree 
-		if (preferences.contains(Cost.GENERALIST)) { 
-			cost += (int) ((1 - newTree.getGeneralness()) * Parameters.getDefaultPenalty());
+		// GENERALIST - penalize according to generalness of the new tree
+		if (preferences.contains(Cost.GENERALIST)) {
+			cost += (int) ((1 - newTree.getGeneralness()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.GENERALIST) + 1));
 		}
 
 		// High punishment when it is preferred taller and the position is not a child
 		if ((preferences.contains(Cost.TALLER)) && (!position.hasParentGoal(goal)))
-			cost += Parameters.getExtraPenalty();
+			cost += Parameters.getDefaultPenalty() * (preferences.indexOf(Cost.TALLER) + 1);
 
 		// Low punishment when is preferred taller but is child
 		if (preferences.contains(Cost.TALLER))
-			cost += Parameters.getDefaultPenalty();
+			cost += Parameters.getDefaultPenalty() * (preferences.indexOf(Cost.TALLER) + 1);
 
 		// SPECIALIST - penalize according to specificness of the new tree
 		if (preferences.contains(Cost.SPECIALIST)) {
-			cost += (int) ((1 - newTree.getSpecificness()) * Parameters.getDefaultPenalty());
+			cost += (int) ((1 - newTree.getSpecificness()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.SPECIALIST) + 1));
 		}
 
 		return cost;

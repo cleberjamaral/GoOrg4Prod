@@ -37,7 +37,7 @@ public class HeuristicResolver {
 			
 			// publish if it is creating more positions than the ideal
 			if (rTree.getTree().size() >= GoalTree.getInstance().getBestNumberOfPositions()) {
-				return gSuc.size() * Parameters.getExtraPenalty();
+				return gSuc.size() * Parameters.getDefaultPenalty() * 2;
 			} else {
 				return gSuc.size() * Parameters.getMinimalPenalty();
 			}

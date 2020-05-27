@@ -24,8 +24,6 @@ public class Parameters {
 	private static int minimalPenalty = 1;
 	// Cost penalty used to infer bad decisions on search
 	private static int defaultPenalty = 10;
-	// Cost penalty used to infer VERY bad decisions on search
-	private static int extraPenalty = defaultPenalty * 2;
 
     private Parameters() {}
     
@@ -88,10 +86,6 @@ public class Parameters {
 
 	public static void setDefaultPenalty(int defaultPenalty) {
 		Parameters.defaultPenalty = defaultPenalty;
-	}
-
-	public static int getExtraPenalty() {
-		return extraPenalty;
 	}
 
 }
