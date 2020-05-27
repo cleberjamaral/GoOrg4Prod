@@ -49,6 +49,12 @@ public class CostResolver {
 					* (preferences.indexOf(Cost.SPECIALIST) + 1));
 		}
 
+		// FLATTER - penalize according to the height of the new tree
+		if (preferences.contains(Cost.FLATTER)) {
+			cost += (int) ((1 - newTree.getFlatness()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.FLATTER) + 1));
+		}
+
 		return cost;
 	}
 
@@ -68,10 +74,10 @@ public class CostResolver {
 					* (preferences.indexOf(Cost.GENERALIST) + 1));
 		}
 
-		// High punishment when it is creating more levels in a preferable flatter
-		// structure
-		if ((preferences.contains(Cost.FLATTER)) && (newTree.getNumberOfLevels() > oldTree.getNumberOfLevels())) {
-			cost += Parameters.getDefaultPenalty() * (preferences.indexOf(Cost.FLATTER) + 1);
+		// FLATTER - penalize according to the height of the new tree
+		if (preferences.contains(Cost.FLATTER)) {
+			cost += (int) ((1 - newTree.getFlatness()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.FLATTER) + 1));
 		}
 
 		// Low punishment when is preferred taller but is not child
@@ -103,9 +109,11 @@ public class CostResolver {
 					* (preferences.indexOf(Cost.GENERALIST) + 1));
 		}
 
-		// High punishment when it is preferred taller and the position is not a child
-		if ((preferences.contains(Cost.TALLER)) && (!position.hasParentGoal(goal)))
-			cost += Parameters.getDefaultPenalty() * (preferences.indexOf(Cost.TALLER) + 1);
+		// FLATTER - penalize according to the height of the new tree
+		if (preferences.contains(Cost.FLATTER)) {
+			cost += (int) ((1 - newTree.getFlatness()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.FLATTER) + 1));
+		}
 
 		// Low punishment when is preferred taller but is child
 		if (preferences.contains(Cost.TALLER))
