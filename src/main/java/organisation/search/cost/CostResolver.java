@@ -56,7 +56,7 @@ public class CostResolver {
 				cost += Parameters.getDefaultPenalty();
 
 			// penalize according to generalness of the new tree
-			cost += (int) ((1 - newTree.getGeneralness()) * Parameters.getExtraPenalty());
+			cost += (int) ((1 - newTree.getGeneralness()) * Parameters.getDefaultPenalty());
 		}
 
 		// SPECIALIST
@@ -86,7 +86,7 @@ public class CostResolver {
 				cost += Parameters.getDefaultPenalty();
 
 			// penalize according to generalness of the new tree
-			cost += (int) ((1 - newTree.getGeneralness()) * Parameters.getExtraPenalty());
+			cost += (int) ((1 - newTree.getGeneralness()) * Parameters.getDefaultPenalty());
 		}
 
 		// High punishment when it is creating more levels in a preferable flatter
@@ -120,7 +120,7 @@ public class CostResolver {
 		// Punish when goal and workloads already exist, better to put it to another position
 		if (costFunction == Cost.GENERALIST) { 
 			// penalize according to generalness of the new tree
-			return (int) ((1 - newTree.getGeneralness()) * Parameters.getExtraPenalty());
+			return (int) ((1 - newTree.getGeneralness()) * Parameters.getDefaultPenalty());
 		}
 
 		// High punishment when it is preferred taller and the position is not a child
