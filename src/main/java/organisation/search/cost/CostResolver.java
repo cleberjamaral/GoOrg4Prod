@@ -5,6 +5,7 @@ import java.util.List;
 import organisation.Parameters;
 import organisation.exception.PositionNotFound;
 import organisation.goal.GoalNode;
+import organisation.position.PositionNode;
 import organisation.position.PositionsTree;
 
 /**

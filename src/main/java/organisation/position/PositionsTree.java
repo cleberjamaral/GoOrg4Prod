@@ -325,17 +325,37 @@ public class PositionsTree implements RequirementSet {
 		return compensateWhenSearchInProgress(occupancy / capacity);
 	}
 
+	/**
+	 * Flatness returns how shallow is the created positions tree. The flattest tree
+	 * has only one level, meaning all positions are supreme.
+	 * 
+	 * @return flatness rate from 0 to 1, less flat to flattest
+	 */
 	public double getFlatness() {
 		// The minimum number of levels is 1
 		return compensateWhenSearchInProgress(1.0 / (double) numberOfLevels);
 	}
 	
+	/**
+	 * Tallness returns how tall is the created positions tree. The tallest tree
+	 * has one position for each goal and all of them are in a chain, with only
+	 * one supreme, that has one subordinate, which has one subordinates, and so on.
+	 * 
+	 * @return Tallness rate from 0 to 1, less tall to tallest
+	 */
 	public double getTallness() {
 		// The maximum number of levels is the number of broken goals
 		return compensateWhenSearchInProgress(
 				(double) numberOfLevels / (double) GoalTree.getInstance().getTree().size());
 	}
 
+	/**
+	 * When the search is in progress, the returned rates must be compensated in order 
+	 * to minimize errors on cost resolution of new states creation
+	 * 
+	 * @param rate is the rate that may need compensation
+	 * @return a new rate eventually compensated
+	 */
 	private double compensateWhenSearchInProgress(double rate) {
 		int nGoalsAssigned = 0;
 		for (PositionNode or : this.tree) {
