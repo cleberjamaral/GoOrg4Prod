@@ -5,10 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -95,7 +92,7 @@ public class CostSpecialistTest {
 			
 			System.out.println("Total workload is 4 (less than 8 - max) -> goals must be assigned to one position.");
 			Organisation o = new Organisation("testOnePositionSpecialistOrg", gTree,
-					Arrays.asList(Cost.SPECIALIST), true);
+					Arrays.asList(Cost.SPECIALIST, Cost.LESS_IDLENESS), true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			System.out.println("Generated tree: " + ((Organisation)n.getEstado()).getPositionsTree().getTree());
@@ -156,7 +153,7 @@ public class CostSpecialistTest {
 
 			System.out.println("Total workload is 10 -> goals must be assigned to two positions.");
 			Organisation o = new Organisation("testTwoPositionsSpecialistOrg", gTree,
-					Arrays.asList(Cost.SPECIALIST), true);
+					Arrays.asList(Cost.SPECIALIST, Cost.LESS_IDLENESS), true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			assertEquals(2, ((Organisation) n.getEstado()).getPositionsTree().getTree().size());
@@ -216,7 +213,7 @@ public class CostSpecialistTest {
 
 			System.out.println("Total workload is 21 -> goals must be assigned to three positions.");
 			Organisation o = new Organisation("testThreePositionsSpecialistOrg", gTree,
-					Arrays.asList(Cost.SPECIALIST), true);
+					Arrays.asList(Cost.SPECIALIST, Cost.LESS_IDLENESS), true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			assertEquals(3, ((Organisation) n.getEstado()).getPositionsTree().getTree().size());

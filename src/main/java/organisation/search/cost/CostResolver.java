@@ -50,24 +50,19 @@ public class CostResolver {
 	public int getAddSupremePenalty(GoalNode goal, PositionsTree oldTree, PositionsTree newTree) throws PositionNotFound {
 		int cost = Parameters.getMinimalPenalty();
 
-		// GENERALIST
-		if (preferences.contains(Cost.GENERALIST)) {
-			
-			// punish if it is creating more position than the ideal
+		// LESS_IDLENESS - punish if it is creating more position than the ideal
+		if (preferences.contains(Cost.LESS_IDLENESS)) {
 			if (isDecreasingEfficiency(oldTree))
 				cost += Parameters.getDefaultPenalty();
+		}
 
-			// penalize according to generalness of the new tree
+		// GENERALIST - penalize according to generalness of the new tree
+		if (preferences.contains(Cost.GENERALIST)) {
 			cost += (int) ((1 - newTree.getGeneralness()) * Parameters.getDefaultPenalty());
 		}
 
-		// SPECIALIST
+		// SPECIALIST - penalize according to specificness of the new tree
 		if (preferences.contains(Cost.SPECIALIST)) {
-			// punish if it is creating more positions than the ideal
-			if (isDecreasingEfficiency(oldTree))
-				cost += Parameters.getDefaultPenalty();
-			
-			// penalize according to specificness of the new tree
 			cost += (int) ((1 - newTree.getSpecificness()) * Parameters.getDefaultPenalty());
 		}
 
@@ -78,14 +73,14 @@ public class CostResolver {
 
 		int cost = Parameters.getMinimalPenalty();
 
-		// High punishment when another position could receive the workload making the tree more generalist
-		if (preferences.contains(Cost.GENERALIST)) {
-			
-			// punish if it is creating more positions than the ideal
-			if ((isDecreasingEfficiency(oldTree)))
+		// LESS_IDLENESS - punish if it is creating more position than the ideal
+		if (preferences.contains(Cost.LESS_IDLENESS)) {
+			if (isDecreasingEfficiency(oldTree))
 				cost += Parameters.getDefaultPenalty();
+		}
 
-			// penalize according to generalness of the new tree
+		// GENERALIST - penalize according to generalness of the new tree 
+		if (preferences.contains(Cost.GENERALIST)) {
 			cost += (int) ((1 - newTree.getGeneralness()) * Parameters.getDefaultPenalty());
 		}
 
@@ -99,13 +94,8 @@ public class CostResolver {
 		if ((preferences.contains(Cost.TALLER)) && (!position.hasParentGoal(goal)))
 			return cost + Parameters.getDefaultPenalty();
 
-		// SPECIALIST
+		// SPECIALIST - penalize according to specificness of the new tree
 		if (preferences.contains(Cost.SPECIALIST)) {
-			// punish if it is creating more positions than the ideal
-			if (isDecreasingEfficiency(oldTree))
-				cost += Parameters.getDefaultPenalty();
-
-			// penalize according to specificness of the new tree
 			cost += (int) ((1 - newTree.getSpecificness()) * Parameters.getDefaultPenalty());
 		}
 
@@ -116,9 +106,14 @@ public class CostResolver {
 
 		int cost = Parameters.getMinimalPenalty();
 
-		// Punish when goal and workloads already exist, better to put it to another position
+		// LESS_IDLENESS - punish if it is creating more position than the ideal
+		if (preferences.contains(Cost.LESS_IDLENESS)) {
+			if (isDecreasingEfficiency(oldTree))
+				cost += Parameters.getDefaultPenalty();
+		}
+
+		// GENERALIST - penalize according to generalness of the new tree 
 		if (preferences.contains(Cost.GENERALIST)) { 
-			// penalize according to generalness of the new tree
 			return (int) ((1 - newTree.getGeneralness()) * Parameters.getDefaultPenalty());
 		}
 
@@ -130,9 +125,8 @@ public class CostResolver {
 		if (preferences.contains(Cost.TALLER))
 			return cost + Parameters.getDefaultPenalty();
 
-		// SPECIALIST
+		// SPECIALIST - penalize according to specificness of the new tree
 		if (preferences.contains(Cost.SPECIALIST)) {
-			// penalize according to specificness of the new tree
 			return (int) ((1 - newTree.getSpecificness()) * Parameters.getDefaultPenalty());
 		}
 

@@ -6,14 +6,16 @@ package organisation.search.cost;
  * positions can be more specialist or more generalist and so on.
  * 
  * Currently, the available cost functions are:
- * 0 UNITARY   : unitary cost (no function)
- * 1 TALLER    : Taller hierarchies are preferable 
- * 2 FLATTER   : Flatter hierarchies are preferable 
- * 3 SPECIALIST: More specialist positions are preferable
- * 4 GENERALIST: More generalist positions are preferable
- * 
+ * 0 UNITARY      : unitary cost (no function)
+ * 1 TALLER       : Taller (more levels) hierarchies are preferable 
+ * 2 FLATTER      : Flatter (fewer levels) hierarchies are preferable 
+ * 3 SPECIALIST   : More specialist positions are preferable
+ * 4 GENERALIST   : More generalist positions are preferable
+ * 5 LESS_IDLENESS: Fewer idleness is preferable
+ * 6 MORE_IDLENESS: More idleness is preferable
+ *  
  * @author cleber
  */
 public enum Cost {
-	UNITARY, TALLER, FLATTER, SPECIALIST, GENERALIST;
+	UNITARY, TALLER, FLATTER, SPECIALIST, GENERALIST, LESS_IDLENESS, MORE_IDLENESS;
 }

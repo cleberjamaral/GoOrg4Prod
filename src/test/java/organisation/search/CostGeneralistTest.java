@@ -95,7 +95,7 @@ public class CostGeneralistTest {
 			
 			System.out.println("Total workload is 4 (less than 8 - max) -> goals must be assigned to one position.");
 			Organisation o = new Organisation("testOnePositionGeneralistOrg", gTree,
-					Arrays.asList(Cost.GENERALIST), true);
+					Arrays.asList(Cost.GENERALIST, Cost.LESS_IDLENESS), true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			System.out.println("Generated tree: " + ((Organisation)n.getEstado()).getPositionsTree().getTree());
@@ -156,7 +156,7 @@ public class CostGeneralistTest {
 
 			System.out.println("Total workload is 10 -> goals must be assigned to two positions.");
 			Organisation o = new Organisation("testTwoPositionsGeneralistOrg", gTree,
-					Arrays.asList(Cost.GENERALIST), true);
+					Arrays.asList(Cost.GENERALIST, Cost.LESS_IDLENESS), true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			assertEquals(2, ((Organisation) n.getEstado()).getPositionsTree().getTree().size());
@@ -216,7 +216,7 @@ public class CostGeneralistTest {
 
 			System.out.println("Total workload is 21 -> goals must be assigned to three positions.");
 			Organisation o = new Organisation("testThreePositionsGeneralistOrg", gTree,
-					Arrays.asList(Cost.GENERALIST), true);
+					Arrays.asList(Cost.GENERALIST, Cost.LESS_IDLENESS), true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			assertEquals(3, ((Organisation) n.getEstado()).getPositionsTree().getTree().size());

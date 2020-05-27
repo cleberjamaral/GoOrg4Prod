@@ -118,7 +118,7 @@ public class OrganisationTest {
 			s.prepareGenerationStatisticsFile("Estimation2Goals");
 
 			final Organisation o = new Organisation("Estimation2Goals", gTree,
-					Arrays.asList(Cost.GENERALIST), false);
+					Arrays.asList(Cost.GENERALIST, Cost.LESS_IDLENESS), false);
 
 			BuscaLargura busca = new BuscaLargura();
 			MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
@@ -167,7 +167,7 @@ public class OrganisationTest {
 			s.prepareGenerationStatisticsFile("Estimation3Goals");
 
 			final Organisation o = new Organisation("Estimation3Goals", gTree,
-					Arrays.asList(Cost.GENERALIST), false);
+					Arrays.asList(Cost.GENERALIST, Cost.LESS_IDLENESS), false);
 			
 			BuscaLargura busca = new BuscaLargura();
 			MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
@@ -213,7 +213,7 @@ public class OrganisationTest {
 			s.prepareGenerationStatisticsFile("Estimation4Goals");
 
 			final Organisation o = new Organisation("Estimation4Goals", gTree,
-					Arrays.asList(Cost.GENERALIST), false);
+					Arrays.asList(Cost.GENERALIST, Cost.LESS_IDLENESS), false);
 			
 			BuscaLargura busca = new BuscaLargura();
 			MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
@@ -255,7 +255,7 @@ public class OrganisationTest {
 			s.prepareGenerationStatisticsFile("AllCreatedOrgs2Goals");
 			
 			final Organisation o = new Organisation("AllCreatedOrgs2Goals", gTree,
-					Arrays.asList(Cost.GENERALIST), false);
+					Arrays.asList(Cost.GENERALIST, Cost.LESS_IDLENESS), false);
 
 			BuscaLargura busca = new BuscaLargura();
 			MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
@@ -320,7 +320,7 @@ public class OrganisationTest {
 			s.prepareGenerationStatisticsFile("AllCreatedOrgs3Goals");
 
 			final Organisation o = new Organisation("AllCreatedOrgs3Goals", gTree,
-					Arrays.asList(Cost.GENERALIST), false);
+					Arrays.asList(Cost.GENERALIST, Cost.LESS_IDLENESS), false);
 
 			BuscaLargura busca = new BuscaLargura();
 			MostraStatusConsole status = new MostraStatusConsole(busca.getStatus());
@@ -383,7 +383,7 @@ public class OrganisationTest {
 			s.prepareGenerationStatisticsFile("testOrganisationIsValid");
 
 			Organisation o = new Organisation("testOrganisationIsValid", gTree,
-					Arrays.asList(Cost.GENERALIST), true);
+					Arrays.asList(Cost.GENERALIST, Cost.LESS_IDLENESS), true);
 			Nodo n = new BuscaLargura().busca(o);
 
 			System.out.println("Validate original gdt workloads with organisations' workloads (must be ok)");
