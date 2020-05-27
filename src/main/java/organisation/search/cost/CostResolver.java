@@ -55,6 +55,12 @@ public class CostResolver {
 					* (preferences.indexOf(Cost.FLATTER) + 1));
 		}
 
+		// TALLER - penalize according to the height of the new tree
+		if (preferences.contains(Cost.TALLER)) {
+			cost += (int) ((1 - newTree.getTallness()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.TALLER) + 1));
+		}
+		
 		return cost;
 	}
 
@@ -80,9 +86,11 @@ public class CostResolver {
 					* (preferences.indexOf(Cost.FLATTER) + 1));
 		}
 
-		// Low punishment when is preferred taller but is not child
-		if ((preferences.contains(Cost.TALLER)) && (!position.hasParentGoal(goal)))
-			cost += Parameters.getDefaultPenalty() * (preferences.indexOf(Cost.TALLER) + 1);
+		// TALLER - penalize according to the height of the new tree
+		if (preferences.contains(Cost.TALLER)) {
+			cost += (int) ((1 - newTree.getTallness()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.TALLER) + 1));
+		}
 
 		// SPECIALIST - penalize according to specificness of the new tree
 		if (preferences.contains(Cost.SPECIALIST)) {
@@ -115,9 +123,11 @@ public class CostResolver {
 					* (preferences.indexOf(Cost.FLATTER) + 1));
 		}
 
-		// Low punishment when is preferred taller but is child
-		if (preferences.contains(Cost.TALLER))
-			cost += Parameters.getDefaultPenalty() * (preferences.indexOf(Cost.TALLER) + 1);
+		// TALLER - penalize according to the height of the new tree
+		if (preferences.contains(Cost.TALLER)) {
+			cost += (int) ((1 - newTree.getTallness()) * Parameters.getDefaultPenalty()
+					* (preferences.indexOf(Cost.TALLER) + 1));
+		}
 
 		// SPECIALIST - penalize according to specificness of the new tree
 		if (preferences.contains(Cost.SPECIALIST)) {
