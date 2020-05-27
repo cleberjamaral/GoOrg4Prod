@@ -32,7 +32,7 @@ public class CostResolver {
 
 		// LESS_IDLENESS - punish if it is creating more position than the ideal
 		if (preferences.contains(Cost.EFFICIENT)) {
-			cost += (int) ((1 - newTree.getLessIdlenessRate()) * Parameters.getDefaultPenalty()
+			cost += (int) ((1 - newTree.getEfficiency()) * Parameters.getDefaultPenalty()
 					* (preferences.indexOf(Cost.EFFICIENT) + 1));
 		}
 

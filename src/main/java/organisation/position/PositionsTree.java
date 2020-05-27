@@ -287,7 +287,7 @@ public class PositionsTree implements RequirementSet {
 	 */
 	public double getAbsoluteIdleness() {
 		double capacity = this.tree.size() * Parameters.getMaxWorkload();
-		double occupancy = capacity - GoalTree.getInstance().getSumEfforts();
+		double occupancy = capacity - this.getSumWorkload();
 
 		return compensateWhenSearchInProgress(occupancy / capacity);
 	}
@@ -300,7 +300,7 @@ public class PositionsTree implements RequirementSet {
 	 * 
 	 * @return less idleness varies from 0 to 1, being 1 for max efficiency
 	 */
-	public double getLessIdlenessRate() {
+	public double getEfficiency() {
 		double capacity = this.tree.size() * Parameters.getMaxWorkload();
 		double occupancy = this.getSumWorkload();
 
