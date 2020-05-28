@@ -65,27 +65,6 @@ public class CostFlatterTest {
 			System.out.println("Originals (unbroken) goals are: "+GoalTree.getInstance().getOriginalGoals());
 			assertEquals(3, GoalTree.getInstance().getOriginalGoals().size(), 0);
 			
-			GoalNode g;
-			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g0"));
-			System.out.println("g0 has no inform and dataloads: " + g.getInforms() + " - " + g.getDataLoads());
-			assertEquals(0, g.getSumInform(), 0);
-			assertEquals(0, g.getSumDataLoad(), 0);
-
-			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g1$0"));
-			System.out.println("g1$0 ~ g1$1 all have sum of inform: " + g.getSumInform() + ", details: " + g.getInforms());
-			System.out.println("g1$0 ~ g1$1 all have sum of workload: " + g.getSumWorkload() + ", details: " + g.getWorkloads());
-			assertEquals(2, g.getSumWorkload(), 0);
-			assertEquals(1, g.getWorkloads().size(), 0);
-			assertEquals(2, g.getSumInform(), 0);
-			assertEquals(2, g.getInforms().size(), 0); 
-			
-			assertNotNull(g = gTree.findAGoalByName(gTree.getRootNode(),"g2$0"));
-			System.out.println("g2$0 ~ g2$1 all have sum of dataload: " + g.getSumDataLoad() + ", details: " + g.getDataLoads());
-			assertEquals(2, g.getSumDataLoad(), 0);
-			assertEquals(2, g.getDataLoads().size(), 0);
-
-			//TODO: assert if inform was removed since it is circular
-			
 			OrganisationStatistics s = OrganisationStatistics.getInstance();
 			s.prepareGenerationStatisticsFile("testOnePositionFlatterOrg");
 			

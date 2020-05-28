@@ -146,6 +146,21 @@ public class PositionsTree implements RequirementSet {
 		return sumWorkload;
 	}
 
+	/**
+	 * Give the sum of dataloads of the whole tree
+	 * 
+	 * @return a double
+	 */
+	public double getSumDataload() {
+		double sumDataload = 0;
+		for (PositionNode r : this.tree) {
+			for (DataLoad d : r.getDataLoads()) {
+				sumDataload += (double) d.getValue();
+			}
+		}
+		return sumDataload;
+	}
+	
 	@Override
 	public String toString() {
 		List<String> signatureByPositions = new ArrayList<>();

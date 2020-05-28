@@ -33,7 +33,7 @@ public class Status {
 	}
 
     void termina(boolean resolveu) {
-    	//TODO: não deveria retornar resolveu?
+    	//TODO: não deveria usar o parametro resolveu?
         this.resolveu = true;
         if (ms != null) {
             ms.para();
