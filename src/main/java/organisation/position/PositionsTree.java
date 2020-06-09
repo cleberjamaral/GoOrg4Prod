@@ -329,8 +329,8 @@ public class PositionsTree implements RequirementSet {
 	 * @return flatness rate from 0 to 1, less flat to flattest
 	 */
 	public double getFlatness() {
-		// The minimum number of levels is 1
-		return compensateWhenSearchInProgress(1.0 / (double) numberOfLevels);
+		// Complimentary function of tallnesse
+		return 1 - getTallness();
 	}
 	
 	/**
@@ -342,8 +342,11 @@ public class PositionsTree implements RequirementSet {
 	 */
 	public double getTallness() {
 		// The maximum number of levels is the number of broken goals
+		int maxLevels = GoalTree.getInstance().getTree().size();
+		// Avoid division per zero
+		if (maxLevels > 1) maxLevels--;
 		return compensateWhenSearchInProgress(
-				(double) numberOfLevels / (double) GoalTree.getInstance().getTree().size());
+				(double) (numberOfLevels - 1) / (double) maxLevels);
 	}
 
 	/**
