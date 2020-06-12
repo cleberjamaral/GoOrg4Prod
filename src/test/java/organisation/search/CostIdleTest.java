@@ -81,7 +81,7 @@ public class CostIdleTest {
 			assertTrue(((Organisation) n.getEstado()).isValid());
 			// 2 goals with WL => 2 positions, occupancy / Max WL per position = 1 - 4/16
 			assertEquals((1.0 - (double) 4 / 16),
-					((Organisation) n.getEstado()).getPositionsTree().getAbsoluteIdleness(), 0.1);
+					((Organisation) n.getEstado()).getPositionsTree().getIdleness(), 0.1);
 
     	} catch (CircularReference e) {
 			e.printStackTrace();
@@ -133,7 +133,7 @@ public class CostIdleTest {
 			assertTrue(((Organisation) n.getEstado()).isValid());
 			// 2 goals with WL => 2 positions, occupancy / Max WL per position = 1 - 10/48
 			assertEquals((1.0 - (double) 10 / 48),
-					((Organisation) n.getEstado()).getPositionsTree().getAbsoluteIdleness(), 0.1);
+					((Organisation) n.getEstado()).getPositionsTree().getIdleness(), 0.1);
 			
 		} catch (CircularReference e) {
 			e.printStackTrace();
@@ -184,7 +184,7 @@ public class CostIdleTest {
 			assertTrue(((Organisation) n.getEstado()).isValid());
 			// 6 goals with WL => 6 positions, occupancy / Max WL per position = 1 - 21/48
 			assertEquals((1.0 - (double) 21 / 48),
-					((Organisation) n.getEstado()).getPositionsTree().getAbsoluteIdleness(), 0.1);
+					((Organisation) n.getEstado()).getPositionsTree().getIdleness(), 0.1);
 
 		} catch (CircularReference e) {
 			e.printStackTrace();

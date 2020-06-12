@@ -271,7 +271,7 @@ public class PositionsTree implements RequirementSet {
 	 * 
 	 * @return absolute idleness achieved, varies from 0 to 1.
 	 */
-	public double getAbsoluteIdleness() {
+	public double getIdleness() {
 		double capacity = this.tree.size() * Parameters.getMaxWorkload();
 		double occupancy = capacity - this.getSumWorkload();
 

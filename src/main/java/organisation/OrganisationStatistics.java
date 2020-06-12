@@ -169,7 +169,7 @@ public class OrganisationStatistics {
 		double idleness = o.getPositionsTree().getTree().size() * Parameters.getMaxWorkload() - originalWorkLoad;
 		line.put("Idlene", (Double.toString(idleness)));
 		
-		line.put("%Idle+", (String.format("%.0f%%", 100 * o.getPositionsTree().getAbsoluteIdleness())));
+		line.put("%Idle+", (String.format("%.0f%%", 100 * o.getPositionsTree().getIdleness())));
 		line.put("%Effic", (String.format("%.0f%%", 100 * o.getPositionsTree().getEfficiency())));
 		line.put("%Geral", (String.format("%.0f%%", 100 * o.getPositionsTree().getGeneralness())));
 		line.put("%Speci", (String.format("%.0f%%", 100 * o.getPositionsTree().getSpecificness())));

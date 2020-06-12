@@ -38,7 +38,7 @@ public class CostResolver {
 
 		// MORE_IDLENESS - punish if it is NOT creating as more position a possible
 		if (preferences.contains(Cost.IDLE)) {
-			cost += (int) ((1 - newTree.getAbsoluteIdleness()) * Parameters.getDefaultPenalty()
+			cost += (int) ((1 - newTree.getIdleness()) * Parameters.getDefaultPenalty()
 					* (preferences.indexOf(Cost.IDLE) + 1));
 		}
 
