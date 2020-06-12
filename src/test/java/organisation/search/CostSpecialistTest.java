@@ -1,7 +1,6 @@
 package organisation.search;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
@@ -88,7 +87,8 @@ public class CostSpecialistTest {
 			}
 			
 			assertTrue(((Organisation) n.getEstado()).isValid());
-			assertEquals(1.0, ((Organisation) n.getEstado()).getPositionsTree().getSpecificness(), 0);
+			// Specificness = 1 - (nAllOriginalGoalsAssigned - nMinOriginalGoalsSpread) / (nMaxOriginalGoalsSpread - nMinOriginalGoalsSpread);
+			assertEquals((1.0 - (3.0 - 1.0)/(3.0 - 1.0)), ((Organisation) n.getEstado()).getPositionsTree().getSpecificness(), 0.1);
 
 			System.out.println("The hierarchy is not being checked.");
 			
@@ -209,8 +209,8 @@ public class CostSpecialistTest {
 			
 			assertTrue(((Organisation) n.getEstado()).isValid());
 			
-			// Specificness = nMinWorkloads / nAllWorkloads = 2 / 3 = 0.6667
-			assertTrue(((Organisation) n.getEstado()).getPositionsTree().getSpecificness() > 0.6);
+			// Specificness = 1 - (nAllOriginalGoalsAssigned - nMinOriginalGoalsSpread) / (nMaxOriginalGoalsSpread - nMinOriginalGoalsSpread);
+			assertEquals(1.0 - ((4.0 - 3.0)/(9.0 - 3.0)), ((Organisation) n.getEstado()).getPositionsTree().getSpecificness(), 0.1);
 
 			System.out.println("The hierarchy is not being checked.");
 			

@@ -212,36 +212,7 @@ public class PositionsTree implements RequirementSet {
 	 * @throws Exception 
 	 */
 	public double getGeneralness() {
-		int nAllOriginalGoalsAssigned = 0;
-		int nGoalsAssigned = 0;
-
-		// An original goal refers to the whole or a part of a given (non-broken) goal
-		for (PositionNode or : this.tree) {
-			Set<String> allOriginalGoalsOfPosition = new HashSet<>();
-			for (GoalNode g : or.getAssignedGoals()) {
-				allOriginalGoalsOfPosition.add(g.getOriginalName());
-				// Accumulates all goals (all broken goals) 
-				nGoalsAssigned++;
-			}
-			// Accumulates only different goals, sum all we have on each position 
-			nAllOriginalGoalsAssigned += allOriginalGoalsOfPosition.size();
-		}
-
-		// ideal situation: each original goal has a broken part that can be distributed
-		// equally across all positions
-		int nMaxOriginalGoalsSpread = GoalTree.getInstance().getOriginalGoals().size() * this.tree.size();
-
-		// the actual generalness of the current positions tree
-		double generalness = (double) nAllOriginalGoalsAssigned / (double) nMaxOriginalGoalsSpread;
-
-		// if it is a partial generalness, add a penalty according to the number of goals to assign
-		int nGoalsToAssing = GoalTree.getInstance().getTree().size() - nGoalsAssigned;
-
-		// a penalty for partial generalness
-		if (nGoalsToAssing > 0)
-			generalness /= nGoalsToAssing * GoalTree.getInstance().getTree().size() * 10;
-
-		return generalness;
+		return compensateWhenSearchInProgress(getGeneralnessMinMax());
 	}
 	
 	/**
@@ -260,15 +231,16 @@ public class PositionsTree implements RequirementSet {
 	 *         possible)
 	 */
 	public double getSpecificness() {
+		return compensateWhenSearchInProgress(1 - getGeneralnessMinMax());
+	}
+	
+	private double getGeneralnessMinMax() {
 		int nAllOriginalGoalsAssigned = 0;
-		int nGoalsAssigned = 0;
 
 		for (PositionNode or : this.tree) {
 			Set<String> allOriginalGoalsOfPosition = new HashSet<>();
 			for (GoalNode g : or.getAssignedGoals()) {
 				allOriginalGoalsOfPosition.add(g.getOriginalName());
-				// Accumulates all goals (all broken goals) 
-				nGoalsAssigned++;
 			}
 			// Accumulates only different goals, sum all we have on each position 
 			nAllOriginalGoalsAssigned += allOriginalGoalsOfPosition.size();
@@ -277,18 +249,17 @@ public class PositionsTree implements RequirementSet {
 		// the most specialist positions tree must have all workloads distributed
 		// without splitting them (if may be impossible if the sumofefforts if higher
 		// than maxWorkload, but efficiency/idleness should not be taken into account
-		int nMinOriginalGoalsSpread = Math.max(GoalTree.getInstance().getOriginalGoals().size(), this.tree.size());
+		int nMinOriginalGoalsSpread = Math.min(GoalTree.getInstance().getOriginalGoals().size(), this.tree.size());
 		
-		double specificness = (double) nMinOriginalGoalsSpread / (double) nAllOriginalGoalsAssigned;
+		// ideal situation: each original goal has a broken part that can be distributed
+		// equally across all positions
+		int nMaxOriginalGoalsSpread = GoalTree.getInstance().getOriginalGoals().size() * this.tree.size();
+
+		// the actual generalness of the current positions tree
+		double generalness = (double) (nAllOriginalGoalsAssigned - nMinOriginalGoalsSpread)
+				/ (double) (nMaxOriginalGoalsSpread - nMinOriginalGoalsSpread);
 		
-		// if it is a partial generalness, add a penalty according to the number of goals to assign
-		int nGoalsToAssing = GoalTree.getInstance().getTree().size() - nGoalsAssigned;
-
-		// a penalty for partial generalness
-		if (nGoalsToAssing > 0)
-			specificness /= nGoalsToAssing * GoalTree.getInstance().getTree().size() * 10;
-
-		return specificness;
+		return generalness;
 	}
 	
 	/**

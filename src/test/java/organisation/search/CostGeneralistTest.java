@@ -210,8 +210,9 @@ public class CostGeneralistTest {
 			System.out.println("In generalist case, if granularity allows, each position must receive at least one workload w1 and one w2.");
 			
 			assertTrue(((Organisation) n.getEstado()).isValid());
-			// since g0 has no workload, it cannot be broken and spread across the positions, so max is 77%
-			assertTrue(((Organisation) n.getEstado()).getPositionsTree().getGeneralness() >= 0.77);
+			// Generalness = (nAllOriginalGoalsAssigned - nMinOriginalGoalsSpread) / (nMaxOriginalGoalsSpread - nMinOriginalGoalsSpread);
+			// since g0 has no workload, it cannot be broken and spread across the positions
+			assertEquals((7.0 - 3.0)/(9.0 - 3.0), ((Organisation) n.getEstado()).getPositionsTree().getGeneralness(), 0.1);
 
 			System.out.println("The hierarchy is not being checked.");
 			
