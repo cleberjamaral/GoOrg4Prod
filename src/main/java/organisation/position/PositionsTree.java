@@ -196,6 +196,27 @@ public class PositionsTree implements RequirementSet {
 			return false;
 		return true;
 	}
+
+	/**
+	 * Generalness is about how similar are the positions. If all positions are
+	 * assigned to the same goals, they request same skills so they are similar.
+	 * 
+	 * @return a compensate factor from 0 to 1 according to the progress of the
+	 *         search
+	 */
+	public double getGeneralness() {
+		return compensateWhenSearchInProgress(getGeneralnessMinMax());
+	}
+	
+	/**
+	 * Specificness is the complement part of generalness.
+	 * 
+	 * @return a compensate factor from 0 to 1 according to the progress of the
+	 *         search
+	 */
+	public double getSpecificness() {
+		return compensateWhenSearchInProgress(1 - getGeneralnessMinMax());
+	}
 	
 	/**
 	 * Generalness is about how goals are distributed across positions. When all
@@ -208,32 +229,12 @@ public class PositionsTree implements RequirementSet {
 	 * those 3 goals. So, the 3 agents that will plays those positions can be
 	 * actually allocated in any one of those positions
 	 * 
+	 * The result uses a min-max function to ensure the max generalness is 1 and
+	 * minimum is 0, which means max specificness 
+	 * 
 	 * @return generalness index from 0 to 1 (less to maximum generalness possible)
 	 * @throws Exception 
-	 */
-	public double getGeneralness() {
-		return compensateWhenSearchInProgress(getGeneralnessMinMax());
-	}
-	
-	/**
-	 * Specificness like generalness is about how workloads are distributed across
-	 * positions. In case of specificness, it would be ideal to do not split workloads,
-	 * since splitting means sharing this workload what makes necessary more skills
-	 * to the other agent.
-	 * 
-	 * For instance, for a GDT with a set of goals that together have 3 different
-	 * workloads the PositionsTree should prefer structure in which each position has only
-	 * 1 workload ideally In this case, it would need less skills from each agent.
-	 * 
-	 * Efficiency/idleness is not being taken into account here
-	 * 
-	 * @return specificness index from 0 to 1 (less to maximum specificness
-	 *         possible)
-	 */
-	public double getSpecificness() {
-		return compensateWhenSearchInProgress(1 - getGeneralnessMinMax());
-	}
-	
+	 */	
 	private double getGeneralnessMinMax() {
 		int nAllOriginalGoalsAssigned = 0;
 
@@ -263,61 +264,79 @@ public class PositionsTree implements RequirementSet {
 	}
 	
 	/**
-	 * Idleness is about total workload split into positions. It considers the ideal
-	 * number of positions according to maximum workload per position. In case of absolute
-	 * idleness, the idleness is the real one, no matter if it is possible to do a 
-	 * perfect split or not, i.e., idleness is ZERO only if the goals tree has reached 
-	 * no idle at all.
+	 * Idleness is the complement part of efficiency.
 	 * 
-	 * @return absolute idleness achieved, varies from 0 to 1.
+	 * @return a compensated factor from 0 to 1 according to the progress of the
+	 *         search
 	 */
 	public double getIdleness() {
-		double capacity = this.tree.size() * Parameters.getMaxWorkload();
-		double occupancy = capacity - this.getSumWorkload();
-
-		return compensateWhenSearchInProgress(occupancy / capacity);
+		return compensateWhenSearchInProgress(1 - getEfficiencyFactor());
 	}
 	
 	/**
-	 * Less idleness rate is about the efficiency of the workforce distribution. If
-	 * the sum of workloads is not multiple of the max workload, efficiency will
-	 * never be 100%. If the algorithm is creating more positions than the minimum
-	 * (ideal) it is decreasing lessIdlenessRate.
+	 * Efficiency is the perfect occupancy of the work force.
 	 * 
-	 * @return less idleness varies from 0 to 1, being 1 for max efficiency
+	 * @return a compensated factor from 0 to 1 according to the progress of the
+	 *         search
 	 */
 	public double getEfficiency() {
+		return compensateWhenSearchInProgress(getEfficiencyFactor());
+	}
+	
+	/**
+	 * It is about efficiency of the workforce distribution. If the sum of workloads
+	 * is not multiple of the max workload, efficiency will never be 100%. If the
+	 * algorithm is creating more positions than the minimum (ideal) it is
+	 * decreasing lessIdlenessRate.
+	 * 
+	 * Low efficiency means high idleness. As said, sometimes, it is possible to do
+	 * a perfect split, so so idleness is often inevitable.
+	 * 
+	 * @return Efficiency varies from 0 to 1, being 1 for max efficiency
+	 */
+	public double getEfficiencyFactor() {
 		double capacity = this.tree.size() * Parameters.getMaxWorkload();
 		double occupancy = this.getSumWorkload();
 
-		return compensateWhenSearchInProgress(occupancy / capacity);
+		return occupancy / capacity;
 	}
 
 	/**
-	 * Flatness returns how shallow is the created positions tree. The flattest tree
-	 * has only one level, meaning all positions are supreme.
+	 * Flatness returns how shallow is the created positions tree. It is the
+	 * complement of tallness.
 	 * 
-	 * @return flatness rate from 0 to 1, less flat to flattest
+	 * @return a compensated factor from 0 to 1, less flat to flattest
 	 */
 	public double getFlatness() {
-		// Complimentary function of tallness
-		return 1 - getTallness();
+		return compensateWhenSearchInProgress(1 - getTallnessFactor());
 	}
 	
 	/**
-	 * Tallness returns how tall is the created positions tree. The tallest tree
-	 * has one position for each goal and all of them are in a chain, with only
-	 * one supreme, that has one subordinate, which has one subordinates, and so on.
+	 * Tallness is how hierarchical is the organisation. The most hierarchical is an
+	 * organisation that has one position for each goal and put each position beow
+	 * another in a long chain of command.
 	 * 
-	 * @return Tallness rate from 0 to 1, less tall to tallest
+	 * @return a compensated factor from 0 to 1, less tall to tallest
 	 */
 	public double getTallness() {
-		// The maximum number of levels is the number of broken goals
-		int maxLevels = GoalTree.getInstance().getTree().size();
-		return compensateWhenSearchInProgress(
-				(double) (numberOfLevels - 1) / (double) Math.max(1, maxLevels - 1));
+		return compensateWhenSearchInProgress(getTallnessFactor());
 	}
 
+	/**
+	 * Tallness returns how tall is the created positions tree. The tallest tree has
+	 * one position for each goal and all of them are in a chain, with only one
+	 * supreme, that has one subordinate, which has one subordinates, and so on.
+	 * Oppositely, the flattest tree has only one level, meaning all positions are
+	 * supreme.
+	 * 
+	 * @return tallness rate from 0 to 1, from flattest to tallest
+	 */
+	public double getTallnessFactor() {
+		// The maximum number of levels is the number of broken goals
+		int maxLevels = GoalTree.getInstance().getTree().size();
+		return (double) (numberOfLevels - 1) / (double) Math.max(1, maxLevels - 1);
+	}
+	
 	/**
 	 * When the search is in progress, the returned rates must be compensated in order 
 	 * to minimize errors on cost resolution of new states creation
