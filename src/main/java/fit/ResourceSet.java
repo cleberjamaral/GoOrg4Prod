@@ -8,6 +8,6 @@ import java.util.Set;
  */
 public interface ResourceSet {
 	
-	public Set<Resource> getResources();
+	public Set<? extends Resource> getResources();
 
 }

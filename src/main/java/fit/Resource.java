@@ -4,20 +4,21 @@ import java.util.Set;
 
 /**
  * @author cleber
+ * @param <T>
  *
  */
-public interface Resource {
+public interface Resource<T> {
 
 	/**
 	 * An identification to the resource
 	 * @return a string
 	 */
-	public String getResource();
+	public T getResource();
 
 	
 	/**
 	 * Return strings representing items that it is able to do
 	 * @return Set of strings
 	 */
-	public Set<String> getFeatures();
+	public Set<T> getFeatures();
 }
