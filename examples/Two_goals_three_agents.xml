@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<organisational-specification id="organisation">
+
+	<automated-design-parameters>
+		<parameter id="maxWorkload" value="8"/>
+		<parameter id="maxDataLoad" value="8.0"/>
+		<parameter id="workloadGrain" value="4.0"/>
+		<parameter id="dataLoadGrain" value="2.0"/>
+		<parameter id="oneSolution" value="false"/>
+	</automated-design-parameters>
+
+	<functional-specification>
+		<scheme id="scheme">
+			<goal id="g0">
+				<workload id="w0" value="5.00"/>
+				<plan operator="sequence">
+					<goal id="g1">
+						<workload id="w1" value="5.00"/>
+						<inform id="i1" value="1" recipient="g0"/>
+					</goal>
+				</plan>
+			</goal>
+		</scheme>
+	</functional-specification>
+
+	<available-agents>
+		<agent id="bob">
+			<skill id="w0"/>
+		</agent>
+		<agent id="alice">
+			<skill id="w1"/>
+		</agent>
+		<agent id="tom">
+			<skill id="w1"/>
+		</agent>
+	</available-agents>
+
+</organisational-specification>
+
