@@ -56,6 +56,7 @@ public class OrganisationPlot {
 
 			final StringWriter out = new StringWriter();
 			out.write("digraph G {\n");
+			out.write("\tmargin=0;\n");
 
 			for (final PositionNode or : o.getPositionsTree().getTree()) {
 				out.write("\t\"" + or.getPositionName() + "\" [ style = \"filled\" fillcolor = \"white\" "
@@ -140,6 +141,8 @@ public class OrganisationPlot {
             final StringWriter out = new StringWriter();
 
 			out.write("digraph G {\n");
+			out.write("\tmargin=0;\n");
+			
 			plotGoalNode(out, gt.getRootNode());
 
             out.write("}\n");
@@ -216,7 +219,7 @@ public class OrganisationPlot {
 		g.getDescendants().forEach(dg -> {
 			plotGoalNode(out, dg);
 			if (dg.getParent() != null)
-				out.write("\t\"" + dg.getParent().getGoalName() + "\"->\"" + dg.getGoalName() + "\";\n");
+				out.write("\t\"" + dg.getParent().getGoalName() + "\"->\"" + dg.getGoalName() + "\" [ style=invis arrowhead=none ];\n");
 
 		});
 	}
