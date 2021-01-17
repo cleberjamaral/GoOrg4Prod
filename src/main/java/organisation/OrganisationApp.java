@@ -85,7 +85,6 @@ public class OrganisationApp {
 			String name = path[path.length - 1];
 			name = name.substring(0, name.length() - 4);
 
-			Parameters.getInstance();
 			LOG.info("Search algorit: "+ search);
 
 			// generate organisations
