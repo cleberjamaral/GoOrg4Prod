@@ -439,7 +439,7 @@ public class Organisation implements Estado, Heuristica {
 	public long getEstimatedNumberOfOrganisations() {
         // first transformation creates an empty tree
 		long nStates = 1 + goalsTree.getTree().size(); 
-		for (int i = 1; i < goalsTree.getTree().size(); i++) {
+		for (int i = 1; i <= goalsTree.getTree().size(); i++) {
 			nStates += openedStates(i, goalsTree.getTree().size());
 		}
 		return nStates;
@@ -453,15 +453,13 @@ public class Organisation implements Estado, Heuristica {
 	 * @param n the number of goals
 	 * @return the number of open states
 	 */
-	public long openedStates(int i, int n) {    
-	    long result = 0;
+	public long openedStates(int i, int n) {
 	    // second transformation makes each goal a supreme
 	    if (i == 1)
-	        result = 3 * n;
+	        return 3 * n;
 	    // further transformations make 3 states from each position
-	    if (i > 1) 
-	        result = 3 * i * openedStates(i-1, n);
-	    return result;     
+	    else
+	        return 3 * openedStates(i-1, n);
 	}
 
 	public int getAdjustedEstimatedNumberOfOrganisations() {
