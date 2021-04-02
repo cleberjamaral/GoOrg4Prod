@@ -68,6 +68,7 @@ public class OrganisationStatistics {
 		this.fields.add("%DL+");
 		this.fields.add("pTree");
 		this.fields.add("bgTree");
+		this.fields.add("skTree");
 		this.fields.add("agents");
 		this.fields.add("matche");
 	}
@@ -178,6 +179,7 @@ public class OrganisationStatistics {
 		
 		line.put("pTree", o.getPositionsTree().toString());
 		line.put("bgTree", bgTree);
+		line.put("skTree", o.getPositionsTree().getSkillsTree());
 		line.put("States", (Integer.toString(o.getNStates())));
 		line.put("Levels", (Integer.toString(o.getPositionsTree().getNumberOfLevels())));
 

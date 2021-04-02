@@ -175,6 +175,26 @@ public class PositionsTree implements RequirementSet {
 		return signatureByPositions.toString();
 	}
 
+	public String getSkillsTree() {
+		List<String> skillsTree = new ArrayList<>();
+		if ((getTree() != null) && (!getTree().isEmpty())) {
+			Iterator<PositionNode> treeIterator = getTree().iterator();
+			while (treeIterator.hasNext()) {
+				PositionNode n = treeIterator.next();
+				List<String> skills = new ArrayList<>();
+				Iterator<Workload> skillIterator = n.getWorkloads().iterator();
+				while (skillIterator.hasNext()) {
+					Workload w = skillIterator.next();
+					//skills.add("\""+w.getId()+"\"");
+					skills.add(w.getId());
+				}
+				skillsTree.add(skills.toString());
+			}
+			Collections.sort(skillsTree);
+		}
+		return skillsTree.toString();
+	}
+
 	@Override
 	public int hashCode() {
 		return this.toString().hashCode();
