@@ -431,52 +431,21 @@ public class Organisation implements Estado, Heuristica {
 	 * not considering any possible pruning, even the ones that occurred without
 	 * constraints
 	 * 
-	 * Wolfram alpha input: [1 + sum {f(j,n)}, f(j,n)=Piecewise[{{{3*n}, j = 1}, {{3
-	 * * f(j-1,n)}, j > 1}}]],j=1..5,n=5
+	 * Wolfram alpha approx input: [1 + n + sum{ 3^(n-1)*(n-1)! }, i=0..n-1]
 	 * 
 	 * @return an integer of worst case number organisations that will be created
 	 */
-	public long getEstimatedNumberOfOrganisations() {
+	public long getEstimatedNumberOfOrganisations(int treeSize) {
         // first transformation creates an empty tree
-		long nStates = 1 + goalsTree.getTree().size(); 
-		for (int i = 1; i <= goalsTree.getTree().size(); i++) {
-			nStates += openedStates(i, goalsTree.getTree().size());
+		long nStates = 1 + treeSize;
+		for (int i = 0; i < treeSize; i++) {
+			int nStatesOfTheLevel = 1;
+			for (int nPositions = 1; nPositions < treeSize; nPositions++) {
+				nStatesOfTheLevel *= 3 * nPositions; 
+				nStates += nStatesOfTheLevel;
+			}
 		}
 		return nStates;
-	}
-
-	/**
-	 * Recursively compute the number of opened states of a given number
-	 * of goals considering all previously opened states
-	 * 
-	 * @param i the current iteration
-	 * @param n the number of goals
-	 * @return the number of open states
-	 */
-	public long openedStates(int i, int n) {
-	    // second transformation makes each goal a supreme
-	    if (i == 1)
-	        return 3 * n;
-	    // further transformations make 3 states from each position
-	    else
-	        return 3 * openedStates(i-1, n);
-	}
-
-	public int getAdjustedEstimatedNumberOfOrganisations() {
-        // second transformation makes each goal a supreme
-	    int openedStates = goalsTree.getTree().size();
-        // first transformation creates an empty tree
-	    int nStates = openedStates + 1;
-	    // empirical first adjust
-	    int prunedStates = -2; 
-
-	    for (int i = 1; i < goalsTree.getTree().size(); i++) {
-		    // empirical adjust of pruned nodes
-	        prunedStates += openedStates * i;
-	        openedStates *= i * 3;
-	        nStates += openedStates - prunedStates;
-	    }
-	    return nStates;
 	}
 	
 	/**

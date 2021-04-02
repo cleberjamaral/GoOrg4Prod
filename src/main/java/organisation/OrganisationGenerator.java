@@ -41,8 +41,8 @@ public class OrganisationGenerator {
 			
 			inicial = new Organisation(name, gTree, preferences, oneSolution);
 			LOG.info("\n\nEstimated number of states to visit (worst case): "
-					+ inicial.getEstimatedNumberOfOrganisations());
-
+					+ inicial.getEstimatedNumberOfOrganisations(gTree.getTree().size()));
+			
 			Nodo n = null;
 			if (search.equals("BFS")) {
 				BuscaLargura busca = new BuscaLargura();
