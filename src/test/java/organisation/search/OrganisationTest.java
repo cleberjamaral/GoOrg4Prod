@@ -125,9 +125,9 @@ public class OrganisationTest {
 			busca.busca(o);
 			status.para();
 
-			System.out.println("Estimated worst case: " + o.getEstimatedNumberOfOrganisations() + " (visited must be less or equal)");
+			System.out.println("Estimated worst case: " + o.getEstimatedNumberOfOrganisations(gTree.getTree().size()) + " (visited must be less or equal)");
 			System.out.println("Visited nodes       : " + status.getStatus().getVisitados());
-			assertTrue(o.getEstimatedNumberOfOrganisations() >= status.getStatus().getVisitados());
+			assertTrue(o.getEstimatedNumberOfOrganisations(gTree.getTree().size()) >= status.getStatus().getVisitados());
 		} catch (GoalNotFound e) {
 			e.printStackTrace();
 		}
@@ -174,9 +174,9 @@ public class OrganisationTest {
 			busca.busca(o);
 			status.para();
 
-			System.out.println("Estimated worst case: " + o.getEstimatedNumberOfOrganisations() + " (visited must be less or equal)");
+			System.out.println("Estimated worst case: " + o.getEstimatedNumberOfOrganisations(gTree.getTree().size()) + " (visited must be less or equal)");
 			System.out.println("Visited nodes       : " + status.getStatus().getVisitados());
-			assertTrue(o.getEstimatedNumberOfOrganisations() >= status.getStatus().getVisitados());
+			assertTrue(o.getEstimatedNumberOfOrganisations(gTree.getTree().size()) >= status.getStatus().getVisitados());
 		} catch (GoalNotFound e) {
 			e.printStackTrace();
 		}
@@ -220,9 +220,9 @@ public class OrganisationTest {
 			busca.busca(o);
 			status.para();
 
-			System.out.println("Estimated worst case: " + o.getEstimatedNumberOfOrganisations() + " (visited must be less or equal)");
+			System.out.println("Estimated worst case: " + o.getEstimatedNumberOfOrganisations(gTree.getTree().size()) + " (visited must be less or equal)");
 			System.out.println("Visited nodes       : " + status.getStatus().getVisitados());
-			assertTrue(o.getEstimatedNumberOfOrganisations() >= status.getStatus().getVisitados());
+			assertTrue(o.getEstimatedNumberOfOrganisations(gTree.getTree().size()) >= status.getStatus().getVisitados());
 		} catch (GoalNotFound e) {
 			e.printStackTrace();
 		}
