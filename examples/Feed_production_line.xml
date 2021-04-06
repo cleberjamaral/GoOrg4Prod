@@ -38,4 +38,17 @@
 		</scheme>
 	</functional-specification>
 
+	<available-agents>
+		<agent id="bt">
+			<skill id="move"/>
+		</agent>
+		<agent id="pp">
+			<skill id="pnp"/>
+		</agent>
+		<agent id="ie">
+			<skill id="db_access"/>
+			<skill id="lift"/>
+		</agent>
+	</available-agents>
+
 </organisational-specification>
