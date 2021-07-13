@@ -25,7 +25,7 @@ targetCompatibility = 1.8
 
 dependencies {
 	// https://mvnrepository.com/artifact/commons-io/commons-io
-	implementation 'commons-io:commons-io:2.10.0'
+	implementation 'commons-io:commons-io:2.11.0'
 	// java-graphviz library
     implementation 'guru.nidi:graphviz-java-all-j2v8:0.18.1'
 	// https://mvnrepository.com/artifact/org.slf4j/slf4j-nop
