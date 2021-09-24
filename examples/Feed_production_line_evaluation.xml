@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
+
+<organisational-specification id="organisation" os-version="0.8"
+
+	xmlns='http://moise.sourceforge.net/os' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:schemaLocation='http://moise.sourceforge.net/os
+                        http://moise.sourceforge.net/xml/os.xsd'>
+
+	<automated-design-parameters>
+		<parameter id="maxWorkload" value="24.0"/>
+		<parameter id="maxDataLoad" value="1000.0"/>
+		<parameter id="workloadGrain" value="8.0"/>
+		<parameter id="dataLoadGrain" value="1000.0"/>
+		<parameter id="oneSolution" value="false"/>
+	</automated-design-parameters>
+
+	<functional-specification>
+		<scheme id="scheme">
+			<goal id="GetBox">
+				<workload id="lift" value="4.00"/>
+                <inform id="box ready" value="8.00" recipient="MoveBox"/>
+				<plan operator="sequence">
+					<goal id="MoveBox">
+						<workload id="move" value="8.00"/>
+						<inform id="items ready" value="8.00" recipient="PlaceBox"/>
+					</goal>
+					<goal id="PlaceBox">
+						<workload id="pnp" value="1.00"/>
+					</goal>
+				</plan>
+			</goal>
+		</scheme>
+	</functional-specification>
+
+	<available-agents>
+		<agent id="bt">
+			<skill id="move"/>
+		</agent>
+		<agent id="pp">
+			<skill id="pnp"/>
+		</agent>
+		<agent id="ie">
+			<skill id="db_access"/>
+			<skill id="lift"/>
+		</agent>
+	</available-agents>
+
+</organisational-specification>
