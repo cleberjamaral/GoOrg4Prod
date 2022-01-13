@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
+
+<organisational-specification id="organisation" os-version="0.8"
+
+	xmlns='http://moise.sourceforge.net/os' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:schemaLocation='http://moise.sourceforge.net/os
+                        http://moise.sourceforge.net/xml/os.xsd'>
+
+	<automated-design-parameters>
+		<parameter id="maxWorkload" value="50.0"/>
+		<parameter id="maxDataLoad" value="8.0"/>
+		<parameter id="workloadGrain" value="50.0"/>
+		<parameter id="dataLoadGrain" value="8.0"/>
+		<parameter id="oneSolution" value="true"/>
+	</automated-design-parameters>
+
+	<functional-specification>
+		<scheme id="scheme">
+			<goal id="winMAPC">
+				<plan operator="parallel">
+					<goal id="deliverSingleTask">
+						<workload id="explore" value="35.00"/>
+						<workload id="performTask" value="65.00"/>
+					</goal>
+					<goal id="deliverComplexTask">
+						<workload id="explore" value="38.00"/>
+						<workload id="findTaskboard" value="2.00"/>
+						<workload id="findGoal" value="2.00"/>
+						<workload id="findDispensers" value="2.00"/>
+						<workload id="buildPlanning" value="2.00"/>
+						<workload id="findMeetingPoint" value="2.00"/>
+						<workload id="coordinatedAssembly" value="2.00"/>
+						<workload id="rotate" value="8.00"/>
+						<workload id="goto" value="40.00"/>
+						<inform id="specificBlocks" value="0.00" recipient="helpComplexTask"/>
+						<inform id="meetingPoint" value="0.00" recipient="helpComplexTask"/>
+					</goal>
+					<goal id="helpComplexTask">
+						<workload id="explore" value="38.00"/>
+						<workload id="shareMap" value="1.00"/>
+						<workload id="goto" value="199.00"/>
+						<inform id="readyAtMeetingPoint" value="0.00" recipient="deliverComplexTask"/>
+					</goal>
+					<goal id="preventOpponentDeliveries">
+						<workload id="explore" value="27.00"/>
+						<workload id="shareMap" value="3.00"/>
+						<workload id="defendGoalArea" value="11.00"/>
+						<workload id="idle" value="100.00"/>
+						<workload id="goto" value="3.00"/>
+						<workload id="clear" value="6.00"/>
+					</goal>
+				</plan>
+			</goal>
+		</scheme>
+	</functional-specification>
+
+</organisational-specification>

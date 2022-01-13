@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
+
+<organisational-specification id="organisation" os-version="0.8"
+
+	xmlns='http://moise.sourceforge.net/os' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:schemaLocation='http://moise.sourceforge.net/os
+                        http://moise.sourceforge.net/xml/os.xsd'>
+
+	<automated-design-parameters>
+		<parameter id="maxWorkload" value="1.0"/>
+		<parameter id="maxDataLoad" value="10.0"/>
+		<parameter id="workloadGrain" value="1.0"/>
+		<parameter id="dataLoadGrain" value="10.0"/>
+		<parameter id="oneSolution" value="false"/>
+	</automated-design-parameters>
+
+	<functional-specification>
+		<scheme id="scheme">
+			<goal id="RetrieveInformation">
+				<workload id="Mediate" value="0.01"/>
+				<!--<inform id="query" value="8.00" recipient="Mediate"/>-->
+				<plan operator="sequence">
+					<!--<goal id="Mediate">
+						<workload id="Mediate" value="1.00"/>-->
+						<!--<inform id="query" value="8.00" recipient="Aggregate"/>-->
+						<!--<inform id="mediated info" value="8.00" recipient="RetrieveInformation"/>-->
+					<!--</goal>-->
+					<goal id="Aggregate">
+						<workload id="Aggregate" value="0.95"/>
+						<!--<inform id="query" value="8.00" recipient="DB"/>-->
+						<inform id="aggregated info" value="3.00" recipient="RetrieveInformation"/>
+					</goal>
+					<goal id="DB">
+						<workload id="DB" value="2.70"/>
+						<inform id="info" value="10.00" recipient="Aggregate"/>
+					</goal>
+					<goal id="ExtractText">
+						<workload id="Extract" value="0.05"/>
+					</goal>
+				</plan>
+			</goal>
+		</scheme>
+	</functional-specification>
+
+
+</organisational-specification>

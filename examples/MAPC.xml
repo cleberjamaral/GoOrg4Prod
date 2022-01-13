@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
+
+<organisational-specification id="organisation" os-version="0.8"
+
+	xmlns='http://moise.sourceforge.net/os' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:schemaLocation='http://moise.sourceforge.net/os
+                        http://moise.sourceforge.net/xml/os.xsd'>
+
+	<automated-design-parameters>
+		<parameter id="maxWorkload" value="100.0"/>
+		<parameter id="maxDataLoad" value="100.0"/>
+		<parameter id="workloadGrain" value="100.0"/>
+		<parameter id="dataLoadGrain" value="100.0"/>
+		<parameter id="oneSolution" value="true"/>
+	</automated-design-parameters>
+
+	<functional-specification>
+		<scheme id="scheme">
+			<goal id="winMAPC">
+				<plan operator="sequence">
+					<goal id="exploreScenario">
+						<plan operator="parallel">
+							<goal id="exploreAndMap">
+								<workload id="explore" value="29.00"/>
+								<workload id="shareMap" value="1.00"/>
+							</goal>
+						</plan>
+					</goal>
+					<goal id="beatOpponent">
+						<plan operator="parallel">
+							<goal id="deliverSingleTask">
+								<plan operator="sequence">
+									<goal id="acceptTask">
+										<workload id="goto" value="20.00"/>
+									</goal>
+									<goal id="collectBlocks">
+										<!-- goto a dispenser to grab blocks -->
+										<workload id="goto" value="20.00"/>
+									</goal>
+									<goal id="putBlocksInRightPositions">
+										<workload id="rotate" value="20.00"/>
+									</goal>
+									<goal id="submitTask">
+										<workload id="goto" value="10.00"/>
+									</goal>
+								</plan>
+							</goal>
+							<goal id="deliverComplexTask">
+								<plan operator="sequence">
+									<goal id="acceptTask">
+										<workload id="goto" value="20.00"/>
+									</goal>
+									<goal id="delegateBlocksCollection">
+										<workload id="buildPlanning" value="20.00"/>
+										<inform id="collectBlock(B)" value="0.00" recipient="collectBlocks"/>
+										<inform id="meetMeAt(X,Y)" value="0.00" recipient="takeBlocksToMeetingPoint"/>
+									</goal>
+									<goal id="buildComplexStructure">
+										<workload id="coordinatedAssembly" value="20.00"/>
+										<workload id="rotate" value="5.00"/>
+										<inform id="meetMeAt(X,Y)" value="0.00" recipient="takeBlocksToMeetingPoint"/>
+									</goal>
+									<goal id="submitTask">
+										<workload id="goto" value="5.00"/>
+									</goal>
+								</plan>
+							</goal>
+							<goal id="helpComplexTask">
+								<plan operator="sequence">
+									<goal id="collectBlocks">
+										<workload id="goto" value="35.00"/>
+										<!-- goto a dispenser to grab blocks -->
+										<inform id="committedToCollectBlocks" value="0.00" recipient="delegateBlocksCollection"/>
+									</goal>
+									<goal id="takeBlocksToMeetingPoint">
+										<!-- goto a dispenser to grab blocks -->
+										<workload id="goto" value="35.00"/>
+										<inform id="readyAtMeetingPoint" value="0.00" recipient="buildComplexStructure"/>
+									</goal>
+								</plan>
+							</goal>
+							<goal id="preventOpponentDeliveries">
+								<plan operator="parallel">
+									<goal id="occupyGoalArea">
+										<workload id="goto" value="20.00"/>
+										<workload id="defendGoalArea" value="40.00"/>
+									</goal>
+									<goal id="attackOpponent">
+										<workload id="clear" value="10.00"/>
+									</goal>
+								</plan>
+							</goal>
+						</plan>
+					</goal>
+				</plan>
+			</goal>
+		</scheme>
+	</functional-specification>
+
+</organisational-specification>

@@ -1,0 +1,8 @@
+[]
+['lift']
+['move']
+['lift', 'move']
+['pnp']
+['lift', 'pnp']
+['move', 'pnp']
+['lift', 'move', 'pnp']
