@@ -188,9 +188,9 @@ public class Organisation implements Estado, Heuristica {
 			}
 		} else {
 			for (GoalNode goalToBeAssociated : goalSuccessors) {
+				addNotNull((List<Object>) (List<?>) suc, addSupremePosition(goalToBeAssociated));
 				// add all children as possible successors
 				for (PositionNode position : positionsTree.getTree()) {
-					addNotNull((List<Object>) (List<?>) suc, addSupremePosition(goalToBeAssociated));
 					addNotNull((List<Object>) (List<?>) suc, addSubordinatePosition(position, goalToBeAssociated));
 					addNotNull((List<Object>) (List<?>) suc, joinExistingPosition(position, goalToBeAssociated));
 				}
