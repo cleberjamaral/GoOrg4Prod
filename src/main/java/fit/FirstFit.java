@@ -19,7 +19,6 @@ public class FirstFit extends Fit {
 		Map<Requirement,Resource> matches = new HashMap<>();
 		Set<Resource> availableResources = new HashSet<>(resources);
 		requirements.forEach(req -> {
-			Resource toRemove = null;
 			Iterator<Resource> it = availableResources.iterator();
 			while (it.hasNext()) {
 				Resource res = it.next();
@@ -27,12 +26,10 @@ public class FirstFit extends Fit {
 				List<String> rs = new ArrayList<>(res.getFeatures());
 				if (rs.containsAll(rr)) {
 					matches.put(req, res);
-					toRemove = res;
+					availableResources.remove(res);
 					break;
 				}
 			}
-			if (toRemove != null)
-				availableResources.remove(toRemove);
 		});
 		return matches;
 	}
