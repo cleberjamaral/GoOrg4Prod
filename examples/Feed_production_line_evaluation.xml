@@ -19,15 +19,15 @@
 	<functional-specification>
 		<scheme id="scheme">
 			<goal id="GetBox">
-				<workload id="lift" value="4.00"/>
-                <inform id="box ready" value="8.00" recipient="MoveBox"/>
+				<workload id="lift" value="8.00"/>
+				<inform id="box ready" value="8.00" recipient="MoveBox"/>
 				<plan operator="sequence">
 					<goal id="MoveBox">
 						<workload id="move" value="8.00"/>
 						<inform id="items ready" value="8.00" recipient="PlaceBox"/>
 					</goal>
 					<goal id="PlaceBox">
-						<workload id="pnp" value="1.00"/>
+						<workload id="pnp" value="8.00"/>
 					</goal>
 				</plan>
 			</goal>
@@ -42,7 +42,6 @@
 			<skill id="pnp"/>
 		</agent>
 		<agent id="ie">
-			<skill id="db_access"/>
 			<skill id="lift"/>
 		</agent>
 	</available-agents>

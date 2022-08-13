@@ -53,9 +53,9 @@ public class OrganisationApp {
 				GoalTree gTree = GoalTree.getInstance();
 				gTree.setRootNode(g0);
 				gTree.addGoal("g1", "g0");
-				gTree.addWorkload("g0", "w0", 5);
-				gTree.addWorkload("g1", "w1", 5);
-				gTree.addInform("g1", "i1", "g0", 1);
+				gTree.addWorkload("g0", "w0", 2);
+				gTree.addWorkload("g1", "w1", 2);
+				//gTree.addInform("g1", "i1", "g0", 1);
 
 				// perform organisation generation (free design)
 				Organisation org = orgGen.generateOrganisationFromTree("sample", preferences, search, Parameters.isOneSolution());
@@ -69,7 +69,7 @@ public class OrganisationApp {
 				// bind agents and positions
 				orgBin.bindOrganisations(org, agents);
 				
-			} catch (GoalNotFound | CircularReference e) {
+			} catch (GoalNotFound e) {
 				e.printStackTrace();
 			}
 
